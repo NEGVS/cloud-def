@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="xCloud.mapper.XOrdersMapper">
+
+    <resultMap id="BaseResultMap" type="xCloud.domain.XOrders">
+            <id property="order_id" column="order_id" jdbcType="BIGINT"/>
+            <result property="user_id" column="user_id" jdbcType="BIGINT"/>
+            <result property="merchant_id" column="merchant_id" jdbcType="INTEGER"/>
+            <result property="amount" column="amount" jdbcType="DECIMAL"/>
+            <result property="status" column="status" jdbcType="TINYINT"/>
+            <result property="payment_id" column="payment_id" jdbcType="VARCHAR"/>
+            <result property="shopping_json" column="shopping_json" jdbcType="VARCHAR"/>
+            <result property="pay_time" column="pay_time" jdbcType="TIMESTAMP"/>
+            <result property="rider_id" column="rider_id" jdbcType="VARCHAR"/>
+            <result property="shipping_address" column="shipping_address" jdbcType="VARCHAR"/>
+            <result property="created_time" column="created_time" jdbcType="TIMESTAMP"/>
+            <result property="updated_time" column="updated_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        order_id,user_id,merchant_id,
+        amount,status,payment_id,
+        shopping_json,pay_time,rider_id,
+        shipping_address,created_time,updated_time
+    </sql>
+</mapper>

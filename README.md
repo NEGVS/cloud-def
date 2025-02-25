@@ -5,11 +5,11 @@ SpringApplication.run(OrderApplication.class, args);
 System.out.println("Hello world! OrderApplication done...");
 
 
-1-nacos
-2-负载均衡Ribbon,
-3-Feign
+1-nacos ✅
+2-负载均衡Ribbon,✅
+3-Feign ✅
 4-Sentinel
-5-gateway
+5-gateway ✅
 
 server:
 port: 8091

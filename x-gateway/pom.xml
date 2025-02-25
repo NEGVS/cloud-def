@@ -9,7 +9,7 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>x-config</artifactId>
+    <artifactId>x-gateway</artifactId>
 
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
@@ -19,10 +19,15 @@
     <dependencies>
 
         <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-bootstrap</artifactId>
+            <groupId>xCloud</groupId>
+            <artifactId>x-config</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
         </dependency>
-
+        <!--gateway-->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-gateway</artifactId>
+        </dependency>
     </dependencies>
 
 </project>

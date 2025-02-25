@@ -117,6 +117,7 @@
         <module>x-order</module>
         <module>x-config</module>
         <module>x-productB</module>
+        <module>x-gateway</module>
     </modules>
 
     <build>

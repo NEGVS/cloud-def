@@ -15,6 +15,8 @@ import xCloud.mapper.XOrdersMapper;
 import xCloud.service.XOrdersService;
 
 import java.net.URI;
+import java.util.List;
+import java.util.Random;
 
 /**
  * @author andy_mac
@@ -33,28 +35,47 @@ public class XOrdersServiceImpl extends ServiceImpl<XOrdersMapper, XOrders>
 
     @Override
     public XOrders createOrder(String pid) {
+
+//        method 4 ,use load balance
+        //直接使用微服务名字， 从nacos中获取服务地址
+        String serviceName = "shop-product";
+        String url4 = "http://" + serviceName + "/product/find/" + pid;
+
+//        end
+
+        //method 3,use random service
+        List<ServiceInstance> instances = discoveryClient.getInstances("shop-product");
+        int index = new Random().nextInt(instances.size());
+        ServiceInstance serviceInstance = instances.get(index);
+
+        //method 3 end
+
+        //method 2 ,use nacos
         //get url from nacos
-        ServiceInstance serviceInstance = discoveryClient.getInstances("shop-product").get(0);
+        //ServiceInstance serviceInstance = discoveryClient.getInstances("shop-product").get(0);
         String host = serviceInstance.getHost();
         int port = serviceInstance.getPort();
 
+        String url = "http://" + serviceInstance.getHost() + ":" + serviceInstance.getPort() + "/product/find/" + pid;
+        //UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.fromUri(URI.create(url));
 
-        String url = serviceInstance.getHost() + ":" + serviceInstance.getPort() + "/product/find/" + pid;
-//        UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.fromUri(URI.create(url));
-        System.out.println(url);
-        XProducts product = restTemplate.getForObject(url, XProducts.class);
+        System.out.println(url4);
+        XProducts product = restTemplate.getForObject(url4, XProducts.class);
+        log.info("-----get url from nacos：{}", url);
+        //method 2 end
 
         //method 1,use restTemplate to call product service
-//        XProducts product = restTemplate.getForObject("http://localhost:8072/product/find/" + pid, XProducts.class);
-//        method 1 end
+        //XProducts product = restTemplate.getForObject("http://localhost:8072/product/find/" + pid, XProducts.class);
+        //method 1 end
+
         log.info(">>商品信息,查询结果：{}", JSON.toJSONString(product));
         XOrders order = new XOrders();
         order.setOrder_id(IdWorker.getId());
         order.setUser_id(1L);
         assert product != null;
-//      System.out.println( "------product.getProductId() = " + product.getProductId() );
-//      order.setMerchantId( 1L );
-//      order.setAmount( product.getPrice() );
+        //System.out.println( "------product.getProductId() = " + product.getProductId() );
+        //order.setMerchantId( 1L );
+        //order.setAmount( product.getPrice() );
         return order;
     }
 }

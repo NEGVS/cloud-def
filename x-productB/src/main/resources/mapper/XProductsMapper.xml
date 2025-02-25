@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="xCloud.mapper.XProductsBMapper">
+
+    <resultMap id="BaseResultMap" type="xCloud.domain.XProductsB">
+            <id property="product_id" column="product_id" jdbcType="BIGINT"/>
+            <result property="name" column="name" jdbcType="VARCHAR"/>
+            <result property="description" column="description" jdbcType="VARCHAR"/>
+            <result property="price" column="price" jdbcType="DECIMAL"/>
+            <result property="pre_price" column="pre_price" jdbcType="DECIMAL"/>
+            <result property="collaborate_price" column="collaborate_price" jdbcType="DECIMAL"/>
+            <result property="original_price" column="original_price" jdbcType="DECIMAL"/>
+            <result property="cost_price" column="cost_price" jdbcType="DECIMAL"/>
+            <result property="stock" column="stock" jdbcType="INTEGER"/>
+            <result property="image" column="image" jdbcType="VARCHAR"/>
+            <result property="notes" column="notes" jdbcType="VARCHAR"/>
+            <result property="category_id" column="category_id" jdbcType="INTEGER"/>
+            <result property="merchant_id" column="merchant_id" jdbcType="INTEGER"/>
+            <result property="version" column="version" jdbcType="BIGINT"/>
+            <result property="created_time" column="created_time" jdbcType="TIMESTAMP"/>
+            <result property="updated_time" column="updated_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        product_id
+        ,name,description,
+        price,pre_price,collaborate_price,
+        original_price,cost_price,stock,
+        image,notes,category_id,
+        merchant_id,version,created_time,
+        updated_time
+    </sql>
+    <select id="getProductById" parameterType="long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from x_products
+        where product_id = #{productId}
+    </select>
+</mapper>

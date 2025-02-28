@@ -14,6 +14,6 @@ spring:
       discovery:
         server-addr: 127.0.0.1:8848
 #配置Ribbon的负载均衡策略
-shop-order:
-  ribbon:
-    NFLoadBalancerRuleClassName: com.netflix.loadbalancer.RoundRobinRule
+#shop-order:
+#  ribbon:
+#    NFLoadBalancerRuleClassName: com.netflix.loadbalancer.RoundRobinRule

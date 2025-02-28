@@ -1,5 +1,5 @@
 server:
-  port: 7000
+  port: 8099
 spring:
   application:
     name: x-gateway
@@ -17,7 +17,7 @@ spring:
           # 断言(就是路由转发要满足的条件)
           predicates:
             # 当请求路径满足Path指定的规则时,才进行路由转发
-            - Path=/product/**
+            - Path=/gateway-product/**
           # 过滤器,请求在传递过程中可以通过过滤器对其进行一定的修改
           filters:
             # 转发之前去掉1层路径

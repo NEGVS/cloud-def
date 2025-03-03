@@ -41,6 +41,12 @@
             <scope>test</scope>
         </dependency>
 
+<!--        rocketMQ-->
+        <dependency>
+            <groupId>org.apache.rocketmq</groupId>
+            <artifactId>rocketmq-client-java</artifactId>
+            <version>5.0.7</version>
+        </dependency>
 
         <!--        nacos, discovery-->
         <dependency>

@@ -23,7 +23,7 @@ public class PushConsumerExample {
 
         final ClientServiceProvider provider = ClientServiceProvider.loadService();
         //接入点地址，需要设置成Proxy的地址和端口列表，一般是xxx:8080;xxx:8081
-        // 此处为示例，实际使用时请替换为真实的 Proxy 地址和端口
+        // 此处为示例，实际使用时请替换为真实的 Proxy 地址和端口 是
         String endpoint = "127.0.0.1:9876";
         ClientConfiguration clientConfiguration = ClientConfiguration.newBuilder()
                 .setEndpoints(endpoint)

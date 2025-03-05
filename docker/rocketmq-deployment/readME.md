@@ -1,6 +1,34 @@
 RocketMQ 的 NameServer、Broker 和 Dashboard 配置都在 docker-compose.yml 中。
 如果需要挂载 broker.conf，放在同一目录便于管理。
 
+Behavior constraints
+行为约束
+
+
+
+Does intermittent fasting work?
+Diets come and diets go.
+
+间歇性禁食有效吗？
+节食法时有发生，时有结束
+
+One of the most popular today is "intermittent fasting" in which, as the name suggests, the idea is to limit one's food intake to certain time windows.
+如今最受欢迎的一种是“间歇性禁食”，顾名思义，其想法是将一个人的食物摄入量限制在特定的时间窗口内。
+intermittent断断续续的，间歇的周期性的
+fasting禁食斋戒节食禁食的fast的现在分词
+as the name suggests顾名思义
+
+One popular variant, the "5-2 diet", requires people to eat either very small amounts, or nothing at all, on two days a week, but imposes no restrictions on the other five.
+一种流行的变体“5-2 饮食法”要求人们每周两天只吃少量食物或不吃任何食物，但对其他五天则22不做任何限制。
+
+Intermittent fasting is popular.
+
+And as a weight-loss strategy, it has several things going for it.
+
+One is that it is uncomplicated.
+
+---
+
 在使用 Docker Compose 部署应用（如 RocketMQ）时，`docker-compose.yml` 文件的存放位置并没有严格的固定要求，但其放置位置会影响命令执行的上下文和文件管理的便利性。以下是关于 `docker-compose.yml` 放置位置的详细说明和推荐实践。
 
 

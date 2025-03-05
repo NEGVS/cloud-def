@@ -5,7 +5,15 @@ spring:
       - optional:nacos:shop-product.yml
   application:
     name: shop-product
+  elasticsearch:
+    uris: http://127.0.0.1:9200
+  data:
+    redis:
+      host: 127.0.0.1
+      port: 6379
+
   cloud:
+
     nacos:
       config:
         namespace:

@@ -11,7 +11,8 @@ Diets come and diets go.
 
 间歇性禁食有效吗？
 节食法时有发生，时有结束
-
+andy
+not pre
 One of the most popular today is "intermittent fasting" in which, as the name suggests, the idea is to limit one's food intake to certain time windows.
 如今最受欢迎的一种是“间歇性禁食”，顾名思义，其想法是将一个人的食物摄入量限制在特定的时间窗口内。
 intermittent断断续续的，间歇的周期性的

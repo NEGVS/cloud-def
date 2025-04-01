@@ -59,11 +59,22 @@
             <artifactId>spring-boot-starter-data-redis</artifactId>
         </dependency>
         <!-- Elasticsearch -->
+        <!-- Spring Data Elasticsearch (可选，推荐用于Repository模式) -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-elasticsearch</artifactId>
+        </dependency>
+
+        <!-- Elasticsearch Java API Client (必须) -->
         <dependency>
             <groupId>co.elastic.clients</groupId>
             <artifactId>elasticsearch-java</artifactId>
-            <version>8.15.2</version>  <!-- 版本根据 Elasticsearch 服务器匹配 -->
+            <version>8.12.0</version> <!-- 必须与服务端版本一致 -->
         </dependency>
+
+
+
+
 <!--        nacos, discovery-->
         <dependency>
             <groupId>com.alibaba.cloud</groupId>

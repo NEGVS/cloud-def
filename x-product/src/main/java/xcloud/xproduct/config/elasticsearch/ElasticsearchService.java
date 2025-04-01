@@ -1,5 +1,8 @@
 package xcloud.xproduct.config.elasticsearch;
 
+//import co.elastic.clients.elasticsearch.ElasticsearchClient;
+//import co.elastic.clients.elasticsearch.core.IndexResponse;
+
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch.core.IndexResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +18,7 @@ import java.util.Map;
  * @Date 2025/3/6 16:13
  * @ClassName ElasticsearchService
  * 3. 创建 Elasticsearch 操作 Service
- *    创建索引、添加文档、搜索数据。
+ * 创建索引、添加文档、搜索数据。
  */
 @Service
 public class ElasticsearchService {

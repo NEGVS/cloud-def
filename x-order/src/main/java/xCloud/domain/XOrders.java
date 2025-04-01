@@ -6,6 +6,8 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 /**
@@ -14,51 +16,61 @@ import lombok.Data;
  */
 @TableName(value ="x_orders")
 @Data
+@Schema(description = "XOrders entity")
 public class XOrders implements Serializable {
     /**
      * 订单id
      */
     @TableId
+    @Schema(description = "订单id", example = "1")
     private Long order_id;
 
     /**
      * 用户id
      */
+    @Schema(description = "用户id", example = "1")
     private Long user_id;
 
     /**
      * 商家id
      */
+    @Schema(description = "商家id", example = "1")
     private Integer merchant_id;
 
     /**
      * 订单总金额
      */
+    @Schema(description = "订单总金额", example = "1000")
     private BigDecimal amount;
 
     /**
      * 订单状态('pending'1, 'paid'2, 'shipped'3, 'completed'4, 'canceled'5)
      */
+    @Schema(description = "订单状态('pending'1, 'paid'2, 'shipped'3, 'completed'4, 'canceled'5)", example = "1")
     private Integer status;
 
     /**
      * 支付id
      */
+    @Schema(description = "支付id", example = "1")
     private String payment_id;
 
     /**
      * 购物车信息
      */
+    @Schema(description = "购物车信息", example = "1")
     private String shopping_json;
 
     /**
      * 付款时间
      */
+    @Schema(description = "付款时间", example = "")
     private Date pay_time;
 
     /**
      * 骑手id
      */
+
     private String rider_id;
 
     /**

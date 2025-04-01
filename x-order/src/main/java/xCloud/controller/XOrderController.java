@@ -2,9 +2,18 @@ package xCloud.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,6 +32,7 @@ import xCloud.service.XOrdersService;
 @RestController
 @Slf4j
 @RequestMapping("/order")
+@Tag(name = "订单服务", description = "订单服务")
 public class XOrderController {
 
     @Resource
@@ -39,12 +49,21 @@ public class XOrderController {
      * @param id id
      * @return order
      */
+    @Operation(summary = "Get user by ID", description = "Returns a single user based on their ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "User found", content = @Content(schema = @Schema(implementation = XOrders.class))),
+            @ApiResponse(responseCode = "404", description = "User not found")
+    })
+    @Parameters(value = {
+            @Parameter(name = "id", description = "用户ID", required = false),
+            @Parameter(name = "name", description = "商品名称", required = false)
+    })
     @GetMapping("/find/{id}")
-    public XOrders findByPid(@PathVariable("id") String id) {
+    public ResponseEntity<XOrders> findByPid(@PathVariable("id") String id) {
         log.info("\n查询商品信息");
         XOrders order = orderService.getById(id);
         log.info("\n查询商品信息：{}", JSON.toJSONString(order));
-        return order;
+        return ResponseEntity.ok().body(order);
     }
 
     /**
@@ -84,12 +103,6 @@ public class XOrderController {
         order.setUser_id(1L);
         assert product != null;
         //System.out.println( "------product.getProductId() = " + product.getProductId() );
-//        白领职场女性我见的开的比较多的是奔驰、宝马、保时捷、蔚来、特斯拉，智己，小米su7还没见过
-
-//        小米su7感觉白领女生开的不多，大学刚毕业的女生买不起，赚几年钱能买的起的也不会自己去买车，要结婚了是基本是要求男方有车，自己很少主动给自己买车。
-//        所以大多是那些早早在社会打拼并且脱颖而出经济独立的女性，做生意 服装 美容 餐饮 直播赚些钱的，富家千金我看到的基本也是特斯拉要么更贵的豪车
-//        过年相亲我就认识一个这样的女生，自己开的店，化妆化的不像正常人，猛喷我的特斯拉，非常喜欢小米su7，我直接让她滚了
-//
         order.setMerchant_id(1);
         order.setAmount(product.getPrice());
         boolean save = orderService.save(order);

@@ -1,4 +1,12 @@
 spring:
+  elasticsearch:
+    uris: https://localhost:9200  # ES地址
+    username: elastic
+    password: ASDks#d12
+    ssl:
+      verification: false
+#      certificate-authorities: classpath:http_ca.crt  # 自签名证书路径（可选）
+#      enabled: true
   config:
     import:
 #      - optional:nacos:${spring.application.name}
@@ -13,3 +21,30 @@ spring:
         group: ANDY_GROUP
       discovery:
         server-addr: 127.0.0.1:8848
+springdoc:
+  swagger-ui:
+    css: /customSwaggerUI.css
+    path: /docs #访问地址变为：http://localhost:8080/docs。
+    operations-sorter: alpha # 接口按字母排序
+    tags-sorter: alpha # 按字母排序
+    display-request-duration: true # 显示请求耗时
+    default-models-expand-depth: -1 # 隐藏默认模型展开
+    deep-linking: true
+    try-it-out-enabled: true
+    display-operation-id: false
+    doc-expansion: list
+
+    #deep-linking: true         # 启用深层链接
+    #    try-it-out-enabled: true   # 启用“Try it out”功能
+    #    display-operation-id: false # 隐藏操作ID
+    #    doc-expansion: list        # 默认展开列表视图（可选：full, none）
+
+#性能优化
+#  API 数量较多，Swagger 界面可能会加载缓慢，可以通过以下方式优化：
+  #按需加载
+  #配置只展示特定包下的控制器，避免扫描所有类。--非常有效
+#  packages-to-scan: xcloud.xproduct.controller
+  packages-to-scan: xcloud.xproduct.config
+#  启用缓存以减少重复生成文档的开销。
+  cache:
+    disabled: false

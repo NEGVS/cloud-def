@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -48,9 +49,9 @@ public class ElasticsearchTestController {
             @ApiResponse(responseCode = "500", description = "创建索引失败")
     })
     @GetMapping("/create-index")
-    public String createIndex(@RequestParam String indexName) throws IOException {
+    public ResponseEntity<Object> createIndex(@RequestParam String indexName) throws IOException {
         elasticsearchService.createIndex(indexName);
-        return "创建索引成功,indexName: " + indexName;
+        return ResponseEntity.ok("创建索引成功,indexName: " + indexName);
     }
 
     /**

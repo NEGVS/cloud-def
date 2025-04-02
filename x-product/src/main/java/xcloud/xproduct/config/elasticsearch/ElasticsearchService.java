@@ -5,6 +5,7 @@ package xcloud.xproduct.config.elasticsearch;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch.core.IndexResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +21,7 @@ import java.util.Map;
  * 3. 创建 Elasticsearch 操作 Service
  * 创建索引、添加文档、搜索数据。
  */
+@Slf4j
 @Service
 public class ElasticsearchService {
 
@@ -27,8 +29,12 @@ public class ElasticsearchService {
     private ElasticsearchClient elasticsearchClient;
 
     public void createIndex(String indexName) throws IOException {
-        elasticsearchClient.indices().create(c -> c.index(indexName));
-        System.out.println("创建索引成功" + indexName);
+        try {
+            elasticsearchClient.indices().create(c -> c.index(indexName));
+            System.out.println("创建索引成功" + indexName);
+        } catch (Exception e) {
+            log.error("\n创建索引失败", e);
+        }
     }
 
     public void addDocument(String indexName, String id) throws IOException {

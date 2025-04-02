@@ -5,11 +5,11 @@ spring:
     password: ASDks#d12
     ssl:
       verification: false
-#      certificate-authorities: classpath:http_ca.crt  # 自签名证书路径（可选）
-#      enabled: true
+  #      certificate-authorities: classpath:http_ca.crt  # 自签名证书路径（可选）
+  #      enabled: true
   config:
     import:
-#      - optional:nacos:${spring.application.name}
+      #      - optional:nacos:${spring.application.name}
       - optional:nacos:shop-product.yml
   application:
     name: shop-product
@@ -39,12 +39,17 @@ springdoc:
     #    display-operation-id: false # 隐藏操作ID
     #    doc-expansion: list        # 默认展开列表视图（可选：full, none）
 
-#性能优化
-#  API 数量较多，Swagger 界面可能会加载缓慢，可以通过以下方式优化：
+  #性能优化
+  #  API 数量较多，Swagger 界面可能会加载缓慢，可以通过以下方式优化：
   #按需加载
   #配置只展示特定包下的控制器，避免扫描所有类。--非常有效
-#  packages-to-scan: xcloud.xproduct.controller
+  #  packages-to-scan: xcloud.xproduct.controller
   packages-to-scan: xcloud.xproduct.config
-#  启用缓存以减少重复生成文档的开销。
+  #  启用缓存以减少重复生成文档的开销。
   cache:
     disabled: false
+#日志
+logging:
+  level:
+    org.elasticsearch.client: debug
+    co.elastic.clients: debug

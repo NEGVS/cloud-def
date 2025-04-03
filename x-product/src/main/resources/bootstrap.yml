@@ -44,7 +44,7 @@ springdoc:
   #按需加载
   #配置只展示特定包下的控制器，避免扫描所有类。--非常有效
   #  packages-to-scan: xcloud.xproduct.controller
-  packages-to-scan: xcloud.xproduct.config
+#  packages-to-scan: xcloud.xproduct.config
   #  启用缓存以减少重复生成文档的开销。
   cache:
     disabled: false

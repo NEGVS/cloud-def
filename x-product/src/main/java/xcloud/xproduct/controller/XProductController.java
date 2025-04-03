@@ -1,5 +1,6 @@
 package xcloud.xproduct.controller;
 
+import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.json.JSONUtil;
 import com.alibaba.nacos.common.http.HttpRestResult;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import xcloud.xproduct.config.kafka.KafkaProducer;
 import xcloud.xproduct.domain.XProducts;
 import xcloud.xproduct.service.XProductsService;
 
@@ -38,6 +40,8 @@ public class XProductController {
 
     @Resource
     XProductsService xProductsService;
+    @Resource
+    KafkaProducer kafkaProducer;
 
     @GetMapping("/find/{id}")
     public XProducts find(@PathVariable("id") String id) {
@@ -60,6 +64,13 @@ public class XProductController {
     public HttpRestResult<List<XProducts>> selectList(@RequestBody XProducts xProducts) {
 
         QueryWrapper<XProducts> queryWrapper = new QueryWrapper<>();
+        //sendMessage
+        String message = "andy";
+        if (ObjectUtil.isNotEmpty(xProducts.getName())) {
+            message = "andy" + xProducts.getName();
+        }
+        //sendMessage
+        kafkaProducer.sendMessage(message);
 
         if (xProducts.getProduct_id() != null) {
             queryWrapper.eq("product_id", xProducts.getProduct_id());

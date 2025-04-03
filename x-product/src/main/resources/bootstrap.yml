@@ -1,4 +1,26 @@
 spring:
+  kafka:
+    #Kafka Broker 的地址列表，多个地址用逗号分隔
+    bootstrap-servers: localhost:9092
+    consumer:
+      #消费者组的 ID，同一个组的消费者会共同消费 Topic 中的数据，每个消息只会被组内的一个消费者消费
+      group-id: andy_group
+      #当消费者组中没有初始偏移量或当前偏移量在服务器上不再存在时，该如何处理。earliest 表示从最早的偏移量开始消费，latest 表示从最新的偏移量开始消费。
+      auto-offset-reset: earliest
+      #生产者用于序列化消息键和值的类。这里使用了字符串序列化器
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      properties:
+        spring:
+          json:
+            trusted:
+              packages: xcloud.xproduct.domain
+#        spring:
+#        json.trusted.packages: *
+#    不要使用*
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
   elasticsearch:
     uris: https://localhost:9200  # ES地址
     username: elastic

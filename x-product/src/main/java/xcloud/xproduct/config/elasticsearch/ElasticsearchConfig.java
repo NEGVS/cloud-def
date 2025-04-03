@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.data.elasticsearch.repository.config.EnableElasticsearchRepositories;
 
 
 /**
@@ -30,6 +31,8 @@ import org.springframework.context.annotation.PropertySource;
 @PropertySource("classpath:bootstrap.yml")
 @Configuration
 @Slf4j
+@EnableElasticsearchRepositories(basePackages = "xcloud.xproduct.config.elasticsearch")
+//@EnableElasticsearchRepositories 启用 Spring Data Elasticsearch,
 public class ElasticsearchConfig {
 
     //@Value 注解会从 application.properties 或 application.yml 中读取属性,确认文件名是 application.properties 或 application.yml，且位于 src/main/resources 下。

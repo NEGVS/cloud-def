@@ -5,12 +5,16 @@ package xcloud.xproduct.config.elasticsearch;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch.core.IndexResponse;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import xcloud.xproduct.domain.XProducts;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -28,6 +32,51 @@ public class ElasticsearchService {
     @Autowired
     private ElasticsearchClient elasticsearchClient;
 
+    @Resource
+    private XProductRepository xProductRepository;
+
+    @PostConstruct // 启动时执行
+    public void initData() {
+        XProducts product = new XProducts();
+        product.setProduct_id(Long.valueOf(11111111));
+        product.setName("Laptop");
+        product.setDescription("High-performance laptop");
+        xProductRepository.save(product);
+        System.out.println("Initialized product: " + product.getName());
+    }
+    /**
+     * 保存商品信息
+     *
+     * @param product x
+     * @return x
+     */
+    public XProducts saveProduct(XProducts product) {
+        return xProductRepository.save(product);
+    }
+
+    /**
+     * 根据商品名称搜索商品信息
+     *
+     * @param name x
+     * @return x
+     */
+    public List<XProducts> searchByName(String name) {
+        log.info("--------service---searchByName-");
+        return xProductRepository.findByName(name);
+    }
+
+    // 根据名称模糊搜索
+    public List<XProducts> searchByNameContaining(String name) {
+        log.info("--------service---searchByNameContaining-");
+        return xProductRepository.findByNameContaining(name);
+    }
+
+    /**
+     * 创建索引
+     *
+     * @param indexName x
+     * @throws IOException x
+     */
     public void createIndex(String indexName) throws IOException {
         try {
             elasticsearchClient.indices().create(c -> c.index(indexName));
@@ -37,6 +86,13 @@ public class ElasticsearchService {
         }
     }
 
+    /**
+     * 添加文档
+     *
+     * @param indexName x
+     * @param id        x
+     * @throws IOException x
+     */
     public void addDocument(String indexName, String id) throws IOException {
         Map<String, Object> data = new HashMap<>();
         data.put("name", "测试name");

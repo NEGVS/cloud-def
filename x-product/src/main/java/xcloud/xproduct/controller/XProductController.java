@@ -2,6 +2,7 @@ package xcloud.xproduct.controller;
 
 import cn.hutool.json.JSONUtil;
 import com.alibaba.nacos.common.http.HttpRestResult;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
@@ -14,6 +15,7 @@ import org.apache.http.HttpEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import xcloud.xproduct.domain.XProducts;
@@ -51,12 +53,22 @@ public class XProductController {
     })
     @Operation(summary = "查询商品列表", description = "查询商品列表")
     @Parameters({
-            @Parameter(name = "id", description = "商品ID", required = false),
+            @Parameter(name = "product_id", description = "商品ID", required = false),
             @Parameter(name = "name", description = "商品名称", required = false)
     })
     @PostMapping("/find/list")
-    public HttpRestResult<List<XProducts>> selectList() {
-        List<XProducts> list = xProductsService.list();
+    public HttpRestResult<List<XProducts>> selectList(@RequestBody XProducts xProducts) {
+
+        QueryWrapper<XProducts> queryWrapper = new QueryWrapper<>();
+
+        if (xProducts.getProduct_id() != null) {
+            queryWrapper.eq("product_id", xProducts.getProduct_id());
+        }
+        if (xProducts.getName() != null) {
+            queryWrapper.like("name", xProducts.getName());
+        }
+        queryWrapper.orderByDesc("created_time");
+        List<XProducts> list = xProductsService.list(queryWrapper);
         log.info("------------");
         log.info(JSONUtil.toJsonStr(list));
         HttpRestResult<List<XProducts>> httpRestResult2 = new HttpRestResult<>();

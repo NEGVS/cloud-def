@@ -10,11 +10,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import xcloud.xproduct.domain.XProducts;
 
 import java.io.IOException;
+import java.util.List;
 
 /**
  * @Description x
@@ -58,7 +63,7 @@ public class ElasticsearchTestController {
      * 添加文件
      *
      * @param indexName x
-     * @param id x
+     * @param id        x
      * @return x
      * @throws IOException x
      */
@@ -93,9 +98,32 @@ public class ElasticsearchTestController {
             @ApiResponse(responseCode = "500", description = "搜索失败")
     })
     @GetMapping("/search")
-    public String createInde2x(@RequestParam String indexName) throws IOException {
+    public String search(@RequestParam String indexName) throws IOException {
         elasticsearchService.createIndex(indexName);
         return "创建索引成功" + indexName;
     }
 
+    @Operation(summary = "按名称精确搜索")
+    @GetMapping("/search/name/{name}")
+    public List<XProducts> searchByName(@PathVariable String name) {
+        log.info("-----------searchByName-");
+        List<XProducts> products = elasticsearchService.searchByName(name);
+        return products;
+    }
+
+    // 按名称模糊搜索
+    @Operation(summary = "按名称模糊搜索")
+    @GetMapping("/search/name-containing/{name}")
+    public List<XProducts> searchByNameContaining(@PathVariable String name) {
+        log.info("-----------searchByNameContaining-");
+        return elasticsearchService.searchByNameContaining(name);
+    }
+
+    // 添加商品
+    @Operation(summary = "添加商品")
+    @PostMapping("/add")
+    public String addProduct(@RequestBody XProducts product) {
+        elasticsearchService.saveProduct(product);
+        return "Product added";
+    }
 }

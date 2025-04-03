@@ -23,20 +23,19 @@
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-bootstrap</artifactId>
         </dependency>
-<!--使用swagger-->
+        <!--使用swagger-->
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
             <version>2.6.0</version> <!-- 或使用最新版本，如 2.6.0 -->
         </dependency>
-<!--Swagger UI优化，使用knife4j，- Swagger/SpringDoc OpenAPI 是“内容”的生产者（生成 API 文档）。 Knife4j 是“内容”的消费者和展示者（美化和增强 API 文档的 UI）。-->
+        <!--Swagger UI优化，使用knife4j，- Swagger/SpringDoc OpenAPI 是“内容”的生产者（生成 API 文档）。 Knife4j 是“内容”的消费者和展示者（美化和增强 API 文档的 UI）。-->
         <!-- https://mvnrepository.com/artifact/com.github.xiaoymin/knife4j-openapi3-jakarta-spring-boot-starter -->
         <dependency>
             <groupId>com.github.xiaoymin</groupId>
             <artifactId>knife4j-openapi3-jakarta-spring-boot-starter</artifactId>
             <version>4.5.0</version>
         </dependency>
-
         <!-- 依赖的JSON库 -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>

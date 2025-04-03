@@ -7,7 +7,7 @@
         <artifactId>cloud-def</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
-    <groupId>xCloud</groupId>
+
     <artifactId>x-product</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>x-product</name>
@@ -69,8 +69,15 @@
         <dependency>
             <groupId>co.elastic.clients</groupId>
             <artifactId>elasticsearch-java</artifactId>
-            <version>8.12.0</version> <!-- 必须与服务端版本一致 -->
+            <version>8.14.3</version> <!-- 必须与服务端版本一致 -->
         </dependency>
+
+<!--        [INFO] +- org.springframework.boot:spring-boot-starter-data-elasticsearch:jar:3.4.3:compile
+[INFO] |  \- org.springframework.data:spring-data-elasticsearch:jar:5.4.2:compile
+[INFO] |     \- org.springframework.data:spring-data-commons:jar:3.4.2:compile
+[INFO] +- co.elastic.clients:elasticsearch-java:jar:8.12.0:compile
+[INFO] |  +- org.elasticsearch.client:elasticsearch-rest-client:jar:8.15.5:compile
+-->
 
 
 

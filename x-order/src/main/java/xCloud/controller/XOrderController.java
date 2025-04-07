@@ -1,7 +1,10 @@
 package xCloud.controller;
 
+import cn.hutool.core.util.ObjectUtil;
 import com.alibaba.fastjson.JSON;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
@@ -16,12 +19,17 @@ import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import xCloud.domain.XOrders;
+import xCloud.entity.ResultEntity;
 import xCloud.entity.XProducts;
 import xCloud.service.ProductService;
 import xCloud.service.XOrdersService;
+
+import java.util.List;
 
 /**
  * @Description
@@ -45,11 +53,39 @@ public class XOrderController {
 
     /**
      * 根据商品id查询商品信息
+     */
+    @Operation(summary = "listPage", description = "listPage")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "success", content = @Content(schema = @Schema(implementation = XOrders.class))),
+            @ApiResponse(responseCode = "404", description = "User not found")
+    })
+    @Parameters(value = {
+            @Parameter(name = "id", description = "用户ID", required = false),
+            @Parameter(name = "name", description = "商品名称", required = false)
+    })
+    @PostMapping("/list")
+    public ResultEntity<List<XOrders>> list(@RequestBody XOrders order) {
+        if (ObjectUtil.isNotNull(order)) {
+            log.info("\n查询商品信息");
+            //            Page<XOrders> page = new Page<>(order.getCurrent(), order.getSize());
+            QueryWrapper<XOrders> wrapper = new QueryWrapper<>();
+            //        wrapper.eq("age", age); // 条件：年龄等于指定值
+            List<XOrders> list = orderService.list(wrapper);
+            List<XOrders> xOrders = list.subList(0, 10);
+            log.info("\n查询商品信息：{}", JSON.toJSONString(xOrders));
+            log.info("\n查询商品信息：{}", JSON.toJSONString(ResultEntity.success(xOrders)));
+            return ResultEntity.success(xOrders);
+        }
+        return ResultEntity.error("查询失败");
+    }
+
+    /**
+     * 根据商品id查询商品信息
      *
      * @param id id
      * @return order
      */
-    @Operation(summary = "Get user by ID", description = "Returns a single user based on their ID")
+    @Operation(summary = "findByPid", description = "Returns a single user based on their ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "User found", content = @Content(schema = @Schema(implementation = XOrders.class))),
             @ApiResponse(responseCode = "404", description = "User not found")
@@ -58,7 +94,7 @@ public class XOrderController {
             @Parameter(name = "id", description = "用户ID", required = false),
             @Parameter(name = "name", description = "商品名称", required = false)
     })
-    @GetMapping("/find/{id}")
+    @PostMapping("/find/{id}")
     public ResponseEntity<XOrders> findByPid(@PathVariable("id") String id) {
         log.info("\n查询商品信息");
         XOrders order = orderService.getById(id);
@@ -72,6 +108,7 @@ public class XOrderController {
      * @param pid pid
      * @return order
      */
+    @Operation(summary = "create", description = "createOrder")
     @GetMapping("/create/{pid}")
     public XOrders createOrder(@PathVariable("pid") String pid) {
         log.info("\n>>客户下单，调用商品微服务查询商品信息---");
@@ -85,6 +122,7 @@ public class XOrderController {
      * @param pid pid
      * @return order
      */
+    @Operation(summary = "Get user by ID", description = "Returns a single user based on their ID")
     @GetMapping("/create/fegin/{pid}")
     public XOrders createOrder2(@PathVariable("pid") String pid) {
         log.info("\n>>客户下单，调用商品微服务查询商品信息---");

@@ -9,8 +9,8 @@ spring:
     username: root
     password: hy123456
   # 配置elasticsearch
-#  elasticsearch:
-#    uris: http://127.0.0.1:9200
+  #  elasticsearch:
+  #    uris: http://127.0.0.1:9200
   # 配置redis
   data:
     redis:

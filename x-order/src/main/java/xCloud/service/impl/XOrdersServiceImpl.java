@@ -14,7 +14,6 @@ import xCloud.entity.XProducts;
 import xCloud.mapper.XOrdersMapper;
 import xCloud.service.XOrdersService;
 
-import java.net.URI;
 import java.util.List;
 import java.util.Random;
 
@@ -41,8 +40,7 @@ public class XOrdersServiceImpl extends ServiceImpl<XOrdersMapper, XOrders>
         String serviceName = "shop-product";
         String url4 = "http://" + serviceName + "/product/find/" + pid;
 
-//        end
-
+        //end
         //method 3,use random service
         List<ServiceInstance> instances = discoveryClient.getInstances("shop-product");
         int index = new Random().nextInt(instances.size());

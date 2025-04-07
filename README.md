@@ -15,7 +15,7 @@ elasticsearch 8.12.0
 
 Spring Boot 3.4.3 匹配的swagger是什么版本？
 
-融合的技术栈
+技术栈
 1-nacos ✅
 2-负载均衡Ribbon✅
 3-Feign ✅
@@ -25,7 +25,7 @@ Spring Boot 3.4.3 匹配的swagger是什么版本？
 7-swagger，✅
 8-elasticsearch 8.12.0 ✅
 
-9- kafka
+9- kafka ✅ 
 10- seata
 
 

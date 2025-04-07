@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="xCloud.mapper.UserMapper">
+    <resultMap id="result" type="xCloud.entity.User">
+        <result property="user_id" column="user_id"/>
+        <result property="dept_id" column="dept_id"/>
+        <result property="user_name" column="user_name"/>
+        <result property="nick_name" column="nick_name"/>
+        <result property="user_type" column="user_type"/>
+        <result property="email" column="email"/>
+        <result property="phonenumber" column="phonenumber"/>
+        <result property="sex" column="sex"/>
+        <result property="avatar" column="avatar"/>
+        <result property="password" column="password"/>
+        <result property="status" column="status"/>
+        <result property="del_flag" column="del_flag"/>
+        <result property="login_ip" column="login_ip"/>
+        <result property="login_date" column="login_date"/>
+        <result property="create_by" column="create_by"/>
+        <result property="create_time" column="create_time"/>
+        <result property="update_by" column="update_by"/>
+        <result property="update_time" column="update_time"/>
+        <result property="id" column="id"/>
+        <result property="username" column="username"/>
+        <result property="realname" column="realname"/>
+        <result property="salt" column="salt"/>
+        <result property="birthday" column="birthday"/>
+        <result property="phone" column="phone"/>
+        <result property="org_code" column="org_code"/>
+        <result property="third_id" column="third_id"/>
+        <result property="third_type" column="third_type"/>
+        <result property="activiti_sync" column="activiti_sync"/>
+        <result property="work_no" column="work_no"/>
+        <result property="post" column="post"/>
+        <result property="telephone" column="telephone"/>
+        <result property="user_identity" column="user_identity"/>
+        <result property="depart_ids" column="depart_ids"/>
+        <result property="rel_tenant_ids" column="rel_tenant_ids"/>
+        <result property="client_id" column="client_id"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        dept_id, user_name, nick_name, user_type, email, phonenumber, sex, avatar, password, status, del_flag, login_ip, login_date, create_by, create_time, update_by, update_time, id, username, realname, salt, birthday, phone, org_code, third_id, third_type, activiti_sync, work_no, post, telephone, depart_ids, rel_tenant_ids, client_id
+    </sql>
+
+    <sql id="Base_Column_List_For_Join">
+        a.dept_id, a.user_name, a.nick_name, a.user_type, a.email, a.phonenumber, a.sex, a.avatar, a.password, a.status, a.del_flag, a.login_ip, a.login_date, a.create_by, a.create_time, a.update_by, a.update_time, a.id, a.username, a.realname, a.salt, a.birthday, a.phone, a.org_code, a.third_id, a.third_type, a.activiti_sync, a.work_no, a.post, a.telephone, a.depart_ids, a.rel_tenant_ids, a.client_id
+    </sql>
+
+    <!--1.新增-->
+    <insert id="insertUser" parameterType="xCloud.entity.User" useGeneratedKeys="true" keyProperty="user_id">
+        INSERT INTO
+        sys_user (<include refid="Base_Column_List"/>)
+        VALUES
+        (#{dept_id}, #{user_name}, #{nick_name}, #{user_type}, #{email}, #{phonenumber}, #{sex}, #{avatar}, #{password},
+        #{status}, #{del_flag}, #{login_ip}, #{login_date}, #{create_by}, #{create_time}, #{update_by}, #{update_time},
+        #{id}, #{username}, #{realname}, #{salt}, #{birthday}, #{phone}, #{org_code}, #{third_id}, #{third_type},
+        #{activiti_sync}, #{work_no}, #{post}, #{telephone}, #{user_identity}, #{depart_ids}, #{rel_tenant_ids},
+        #{client_id})
+    </insert>
+
+    <!--2.删除-->
+    <delete id="deleteUser" parameterType="xCloud.entity.User">
+        UPDATE
+            sys_user
+        SET deleted    = 2,
+            modifyBy   = #{modifyBy},
+            modifyDate = #{modifyDate}
+        WHERE user_id = #{user_id}
+    </delete>
+
+    <!--3.修改-->
+    <update id="updateUser" parameterType="xCloud.entity.User">
+        UPDATE
+        sys_user
+        <set>
+            <if test="dept_id != null">
+                dept_id = #{dept_id},
+            </if>
+            <if test="user_name != null">
+                user_name = #{user_name},
+            </if>
+            <if test="nick_name != null">
+                nick_name = #{nick_name},
+            </if>
+            <if test="user_type != null">
+                user_type = #{user_type},
+            </if>
+            <if test="email != null">
+                email = #{email},
+            </if>
+            <if test="phonenumber != null">
+                phonenumber = #{phonenumber},
+            </if>
+            <if test="sex != null">
+                sex = #{sex},
+            </if>
+            <if test="avatar != null">
+                avatar = #{avatar},
+            </if>
+            <if test="password != null">
+                password = #{password},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+            <if test="del_flag != null">
+                del_flag = #{del_flag},
+            </if>
+            <if test="login_ip != null">
+                login_ip = #{login_ip},
+            </if>
+            <if test="login_date != null">
+                login_date = #{login_date},
+            </if>
+            <if test="create_by != null">
+                create_by = #{create_by},
+            </if>
+            <if test="create_time != null">
+                create_time = #{create_time},
+            </if>
+            <if test="update_by != null">
+                update_by = #{update_by},
+            </if>
+            <if test="update_time != null">
+                update_time = #{update_time},
+            </if>
+            <if test="id != null">
+                id = #{id},
+            </if>
+            <if test="username != null">
+                username = #{username},
+            </if>
+            <if test="realname != null">
+                realname = #{realname},
+            </if>
+            <if test="salt != null">
+                salt = #{salt},
+            </if>
+            <if test="birthday != null">
+                birthday = #{birthday},
+            </if>
+            <if test="phone != null">
+                phone = #{phone},
+            </if>
+            <if test="org_code != null">
+                org_code = #{org_code},
+            </if>
+            <if test="third_id != null">
+                third_id = #{third_id},
+            </if>
+            <if test="third_type != null">
+                third_type = #{third_type},
+            </if>
+            <if test="activiti_sync != null">
+                activiti_sync = #{activiti_sync},
+            </if>
+            <if test="work_no != null">
+                work_no = #{work_no},
+            </if>
+            <if test="post != null">
+                post = #{post},
+            </if>
+            <if test="telephone != null">
+                telephone = #{telephone},
+            </if>
+            <if test="depart_ids != null">
+                depart_ids = #{depart_ids},
+            </if>
+            <if test="rel_tenant_ids != null">
+                rel_tenant_ids = #{rel_tenant_ids},
+            </if>
+            <if test="client_id != null">
+                client_id = #{client_id},
+            </if>
+
+        </set>
+        WHERE
+        user_id = #{user_id}
+    </update>
+
+    <!--4.查询-->
+    <select id="selectUser" parameterType="xCloud.entity.User" resultMap="result">
+        SELECT
+        a.user_id,
+        <include refid="Base_Column_List_For_Join"/>
+        FROM
+        sys_user a
+        WHERE
+        a.deleted = 1
+        <if test="entity.user_id != null">
+            AND a.user_id = #{entity.user_id}
+        </if>
+        <if test="entity.dept_id != null">
+            AND a.dept_id = #{entity.dept_id}
+        </if>
+        <if test="entity.user_name != null and entity.user_name != ''">
+            AND a.user_name = #{entity.user_name}
+        </if>
+        <if test="entity.nick_name != null and entity.nick_name != ''">
+            AND a.nick_name = #{entity.nick_name}
+        </if>
+        <if test="entity.user_type != null and entity.user_type != ''">
+            AND a.user_type = #{entity.user_type}
+        </if>
+        <if test="entity.email != null and entity.email != ''">
+            AND a.email = #{entity.email}
+        </if>
+        <if test="entity.phonenumber != null and entity.phonenumber != ''">
+            AND a.phonenumber = #{entity.phonenumber}
+        </if>
+        <if test="entity.sex != null and entity.sex != ''">
+            AND a.sex = #{entity.sex}
+        </if>
+        <if test="entity.avatar != null and entity.avatar != ''">
+            AND a.avatar = #{entity.avatar}
+        </if>
+        <if test="entity.password != null and entity.password != ''">
+            AND a.password = #{entity.password}
+        </if>
+        <if test="entity.status != null and entity.status != ''">
+            AND a.status = #{entity.status}
+        </if>
+        <if test="entity.del_flag != null and entity.del_flag != ''">
+            AND a.del_flag = #{entity.del_flag}
+        </if>
+        <if test="entity.login_ip != null and entity.login_ip != ''">
+            AND a.login_ip = #{entity.login_ip}
+        </if>
+        <if test="entity.login_date != null">
+            AND a.login_date = #{entity.login_date}
+        </if>
+        <if test="entity.create_by != null and entity.create_by != ''">
+            AND a.create_by = #{entity.create_by}
+        </if>
+        <if test="entity.create_time != null">
+            AND a.create_time = #{entity.create_time}
+        </if>
+        <if test="entity.update_by != null and entity.update_by != ''">
+            AND a.update_by = #{entity.update_by}
+        </if>
+        <if test="entity.update_time != null">
+            AND a.update_time = #{entity.update_time}
+        </if>
+        <if test="entity.id != null and entity.id != ''">
+            AND a.id = #{entity.id}
+        </if>
+        <if test="entity.username != null and entity.username != ''">
+            AND a.username = #{entity.username}
+        </if>
+        <if test="entity.realname != null and entity.realname != ''">
+            AND a.realname = #{entity.realname}
+        </if>
+        <if test="entity.salt != null and entity.salt != ''">
+            AND a.salt = #{entity.salt}
+        </if>
+        <if test="entity.birthday != null">
+            AND a.birthday = #{entity.birthday}
+        </if>
+        <if test="entity.phone != null and entity.phone != ''">
+            AND a.phone = #{entity.phone}
+        </if>
+        <if test="entity.org_code != null and entity.org_code != ''">
+            AND a.org_code = #{entity.org_code}
+        </if>
+        <if test="entity.third_id != null and entity.third_id != ''">
+            AND a.third_id = #{entity.third_id}
+        </if>
+        <if test="entity.third_type != null and entity.third_type != ''">
+            AND a.third_type = #{entity.third_type}
+        </if>
+        <if test="entity.activiti_sync != null">
+            AND a.activiti_sync = #{entity.activiti_sync}
+        </if>
+        <if test="entity.work_no != null and entity.work_no != ''">
+            AND a.work_no = #{entity.work_no}
+        </if>
+        <if test="entity.post != null and entity.post != ''">
+            AND a.post = #{entity.post}
+        </if>
+        <if test="entity.telephone != null and entity.telephone != ''">
+            AND a.telephone = #{entity.telephone}
+        </if>
+        <if test="entity.user_identity != null">
+            AND a.user_identity = #{entity.user_identity}
+        </if>
+        <if test="entity.depart_ids != null and entity.depart_ids != ''">
+            AND a.depart_ids = #{entity.depart_ids}
+        </if>
+        <if test="entity.rel_tenant_ids != null and entity.rel_tenant_ids != ''">
+            AND a.rel_tenant_ids = #{entity.rel_tenant_ids}
+        </if>
+        <if test="entity.client_id != null and entity.client_id != ''">
+            AND a.client_id = #{entity.client_id}
+        </if>
+
+    </select>
+
+</mapper>

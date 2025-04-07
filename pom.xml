@@ -118,6 +118,8 @@
         <module>x-config</module>
         <module>x-productB</module>
         <module>x-gateway</module>
+        <module>x-common</module>
+        <module>x-user</module>
     </modules>
 
     <build>

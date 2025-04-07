@@ -15,6 +15,7 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
         )
 )
 @SpringBootApplication
+//启用nacos
 @EnableDiscoveryClient
 @MapperScan("xcloud.xproduct.mapper")
 public class XProductApplication {

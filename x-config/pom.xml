@@ -18,12 +18,15 @@
     </properties>
     <dependencies>
 
-<!--        指定使用bootstrap.yml配置文件-->
+        <!--3-指定使用bootstrap.yml配置文件,Spring Boot 2.4 开始默认禁用 bootstrap.yml，需手动启用。
+            配置中心优先级
+            如果同时使用 Spring Cloud Config 或 Nacos，远程配置中心的 Profile 会覆盖本地配置。
+        -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-bootstrap</artifactId>
         </dependency>
-        <!--使用swagger-->
+        <!--2-使用swagger-->
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
@@ -36,7 +39,7 @@
             <artifactId>knife4j-openapi3-jakarta-spring-boot-starter</artifactId>
             <version>4.5.0</version>
         </dependency>
-        <!-- 依赖的JSON库 -->
+        <!-- 1-依赖的JSON库 -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>

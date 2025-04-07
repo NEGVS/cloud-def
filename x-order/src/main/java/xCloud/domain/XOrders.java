@@ -7,6 +7,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
@@ -17,7 +18,7 @@ import lombok.Data;
 @TableName(value ="x_orders")
 @Data
 @Schema(description = "XOrders entity")
-public class XOrders implements Serializable {
+public class XOrders  implements Serializable {
     /**
      * 订单id
      */

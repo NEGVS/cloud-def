@@ -1,4 +1,5 @@
 spring:
+#  1-kafka配置
   kafka:
     #Kafka Broker 的地址列表，多个地址用逗号分隔
     bootstrap-servers: localhost:9092
@@ -21,6 +22,7 @@ spring:
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
+#      3-elasticsearch配置
   elasticsearch:
     uris: https://localhost:9200  # ES地址
     username: elastic
@@ -43,6 +45,7 @@ spring:
         group: ANDY_GROUP
       discovery:
         server-addr: 127.0.0.1:8848
+# 1-swagger配置
 springdoc:
   swagger-ui:
     css: /customSwaggerUI.css
@@ -70,7 +73,7 @@ springdoc:
   #  启用缓存以减少重复生成文档的开销。
   cache:
     disabled: false
-#日志
+#2-日志
 logging:
   level:
     org.elasticsearch.client: debug

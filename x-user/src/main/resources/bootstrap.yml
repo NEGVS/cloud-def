@@ -1,26 +1,14 @@
-server:
-  port: 8074
 spring:
-  application:
-    name: x-user
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://1.92.111.247:3306/andy_ruoYi?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
-    username: root
-    password: hy123456
-  # 配置elasticsearch
-  #  elasticsearch:
-  #    uris: http://127.0.0.1:9200
-  # 配置redis
-  data:
-    redis:
-      host: 127.0.0.1
-      port: 6379
-
-mybatis-plus:
-  configuration:
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
-    map-underscore-to-camel-case: true
-  #    下面这些内容是为了让MyBatis映射,指定Mybatis的Mapper文件
-  mapper-locations: classpath:mapper/*Mapper.xml
-#mybatis
+# 0-配置nacos
+  config:
+    import:
+      #      - optional:nacos:${spring.application.name}
+      - optional:nacos:x-user.yml
+  cloud:
+    nacos:
+      config:
+        namespace:
+        server-addr: 127.0.0.1:8848
+        group: ANDY_GROUP
+      discovery:
+        server-addr: 127.0.0.1:8848

@@ -3,6 +3,7 @@ package xCloud.controller;
 import cn.hutool.json.JSONUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -46,6 +47,15 @@ public class UserController {
      * @return 查询结果
      */
     @Operation(summary = "新增")
+    @Parameters(
+            value = {
+                    @Parameter(name = "userId", description = "Id", required = true),
+                    @Parameter(name = "userName", description = "姓名", required = true),
+                    @Parameter(name = "userAge", description = "年龄", required = true),
+                    @Parameter(name = "userAddress", description = "地址", required = true),
+                    @Parameter(name = "userPhone", description = "手机号", required = true),
+            }
+    )
     @ApiResponse(responseCode = "200", description = "新增成功", content = @Content(schema = @Schema(implementation = User.class)))
     @PostMapping("/add")
     public Map<String, Object> add(@RequestBody UserDTO dto) {

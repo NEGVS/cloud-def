@@ -16,6 +16,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,13 +26,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
 import xCloud.domain.XOrders;
 import xCloud.entity.ResultEntity;
 import xCloud.entity.XProducts;
 import xCloud.service.ProductService;
 import xCloud.service.XOrdersService;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Description
@@ -159,9 +165,30 @@ public class XOrderController {
     }
 
 
-    @GetMapping("/message2")
-    public String message2() {
-        return "Hello World22222,模拟一个高并发的场景问题测试";
+    @Operation(summary = "flask", description = "flask java Python")
+    @PostMapping("/flask")
+    public String message2(@RequestBody XOrders order) {
+        RestTemplate restTemplate = new RestTemplate();
+        String url = "http://localhost:8088/add";
+        if (order == null) {
+            return "参数为空";
+        }
+        // 构造请求体
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        Map<String, Integer> map = new HashMap<>();
+        map.put("a", order.getA() != null ? order.getA() : 0);
+        map.put("b", order.getB() != null ? order.getB() : 0);
+
+//        String json = "{\"a\": 99, \"b\": 222}";
+        String json = JSON.toJSONString(map);
+        HttpEntity<String> entity = new HttpEntity<>(json, headers);
+
+        // 发送请求
+        String response = restTemplate.postForObject(url, entity, String.class);
+        System.out.println("响应: " + response);
+        return response;
     }
 
 }

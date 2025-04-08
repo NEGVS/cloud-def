@@ -3,6 +3,7 @@ package xCloud.domain;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -13,12 +14,13 @@ import lombok.Data;
 
 /**
  * 订单表
+ *
  * @TableName x_orders
  */
-@TableName(value ="x_orders")
+@TableName(value = "x_orders")
 @Data
 @Schema(description = "XOrders entity")
-public class XOrders  implements Serializable {
+public class XOrders implements Serializable {
     /**
      * 订单id
      */
@@ -78,6 +80,10 @@ public class XOrders  implements Serializable {
      * 收货地址
      */
     private String shipping_address;
+
+    private Integer a;
+
+    private Integer b;
 
     /**
      * 创建时间

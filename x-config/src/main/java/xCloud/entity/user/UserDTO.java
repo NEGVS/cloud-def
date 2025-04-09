@@ -1,13 +1,14 @@
-package xCloud.entity;
+package xCloud.entity.user;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
+import xCloud.entity.PagerModel;
 
 import java.util.Date;
 
 @Data
-@Schema(name = "UserVO", description = "商保方案明细-参数集合对象")
-public class UserVO extends PagerModel {
+@Schema(name = "UserDTO", description = "商保方案明细-参数集合对象")
+public class UserDTO extends PagerModel {
     @Schema(name = "user_id", description = "用户ID")
     private Integer user_id;
 

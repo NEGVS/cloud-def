@@ -120,6 +120,7 @@
         <module>x-gateway</module>
         <module>x-common</module>
         <module>x-user</module>
+        <module>x-merchant</module>
     </modules>
 
     <build>

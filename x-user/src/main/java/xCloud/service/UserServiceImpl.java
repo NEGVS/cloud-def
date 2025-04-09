@@ -6,9 +6,9 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import jakarta.annotation.Resource;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
-import xCloud.entity.User;
-import xCloud.entity.UserDTO;
-import xCloud.entity.UserVO;
+import xCloud.entity.user.User;
+import xCloud.entity.user.UserDTO;
+import xCloud.entity.user.UserVO;
 import xCloud.mapper.UserMapper;
 
 import java.util.List;

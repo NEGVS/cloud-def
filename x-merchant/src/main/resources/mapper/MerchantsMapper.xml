@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="xCloud.mapper.MerchantsMapper">
+<resultMap id="result" type="xCloud.entity.merchants.Merchants" >
+ 		    <result property="merchant_id" column="merchant_id"/>
+ 		    <result property="user_id" column="user_id"/>
+ 		    <result property="name" column="name"/>
+ 		    <result property="logo" column="logo"/>
+ 		    <result property="description" column="description"/>
+ 		    <result property="image" column="image"/>
+ 		    <result property="address" column="address"/>
+ 		    <result property="status" column="status"/>
+ 		    <result property="sort" column="sort"/>
+ 		    <result property="packaging_rating" column="packaging_rating"/>
+ 		    <result property="quantity_rating" column="quantity_rating"/>
+ 		    <result property="taste_rating" column="taste_rating"/>
+ 		    <result property="phone" column="phone"/>
+ 		    <result property="email" column="email"/>
+ 		    <result property="created_time" column="created_time"/>
+ 		    <result property="updated_time" column="updated_time"/>
+ 		    <result property="password" column="password"/>
+ 		    <result property="open_id" column="open_id"/>
+	</resultMap>
+
+	 <sql id="Base_Column_List">
+		user_id, name, logo, description, image, address, status, sort, packaging_rating, quantity_rating, taste_rating, phone, email, created_time, updated_time, password, open_id
+	 </sql>
+
+	<sql id="Base_Column_List_For_Join">
+		a.user_id, a.name, a.logo, a.description, a.image, a.address, a.status, a.sort, a.packaging_rating, a.quantity_rating, a.taste_rating, a.phone, a.email, a.created_time, a.updated_time, a.password, a.open_id
+	</sql>
+
+	<!--1.新增-->
+	<insert id="insertMerchants" parameterType="xCloud.entity.merchants.Merchants" useGeneratedKeys="true" keyProperty="merchant_id">
+		INSERT INTO
+			x_merchants (<include refid="Base_Column_List"/>)
+		VALUES
+			(#{user_id}, #{name}, #{logo}, #{description}, #{image}, #{address}, #{status}, #{sort}, #{packaging_rating}, #{quantity_rating}, #{taste_rating}, #{phone}, #{email}, #{created_time}, #{updated_time}, #{password}, #{open_id})
+	</insert>
+
+	<!--2.删除-->
+	<delete id="deleteMerchants" parameterType="xCloud.entity.merchants.Merchants">
+		UPDATE 
+			x_merchants 
+		SET 
+			 deleted = 2, modifyBy = #{modifyBy}, modifyDate = #{modifyDate}
+		WHERE
+			merchant_id = #{merchant_id}
+	</delete>
+
+	<!--3.修改-->
+	<update id="updateMerchants" parameterType="xCloud.entity.merchants.Merchants">
+		UPDATE
+			x_merchants
+ 		<set>
+			<if test="user_id != null">
+                user_id = #{user_id},
+            </if>
+			<if test="name != null">
+                name = #{name},
+            </if>
+			<if test="logo != null">
+                logo = #{logo},
+            </if>
+			<if test="description != null">
+                description = #{description},
+            </if>
+			<if test="image != null">
+                image = #{image},
+            </if>
+			<if test="address != null">
+                address = #{address},
+            </if>
+			<if test="status != null">
+                status = #{status},
+            </if>
+			<if test="sort != null">
+                sort = #{sort},
+            </if>
+			<if test="packaging_rating != null">
+                packaging_rating = #{packaging_rating},
+            </if>
+			<if test="quantity_rating != null">
+                quantity_rating = #{quantity_rating},
+            </if>
+			<if test="taste_rating != null">
+                taste_rating = #{taste_rating},
+            </if>
+			<if test="phone != null">
+                phone = #{phone},
+            </if>
+			<if test="email != null">
+                email = #{email},
+            </if>
+			<if test="created_time != null">
+                created_time = #{created_time},
+            </if>
+			<if test="updated_time != null">
+                updated_time = #{updated_time},
+            </if>
+			<if test="password != null">
+                password = #{password},
+            </if>
+			<if test="open_id != null">
+                open_id = #{open_id},
+            </if>
+
+		</set>		WHERE 
+			merchant_id = #{merchant_id}  		
+  	</update>  	
+
+	<!--4.查询-->
+	<select id="selectMerchants" parameterType="xCloud.entity.merchants.Merchants" resultMap="result">
+		SELECT 
+			a.merchant_id, <include refid="Base_Column_List_For_Join"/> 
+		FROM 
+			x_merchants a
+		WHERE 
+			a.deleted = 1
+		<if test="entity.merchant_id != null">
+			AND a.merchant_id = #{entity.merchant_id}
+		</if>
+		<if test="entity.user_id != null and entity.user_id != ''">
+			AND a.user_id = #{entity.user_id}
+		</if>
+		<if test="entity.name != null and entity.name != ''">
+			AND a.name = #{entity.name}
+		</if>
+		<if test="entity.logo != null and entity.logo != ''">
+			AND a.logo = #{entity.logo}
+		</if>
+		<if test="entity.description != null and entity.description != ''">
+			AND a.description = #{entity.description}
+		</if>
+		<if test="entity.image != null and entity.image != ''">
+			AND a.image = #{entity.image}
+		</if>
+		<if test="entity.address != null and entity.address != ''">
+			AND a.address = #{entity.address}
+		</if>
+		<if test="entity.status != null">
+			AND a.status = #{entity.status}
+		</if>
+		<if test="entity.sort != null">
+			AND a.sort = #{entity.sort}
+		</if>
+		<if test="entity.packaging_rating != null">
+			AND a.packaging_rating = #{entity.packaging_rating}
+		</if>
+		<if test="entity.quantity_rating != null">
+			AND a.quantity_rating = #{entity.quantity_rating}
+		</if>
+		<if test="entity.taste_rating != null">
+			AND a.taste_rating = #{entity.taste_rating}
+		</if>
+		<if test="entity.phone != null and entity.phone != ''">
+			AND a.phone = #{entity.phone}
+		</if>
+		<if test="entity.email != null and entity.email != ''">
+			AND a.email = #{entity.email}
+		</if>
+		<if test="entity.created_time != null">
+			AND a.created_time = #{entity.created_time}
+		</if>
+		<if test="entity.updated_time != null">
+			AND a.updated_time = #{entity.updated_time}
+		</if>
+		<if test="entity.password != null and entity.password != ''">
+			AND a.password = #{entity.password}
+		</if>
+		<if test="entity.open_id != null and entity.open_id != ''">
+			AND a.open_id = #{entity.open_id}
+		</if>
+
+	</select>
+
+</mapper>

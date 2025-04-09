@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="xCloud.mapper.UserMapper">
-    <resultMap id="result" type="xCloud.entity.User">
+    <resultMap id="result" type="xCloud.entity.user.User">
         <result property="user_id" column="user_id"/>
         <result property="dept_id" column="dept_id"/>
         <result property="user_name" column="user_name"/>
@@ -48,7 +48,7 @@
     </sql>
 
     <!--1.新增-->
-    <insert id="insertUser" parameterType="xCloud.entity.User" useGeneratedKeys="true" keyProperty="user_id">
+    <insert id="insertUser" parameterType="xCloud.entity.user.User" useGeneratedKeys="true" keyProperty="user_id">
         INSERT INTO
         sys_user (<include refid="Base_Column_List"/>)
         VALUES
@@ -60,7 +60,7 @@
     </insert>
 
     <!--2.删除-->
-    <delete id="deleteUser" parameterType="xCloud.entity.User">
+    <delete id="deleteUser" parameterType="xCloud.entity.user.User">
         UPDATE
             sys_user
         SET deleted    = 2,
@@ -70,7 +70,7 @@
     </delete>
 
     <!--3.修改-->
-    <update id="updateUser" parameterType="xCloud.entity.User">
+    <update id="updateUser" parameterType="xCloud.entity.user.User">
         UPDATE
         sys_user
         <set>
@@ -180,7 +180,7 @@
     </update>
 
     <!--4.查询-->
-    <select id="selectUser" parameterType="xCloud.entity.User" resultMap="result">
+    <select id="selectUser" parameterType="xCloud.entity.user.User" resultMap="result">
         SELECT
         a.user_id,
         <include refid="Base_Column_List_For_Join"/>

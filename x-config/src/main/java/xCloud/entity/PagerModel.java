@@ -1,34 +1,31 @@
 package xCloud.entity;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import io.swagger.v3.oas.annotations.Hidden;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.io.Serializable;
 
-/**
- * 分页
- **/
+
+@Schema(name = "PagerModel", description = "PagerModel分页")
 @Data
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class PagerModel implements Serializable {
-    /**
-     * 获取当前页
-     */
+
+    @Schema(name = "current", description = "当前页")
     private long current;
-    /**
-     * 当前页显示几条数据
-     */
 
+    @Schema(name = "size", description = "当前页显示几条数据")
     private long size;
-    /**
-     * 当前页是否有下一页
-     */
 
+    //不在swagger文档中显示
+    @Hidden
+    @Schema(name = "hasNext", description = "当前页是否有下一页")
     private boolean hasNext;
-    /**
-     * 当前页是否有上一页
-     */
 
+    @Hidden
+    @Schema(name = "hasPrevious", description = "当前页是否有上一页")
     private boolean hasPrevious;
 
     public PagerModel() {

@@ -1,11 +1,9 @@
 package xCloud.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import org.springframework.web.multipart.MultipartFile;
-import xCloud.entity.User;
-import xCloud.entity.UserDTO;
+import xCloud.entity.user.User;
+import xCloud.entity.user.UserDTO;
 
-import java.io.IOException;
 import java.util.Map;
 
 /**

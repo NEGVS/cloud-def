@@ -4,25 +4,24 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
-import xCloud.entity.user.User;
+import xCloud.entity.merchants.Merchants;
 
 import java.util.List;
 
-
 /**
  * @author AndyFan
- * @description 针对表【sys_user】的数据库操作Mapper
- * @createDate 2025-04-07 10:51:53
+ * @description 针对表【x_merchants】的数据库操作Mapper
+ * @createDate 2025-04-09 09:38:50
  */
 @Repository
-public interface UserMapper extends BaseMapper<User> {
+public interface MerchantsMapper extends BaseMapper<Merchants> {
     /**
      * 1-新增
      *
      * @param entity entity
      * @return int
      */
-    int insertUser(User entity);
+    int insertMerchants(Merchants entity);
 
     /**
      * 2-删除
@@ -30,7 +29,7 @@ public interface UserMapper extends BaseMapper<User> {
      * @param entity
      * @return
      */
-    int deleteUser(User entity);
+    int deleteMerchants(Merchants entity);
 
     /**
      * 3-修改
@@ -38,7 +37,7 @@ public interface UserMapper extends BaseMapper<User> {
      * @param entity entity
      * @return int
      */
-    int updateUser(User entity);
+    int updateMerchants(Merchants entity);
 
     /**
      * 4-查询
@@ -46,7 +45,7 @@ public interface UserMapper extends BaseMapper<User> {
      * @param entity entity
      * @return List
      */
-    List<User> selectUser(@Param("entity") User entity);
+    List<Merchants> selectMerchants(@Param("entity") Merchants entity);
 
     /**
      * 4-查询
@@ -55,5 +54,5 @@ public interface UserMapper extends BaseMapper<User> {
      * @param entity entity
      * @return Page
      */
-    Page<User> selectUser(@Param("page") Page<User> page, @Param("entity") User entity);
+    Page<Merchants> selectMerchants(@Param("page") Page<Merchants> page, @Param("entity") Merchants entity);
 }

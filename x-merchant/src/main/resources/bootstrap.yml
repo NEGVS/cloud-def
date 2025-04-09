@@ -1,0 +1,14 @@
+spring:
+# 0-配置nacos
+  config:
+    import:
+      #      - optional:nacos:${spring.application.name}
+      - optional:nacos:x-merchant.yml
+  cloud:
+    nacos:
+      config:
+        namespace:
+        server-addr: 127.0.0.1:8848
+        group: ANDY_GROUP
+      discovery:
+        server-addr: 127.0.0.1:8848

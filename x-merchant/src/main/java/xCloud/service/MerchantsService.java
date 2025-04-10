@@ -1,5 +1,6 @@
 package xCloud.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.web.multipart.MultipartFile;
@@ -45,7 +46,7 @@ public interface MerchantsService extends IService<Merchants>
      * @param dto 列表搜索
      * @return 列表
      */
-    Map<String, Object> list(MerchantsDTO dto);
+    ResultEntity<IPage> listPage(MerchantsDTO dto);
 
     /**
      * 4.1-查询-详情

@@ -2,6 +2,7 @@ package xCloud.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 import xCloud.entity.merchants.Merchants;
@@ -13,7 +14,7 @@ import java.util.List;
  * @description 针对表【x_merchants】的数据库操作Mapper
  * @createDate 2025-04-09 09:38:50
  */
-@Repository
+@Mapper
 public interface MerchantsMapper extends BaseMapper<Merchants> {
     /**
      * 1-新增

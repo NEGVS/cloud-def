@@ -108,16 +108,24 @@ public class MerchantsController {
     @Operation(summary = "获取列表")
     @ApiResponse(responseCode = "200", description = "获取成功", content = @Content(schema = @Schema(implementation = MerchantsVO.class)))
     @PostMapping(value = "/list")
-    public ResultEntity<List<Merchants>> list(@RequestBody MerchantsDTO dto) {
+    public ResultEntity<Page<Merchants>> list(@RequestBody MerchantsDTO dto) {
         log.info("列表查询参数：{}", JSONUtil.toJsonStr(dto));
-        IPage<Merchants> page = new Page<>(1,10);
+        if (ObjectUtil.isEmpty(dto.getCurrent())){
+            dto.setCurrent(1L);
+        }
+        if (ObjectUtil.isEmpty(dto.getSize())){
+            dto.setSize(10L);
+        }
+        IPage<Merchants> page = new Page<>(dto.getCurrent(),dto.getSize());
         QueryWrapper<Merchants> queryWrapper = new QueryWrapper<>();
         if (ObjectUtil.isNotEmpty(dto.getName())) {
             queryWrapper.like("name", dto.getName());
         }
         List<Merchants> list = merchantsService.list(page, queryWrapper);
+        IPage<Merchants> page1 = merchantsService.page(page, queryWrapper);
         System.out.println(JSONUtil.toJsonStr(page));
-        return ResultEntity.success(list);
+        merchantsService.listPage(dto);
+        return null;
     }
 
 

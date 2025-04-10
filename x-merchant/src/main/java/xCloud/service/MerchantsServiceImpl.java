@@ -1,6 +1,7 @@
 package xCloud.service;
 
 import cn.hutool.core.util.ObjectUtil;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import jakarta.annotation.Resource;
@@ -84,18 +85,18 @@ public class MerchantsServiceImpl extends ServiceImpl<MerchantsMapper, Merchants
      * @return Map
      */
     @Override
-    public Map<String, Object> list(MerchantsDTO dto) {
+    public ResultEntity<IPage> listPage(MerchantsDTO dto) {
         if (ObjectUtil.isEmpty(dto)) {
-            return null;
+            return ResultEntity.error("参数错误");
         }
         Page<Merchants> page = new Page<>(dto.getCurrent(), dto.getSize());
         //dto-->entity
         Merchants merchants = new Merchants();
         BeanUtils.copyProperties(dto, merchants);
         //分页查询
-//        Page<Merchants> merchantss = merchantsMapper.selectMerchants(page, merchants);
+        Page<Merchants> merchantss = merchantsMapper.selectMerchants(page, merchants);
 
-        return null;
+        return ResultEntity.success(merchantss);
     }
 
     /**

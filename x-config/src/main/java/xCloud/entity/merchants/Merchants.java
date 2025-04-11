@@ -90,12 +90,5 @@ public class Merchants implements Serializable {
 	@TableField("updated_time")
 	private Date updated_time;
 
-//	@Schema(name = "password",description = "密码")
-//	@TableField("password")
-//	private String password;
-//
-//	@Schema(name = "open_id",description = "openID")
-//	@TableField("open_id")
-//	private String open_id;
 
 }

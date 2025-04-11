@@ -37,13 +37,12 @@ public class MerchantsServiceImpl extends ServiceImpl<MerchantsMapper, Merchants
      * @return Map
      */
     @Override
-    public Map<String, Object> add(MerchantsDTO dto) {
+    public ResultEntity<Merchants> add(Merchants dto) {
 
-        //dto-->entity
-        Merchants merchants = new Merchants();
-        BeanUtils.copyProperties(dto, merchants);
-//        int count = merchantsMapper.insertMerchants(merchants);
-        return null;
+        if (merchantsMapper.insertMerchants(dto) > 0) {
+            return ResultEntity.success(dto);
+        }
+        return ResultEntity.error("新增失败");
     }
 
     /**
@@ -85,18 +84,28 @@ public class MerchantsServiceImpl extends ServiceImpl<MerchantsMapper, Merchants
      * @return Map
      */
     @Override
-    public ResultEntity<IPage> listPage(MerchantsDTO dto) {
-        if (ObjectUtil.isEmpty(dto)) {
+    public ResultEntity<Page<Merchants>> listPage(MerchantsDTO dto) {
+        if (ObjectUtil.isNull(dto)) {
             return ResultEntity.error("参数错误");
+        }
+        if (ObjectUtil.isEmpty(dto.getCurrent())) {
+            dto.setCurrent(1L);
+        }
+        if (ObjectUtil.isEmpty(dto.getSize())) {
+            dto.setSize(10L);
         }
         Page<Merchants> page = new Page<>(dto.getCurrent(), dto.getSize());
         //dto-->entity
         Merchants merchants = new Merchants();
         BeanUtils.copyProperties(dto, merchants);
         //分页查询
-        Page<Merchants> merchantss = merchantsMapper.selectMerchants(page, merchants);
+        Page<Merchants> merchantsPage = merchantsMapper.selectMerchants(page, merchants);
+        return ResultEntity.success(merchantsPage);
+    }
 
-        return ResultEntity.success(merchantss);
+    @Override
+    public List<MerchantsVO> listMerchantAndProduct(MerchantsDTO dto) {
+        return null;
     }
 
     /**
@@ -161,4 +170,6 @@ public class MerchantsServiceImpl extends ServiceImpl<MerchantsMapper, Merchants
     public void exportFile(MerchantsDTO dto, HttpServletResponse response) throws Exception {
 
     }
+
+
 }

@@ -18,16 +18,14 @@
  		    <result property="email" column="email"/>
  		    <result property="created_time" column="created_time"/>
  		    <result property="updated_time" column="updated_time"/>
- 		    <result property="password" column="password"/>
- 		    <result property="open_id" column="open_id"/>
 	</resultMap>
 
 	 <sql id="Base_Column_List">
-		user_id, name, logo, description, image, address, status, sort, packaging_rating, quantity_rating, taste_rating, phone, email, created_time, updated_time, password, open_id
+		user_id, name, logo, description, image, address, status, sort, packaging_rating, quantity_rating, taste_rating, phone, email, created_time, updated_time
 	 </sql>
 
 	<sql id="Base_Column_List_For_Join">
-		a.user_id, a.name, a.logo, a.description, a.image, a.address, a.status, a.sort, a.packaging_rating, a.quantity_rating, a.taste_rating, a.phone, a.email, a.created_time, a.updated_time, a.password, a.open_id
+		a.user_id, a.name, a.logo, a.description, a.image, a.address, a.status, a.sort, a.packaging_rating, a.quantity_rating, a.taste_rating, a.phone, a.email, a.created_time, a.updated_time
 	</sql>
 
 	<!--1.新增-->
@@ -35,7 +33,7 @@
 		INSERT INTO
 			x_merchants (<include refid="Base_Column_List"/>)
 		VALUES
-			(#{user_id}, #{name}, #{logo}, #{description}, #{image}, #{address}, #{status}, #{sort}, #{packaging_rating}, #{quantity_rating}, #{taste_rating}, #{phone}, #{email}, #{created_time}, #{updated_time}, #{password}, #{open_id})
+			(#{user_id}, #{name}, #{logo}, #{description}, #{image}, #{address}, #{status}, #{sort}, #{packaging_rating}, #{quantity_rating}, #{taste_rating}, #{phone}, #{email}, #{created_time}, #{updated_time})
 	</insert>
 
 	<!--2.删除-->
@@ -98,12 +96,7 @@
 			<if test="updated_time != null">
                 updated_time = #{updated_time},
             </if>
-			<if test="password != null">
-                password = #{password},
-            </if>
-			<if test="open_id != null">
-                open_id = #{open_id},
-            </if>
+
 
 		</set>		WHERE 
 			merchant_id = #{merchant_id}  		
@@ -165,12 +158,7 @@
 		<if test="entity.updated_time != null">
 			AND a.updated_time = #{entity.updated_time}
 		</if>
-		<if test="entity.password != null and entity.password != ''">
-			AND a.password = #{entity.password}
-		</if>
-		<if test="entity.open_id != null and entity.open_id != ''">
-			AND a.open_id = #{entity.open_id}
-		</if>
+
 
 	</select>
 

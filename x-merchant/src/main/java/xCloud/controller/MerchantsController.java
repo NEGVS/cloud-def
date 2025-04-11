@@ -55,7 +55,7 @@ public class MerchantsController {
      * @param dto 前端请求dto
      * @return 查询结果
      */
-    @Operation(summary = "新增")
+    @Operation(summary = "1.新增")
     @Parameters(
             value = {
                     @Parameter(name = "merchantsName", description = "商户名称", required = true),
@@ -65,7 +65,7 @@ public class MerchantsController {
     )
     @ApiResponse(responseCode = "200", description = "新增成功", content = @Content(schema = @Schema(implementation = Merchants.class)))
     @PostMapping("/add")
-    public Map<String, Object> add(@RequestBody MerchantsDTO dto) {
+    public ResultEntity<Merchants> add(@RequestBody Merchants dto) {
         log.info("新增数据参数：{}", JSONUtil.toJsonStr(dto));
         return merchantsService.add(dto);
     }
@@ -76,7 +76,7 @@ public class MerchantsController {
      * @param dto 前端请求dto
      * @return 查询结果
      */
-    @Operation(summary = "删除", description = "删除")
+    @Operation(summary = "2.删除", description = "删除")
     //@Parameter(name = "merchant_id", description = "merchant_id", required = true)
     @ApiResponse(responseCode = "200", description = "删除成功", content = @Content(schema = @Schema(implementation = Merchants.class)))
     @PostMapping("/delete")
@@ -91,7 +91,7 @@ public class MerchantsController {
      * @param dto 前端请求VO
      * @return 查询结果
      */
-    @Operation(summary = "更新接口", description = "更新数据")
+    @Operation(summary = "3.更新", description = "更新数据")
     @ApiResponse(responseCode = "200", description = "更新成功", content = @Content(schema = @Schema(implementation = Merchants.class)))
     @PostMapping("/update")
     public Map<String, Object> update(@RequestBody MerchantsDTO dto) {
@@ -105,29 +105,28 @@ public class MerchantsController {
      * @param dto 列表搜索
      * @return 列表
      */
-    @Operation(summary = "获取列表")
+    @Operation(summary = "4.获取分页列表-只有商家")
     @ApiResponse(responseCode = "200", description = "获取成功", content = @Content(schema = @Schema(implementation = MerchantsVO.class)))
     @PostMapping(value = "/list")
     public ResultEntity<Page<Merchants>> list(@RequestBody MerchantsDTO dto) {
         log.info("列表查询参数：{}", JSONUtil.toJsonStr(dto));
-        if (ObjectUtil.isEmpty(dto.getCurrent())){
-            dto.setCurrent(1L);
-        }
-        if (ObjectUtil.isEmpty(dto.getSize())){
-            dto.setSize(10L);
-        }
-        IPage<Merchants> page = new Page<>(dto.getCurrent(),dto.getSize());
-        QueryWrapper<Merchants> queryWrapper = new QueryWrapper<>();
-        if (ObjectUtil.isNotEmpty(dto.getName())) {
-            queryWrapper.like("name", dto.getName());
-        }
-        List<Merchants> list = merchantsService.list(page, queryWrapper);
-        IPage<Merchants> page1 = merchantsService.page(page, queryWrapper);
-        System.out.println(JSONUtil.toJsonStr(page));
-        merchantsService.listPage(dto);
-        return null;
+        return merchantsService.listPage(dto);
     }
 
+    /**
+     * 4-查询-列表
+     *
+     * @param dto 列表搜索
+     * @return 列表
+     */
+    @Operation(summary = "4.获取列表-包含商品")
+    @ApiResponse(responseCode = "200", description = "获取成功", content = @Content(schema = @Schema(implementation = MerchantsVO.class)))
+    @PostMapping(value = "/listMerchantAndProduct")
+    public ResultEntity<List<MerchantsVO>> listMerchantAndProduct(@RequestBody MerchantsDTO dto) {
+        log.info("列表查询参数：{}", JSONUtil.toJsonStr(dto));
+        List<MerchantsVO> merchantsWithProducts = merchantsService.listMerchantAndProduct(dto);
+        return ResultEntity.success(merchantsWithProducts);
+    }
 
     /**
      * 4.1-查询-详情

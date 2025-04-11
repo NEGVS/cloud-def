@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import xCloud.entity.ResultEntity;
 import xcloud.xproduct.config.kafka.KafkaProducer;
 import xcloud.xproduct.domain.XProducts;
 import xcloud.xproduct.service.XProductsService;
@@ -51,6 +52,11 @@ public class XProductController {
         return productById;
     }
 
+    /**
+     * 4-list Page
+     * @param xProducts
+     * @return
+     */
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "查询成功"),
             @ApiResponse(responseCode = "500", description = "查询失败")
@@ -61,7 +67,7 @@ public class XProductController {
             @Parameter(name = "name", description = "商品名称", required = false)
     })
     @PostMapping("/find/list")
-    public HttpRestResult<List<XProducts>> selectList(@RequestBody XProducts xProducts) {
+    public ResultEntity<List<XProducts>> selectList(@RequestBody XProducts xProducts) {
 
         QueryWrapper<XProducts> queryWrapper = new QueryWrapper<>();
         //sendMessage
@@ -80,12 +86,13 @@ public class XProductController {
         }
         queryWrapper.orderByDesc("created_time");
         List<XProducts> list = xProductsService.list(queryWrapper);
+        XProducts productById = xProductsService.getProductById(1L);
         log.info("------------");
         log.info(JSONUtil.toJsonStr(list));
         HttpRestResult<List<XProducts>> httpRestResult2 = new HttpRestResult<>();
         httpRestResult2.setData(list);
         httpRestResult2.setCode(200);
         httpRestResult2.setMessage("查询成功");
-        return httpRestResult2;
+        return ResultEntity.success(httpRestResult2.getData());
     }
 }

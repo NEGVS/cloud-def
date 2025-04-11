@@ -10,8 +10,11 @@ import lombok.Data;
  */
 @Data
 public class ResultEntity<T> {
+
     private int code; // 状态码
+
     private String message; // 消息
+
     private T data; // 数据
 
     // 成功返回
@@ -30,4 +33,14 @@ public class ResultEntity<T> {
         result.setMessage(message);
         return result;
     }
+
+    // 成功返回
+    public static <T> ResultEntity<T> success(T data,String message) {
+        ResultEntity<T> result = new ResultEntity<>();
+        result.setCode(200);
+        result.setMessage(message);
+        result.setData(data);
+        return result;
+    }
+
 }

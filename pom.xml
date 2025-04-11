@@ -148,6 +148,7 @@
         <module>x-common</module>
         <module>x-user</module>
         <module>x-merchant</module>
+        <module>x-payment</module>
     </modules>
 
     <build>

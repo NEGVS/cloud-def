@@ -4,7 +4,6 @@ import cn.hutool.core.util.ObjectUtil;
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
@@ -15,7 +14,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cloud.client.discovery.DiscoveryClient;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -25,11 +24,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 import xCloud.domain.XOrders;
 import xCloud.entity.ResultEntity;
 import xCloud.entity.XProducts;
+import xCloud.feign.PaymentFeignClient;
 import xCloud.service.ProductService;
 import xCloud.service.XOrdersService;
 
@@ -56,6 +57,37 @@ public class XOrderController {
     private ProductService productService;
 
     //   DiscoveryClient是专门负责服务注册和发现的，我们可以通过它获取到注册到注册中心的所有服务
+    @Autowired
+    private PaymentFeignClient paymentClient;
+
+    /**
+     * 创建订单并支付
+     *
+     * @param orderId
+     * @param amount
+     * @param subject
+     * @return
+     */
+    public String createOrderAndPay(String orderId, String amount, String subject) {
+        return paymentClient.pay(orderId, amount, subject);
+    }
+
+    /**
+     * 更新订单状态--订单服务端点（示例）
+     * @param orderId
+     * @param status
+     * @param transactionId
+     * @return
+     */
+    @PostMapping("/updateStatus")
+    public String updateOrderStatus(
+            @RequestParam("orderId") String orderId,
+            @RequestParam("status") String status,
+            @RequestParam("transactionId") String transactionId) {
+        // TODO: 更新数据库订单状态
+        System.out.println("更新订单: " + orderId + ", 状态: " + status + ", 交易号: " + transactionId);
+        return "success"; // 假设更新成功
+    }
 
     /**
      * 根据商品id查询商品信息

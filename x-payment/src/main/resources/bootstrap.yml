@@ -1,0 +1,19 @@
+server:
+  port: 8077
+
+spring:
+  application:
+    name: x-payment
+
+#eureka:
+#  client:
+#    service-url:
+#      defaultZone: http://localhost:8761/eureka/  # Eureka 注册中心地址
+
+alipay:
+  app-id: "你的APPID"
+  private-key: "你的私钥"
+  public-key: "你的支付宝公钥"
+  gateway-url: "https://openapi.alipaydev.com/gateway.do"  # 沙箱环境
+  notify-url: "http://你的域名:8083/alipay/notify"  # 需公网访问
+  return-url: "http://你的域名:8083/alipay/success"

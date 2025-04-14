@@ -56,13 +56,13 @@ public class MerchantsController {
      * @return 查询结果
      */
     @Operation(summary = "1.新增")
-    @Parameters(
-            value = {
-                    @Parameter(name = "merchantsName", description = "商户名称", required = true),
-                    @Parameter(name = "merchantsCode", description = "商户编码", required = true),
-                    @Parameter(name = "merchantsType", description = "商户类型", required = true),
-            }
-    )
+//    @Parameters(
+//            value = {
+//                    @Parameter(name = "name", description = "商户名称", required = true),
+//                    @Parameter(name = "logo", description = "logo", required = true),
+//                    @Parameter(name = "address", description = "address", required = true),
+//            }
+//    )
     @ApiResponse(responseCode = "200", description = "新增成功", content = @Content(schema = @Schema(implementation = Merchants.class)))
     @PostMapping("/add")
     public ResultEntity<Merchants> add(@RequestBody Merchants dto) {

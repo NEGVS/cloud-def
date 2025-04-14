@@ -4,7 +4,10 @@ import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Info;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.cloud.openfeign.EnableFeignClients;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
 
 @OpenAPIDefinition(
         info = @Info(
@@ -13,11 +16,16 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
                 description = "API documentation for my Spring Cloud XPaymentApplication"
         )
 )
-@SpringBootApplication
-//启用nacos
-//收拾收
+
+//@SpringBootApplication(exclude = {DataSourceAutoConfiguration.class}) // 排除数据库自动配置
+//@EnableDiscoveryClient // 启用服务注册与发现（如 Eureka）
+//@EnableFeignClients    // 启用 Feign 客户端
+
+
+@SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})
 //启用 Feign
 @EnableFeignClients
+
 public class XPaymentApplication {
     public static void main(String[] args) {
         System.out.println("Hello world! XPaymentApplication start...");

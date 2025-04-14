@@ -1,3 +1,19 @@
+#spring:
+#  # 0-配置nacos
+#  config:
+#    import:
+#      #      - optional:nacos:${spring.application.name}
+#      - optional:nacos:x-payment.yml
+#  cloud:
+#    nacos:
+#      config:
+#        namespace:
+#        server-addr: 127.0.0.1:8848
+#        group: ANDY_GROUP
+#      discovery:
+#        server-addr: 127.0.0.1:8848
+
+
 server:
   port: 8077
 
@@ -9,11 +25,14 @@ spring:
 #  client:
 #    service-url:
 #      defaultZone: http://localhost:8761/eureka/  # Eureka 注册中心地址
-
 alipay:
-  app-id: "你的APPID"
-  private-key: "你的私钥"
-  public-key: "你的支付宝公钥"
-  gateway-url: "https://openapi.alipaydev.com/gateway.do"  # 沙箱环境
-  notify-url: "http://你的域名:8083/alipay/notify"  # 需公网访问
-  return-url: "http://你的域名:8083/alipay/success"
+  app-id: "2021000147692713"
+  #  你的私钥
+  private-key: "MIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQCF1WYCLJb4Qpsx+NeefDsDhZcfOtNVWKyNItz7EuSuz3PG8SzZ6i6hUNio6THMsH93lnjIol6QYwktBKwAF9eUX6FZCDhyEDTOL8ouS3hZfLOWxq4CAYOgDA+BWN9xSJgQ3kRHC1ctjiS/TawxOxtxh5vRLVDY33WVSHPkiRaDaEJkoqjQCFB4TEwXcuGKRXfrqrtgsJfuLtOQTekPytHsMvS24ojp1HOLJLkDPcxdue9CS6lgJmHllWBCG1X3m8WdbEVJoj5D2G+6ceOFCsbvqMmytCBSLoNNa77hBtiXBnwGGrrLcK33pEZQavunrp8I0l9QDIIXEMnTRpAeoDVJAgMBAAECggEAYVZIn9IwZxWCbIDwyXrPLQuPUw5kwBEDRo8Rq6YdHqsRKKMmHMO+8GKtgYRBTP8dZivRYxL8tgThmpVoR5UPnQFEh018SDFTRpbpdGw9dtBEiaeszRau1cuPx2KM+IZ02ufdPtKXsDFOtrhWQWQc3KBlimhsAZ/clBui9pdiAWXUTrOtiifDJt7m8UNSc1bG796tgd+sKBV2qkiztrh93oD9XOw9jGarVnHIWvoFGM1tHtDOUqFHW/1KRRTW+8AuxyojjF2lo7v+qorC8mAbzhIIw4UqKOfkuOLioL5lRxch/zsPhvwCoH8eKNLQBry7hvUzHQFI9vp3EUCih3kM0QKBgQDc/7O/gc/UAI/aTY7OQldN9DdkB4F91QxWiLoW+7R2qcTNMK64MHFmCdkf9o9ANBoANsrZPpoDg0sAcSrK2cmAap+AEedY4cTu0B4CxFkHMkQA1/VOIaSbceDRhsnOYkuOgw3qxroxrTbeA7KmyRsWybdWZlUuSG4uJyDMJfsM9QKBgQCbB57pZzLd3pTjsSmJolYIt7/V8kG2L6l2uGH8HRO0m8IruYRvI2qbA8X2VihwFF0+p776vwMXNVwy2YWHkC5owbqAGnKDdHfDivYMEU9cKfXTC5lGf+iJPxfHid9BKbZiM6MHvuqKo4qVY1TSY0pdOPk9wrzrJmccJNeVbVxShQKBgFOde4jNuLBhtgvGpG1ttFKOQBbcsCXH4e8rtBzWByWOfiOUc8bErWMJ/tiVFQYZsGy8Tmt7wBHsLwhvyN0PIaowrUBrhbifUz94BqLNX1HVtt0K2IlDOWCG6aTc9qXbkvLMqwtVPUVmYAgIJiPsmw84KuHJvhjQ1r8nlsUm6aGxAoGAa9b9P7a9t4BhaZGPJ2J5Hk9Tbmu6MhUteJwB7PH9ByFiDDBcY0LroTEav6RnNK+1vSPKwXmlmLtRiz2smQQ+hDhel0XOaorV1HwRc4uG/MFjco8a6+OFyhLNY8wQNK/jYqQwv+6aEB57BDe4hTD0RaygE8omyBxKlVU7cYJFOlECgYAozOe3ImqSv67StZAXSBJl/usSUQiITJ3iFz09sZDBvnL7PwmLWF6IBExTVnnNKd4ijJjmteHnTnHH/+rJkaySZYWc51Rydk1Y1FY0FEqL7/idCDzmhh7Tf23AgRF6ehNfNSWIRSqHeUKcofwqQhejdrFyemxWWCjGf0axEZOGjw=="
+  #  你的支付宝公钥
+  public-key: "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAn3FCfgAErfVSn0AwWzX78lcWg4PzYAgsoFk6puGoCtjsxOiahsMPXffA9ZvLV08KSiO7nK031rPjOlaY9Whg1FDHp/60dsMfE0EB0kOJukw8jBaaEK9FPMqgnCbqzgBn7hYS1FDAq8mBxvhKB7YYQHVMyYGTr68OYVYvPOhF1wAqxV3Ahxr3Iu3Pt31DDHebipTDJhR7FtmVyfM7dYqk9CxNOu7YpxvJj+Zf08IWW0MY8VpoXbOgVb56lRVyXz5nVPsFruiO68FE8mgGLq0GY3k0H8SYilblrNZV6SYrhfgtlXMdRNV9mgiQeoZFsuKkv3h7jet8CTTYT2Dq3BebmwIDAQAB"
+  #  gateway-url: "https://openapi.alipaydev.com/gateway.do"  # 沙箱环境
+  gateway-url: "https://openapi-sandbox.dl.alipaydev.com/gateway.do"  # 沙箱环境
+  #  https://openapi-sandbox.dl.alipaydev.com/gateway.do
+  notify-url: "http://47.98.217.165:8083/alipay/notify"  # 需公网访问
+  return-url: "http://47.98.217.165:8083/alipay/success"

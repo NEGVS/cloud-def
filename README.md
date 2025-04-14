@@ -15,6 +15,12 @@ elasticsearch 8.12.0
 
 Spring Boot 3.4.3 匹配的swagger是什么版本？
 
+springCloud
+├── payment-service
+├── config-service
+├── order-service
+└── merchant-service
+
 技术栈
 1-nacos ✅
 2-负载均衡Ribbon✅

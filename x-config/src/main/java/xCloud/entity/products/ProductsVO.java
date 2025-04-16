@@ -2,12 +2,14 @@ package xCloud.entity.products;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import xCloud.entity.PagerModel;
 
 import java.math.BigDecimal;
 import java.util.Date;
 
 @Data
+@EqualsAndHashCode(callSuper=false)
 @Schema(name = "ProductsDTO", description = "商保方案明细-参数集合对象")
 public class ProductsVO extends PagerModel {
     @Schema(name = "product_id", description = "商品ID")

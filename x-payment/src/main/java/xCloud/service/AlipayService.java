@@ -39,7 +39,7 @@ public class AlipayService {
 
         AlipayTradePrecreateResponse response = alipayClient.execute(request);
         if (response.isSuccess()) {
-            log.info("\n-----------返回二维码链接");
+            log.info("\n-----------返回二维码链接:"+response.getQrCode());
             return response.getQrCode();
         } else {
             throw new RuntimeException("支付创建失败: " + response.getSubMsg());

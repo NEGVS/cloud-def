@@ -2106,27 +2106,27 @@ public class CodeX {
         return "Result of query: " + query;
     }
 
-    public static void main(String[] args) throws Exception {
-
-        String general_sssentity = "/Volumes/Elements";
-        CodeX codeX07 = new CodeX();
-        codeX07.deleteTeslaCamBackFiles(general_sssentity);
-        codeX07.deleteTeslaCamRightFiles(general_sssentity);
-        codeX07.deleteTeslaCamLeftFiles(general_sssentity);
-        if (true) {
-            return;
-        }
-
-        //      Thread threadA = new Thread( () -> printABC( "A", 0, conditionA, conditionB ) );
-        //      Thread threadB = new Thread( () -> printABC( "B", 1, conditionB, conditionC ) );
-        //      Thread threadC = new Thread( () -> printABC( "C", 2, conditionC, conditionA ) );
-        Thread threadA = new Thread(() -> printABC_synchronized("A", 0));
-        Thread threadB = new Thread(() -> printABC_synchronized("B", 1));
-        Thread threadC = new Thread(() -> printABC_synchronized("C", 2));
-        threadA.start();
-        threadB.start();
-        threadC.start();
-    }
+//    public static void main(String[] args) throws Exception {
+//
+//        String general_sssentity = "/Volumes/Elements";
+//        CodeX codeX07 = new CodeX();
+//        codeX07.deleteTeslaCamBackFiles(general_sssentity);
+//        codeX07.deleteTeslaCamRightFiles(general_sssentity);
+//        codeX07.deleteTeslaCamLeftFiles(general_sssentity);
+//        if (true) {
+//            return;
+//        }
+//
+//        //      Thread threadA = new Thread( () -> printABC( "A", 0, conditionA, conditionB ) );
+//        //      Thread threadB = new Thread( () -> printABC( "B", 1, conditionB, conditionC ) );
+//        //      Thread threadC = new Thread( () -> printABC( "C", 2, conditionC, conditionA ) );
+//        Thread threadA = new Thread(() -> printABC_synchronized("A", 0));
+//        Thread threadB = new Thread(() -> printABC_synchronized("B", 1));
+//        Thread threadC = new Thread(() -> printABC_synchronized("C", 2));
+//        threadA.start();
+//        threadB.start();
+//        threadC.start();
+//    }
 
     //   thread*---------------------------------------
     public static void threadTest() {

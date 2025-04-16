@@ -34,5 +34,5 @@ alipay:
   #  gateway-url: "https://openapi.alipaydev.com/gateway.do"  # 沙箱环境
   gateway-url: "https://openapi-sandbox.dl.alipaydev.com/gateway.do"  # 沙箱环境
   #  https://openapi-sandbox.dl.alipaydev.com/gateway.do
-  notify-url: "http://47.98.217.165:8083/alipay/notify"  # 需公网访问
-  return-url: "http://47.98.217.165:8083/alipay/success"
+  notify-url: "http://47.98.217.165:8077/alipay/notify"  # 需公网访问
+  return-url: "http://47.98.217.165:8077/alipay/success"

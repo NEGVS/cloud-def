@@ -36,3 +36,12 @@ alipay:
   #  https://openapi-sandbox.dl.alipaydev.com/gateway.do
   notify-url: "http://47.98.217.165:8077/alipay/notify"  # 需公网访问
   return-url: "http://47.98.217.165:8077/alipay/success"
+
+
+#日志管理
+logging:
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+  file:
+    path: ./logs
+    name: ./logs/app.log

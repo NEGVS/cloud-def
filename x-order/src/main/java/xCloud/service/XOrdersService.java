@@ -9,6 +9,16 @@ import xCloud.domain.XOrders;
  * @createDate 2025-02-21 17:26:18
  */
 public interface XOrdersService extends IService<XOrders> {
-
+    /**
+     * 根据商品ID，进行创建订单
+     *
+     * @param pid
+     * @return
+     */
     XOrders createOrder(String pid);
+
+    /**
+     *  测试sentinel
+     */
+    void message();
 }

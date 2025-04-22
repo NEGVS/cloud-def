@@ -86,5 +86,5 @@ public interface MerchantsService extends IService<Merchants> {
      * @param dto 列表搜索
      * @return 列表
      */
-    List<MerchantsVO> listMerchantAndProduct(MerchantsDTO dto);
+    List<Merchants> listMerchantAndProduct(MerchantsDTO dto);
 }

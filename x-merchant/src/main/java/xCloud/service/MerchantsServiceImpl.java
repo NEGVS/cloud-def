@@ -104,8 +104,9 @@ public class MerchantsServiceImpl extends ServiceImpl<MerchantsMapper, Merchants
     }
 
     @Override
-    public List<MerchantsVO> listMerchantAndProduct(MerchantsDTO dto) {
-        return null;
+    public List<Merchants> listMerchantAndProduct(MerchantsDTO dto) {
+        List<Merchants> merchants = merchantsMapper.selectList(null);
+        return merchants;
     }
 
     /**

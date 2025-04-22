@@ -78,3 +78,27 @@ logging:
   level:
     org.elasticsearch.client: debug
     co.elastic.clients: debug
+
+#    3-
+#  langchain4j.open-ai.chat-model.api-key=${OPENAI_API_KEY}
+#  langchain4j.open-ai.chat-model.model-name=gpt-4o
+#  langchain4j.open-ai.chat-model.log-requests=true
+#If you don't have your own OpenAI API key, don't worry.
+#  You can temporarily use demo key, which we provide for free for demonstration purposes.
+#  Be aware that when using the demo key, all requests to the OpenAI API need to go through our proxy, which injects the real key before forwarding your request to the OpenAI API.
+#  We do not collect or use your data in any way. The demo key has a quota, is restricted to the gpt-4o-mini model,
+#  and should only be used for demonstration purposes.
+langchain4j:
+  open-ai:
+    chat-model:
+#      api-key: ${OPENAI_API_KEY}
+      api-key: "demo"
+      model-name: "gpt-4o-mini"
+      log-requests: true
+    #If you need an instance of a StreamingChatLanguageModel, use the streaming-chat-model instead of the chat-model properties:
+#    streaming-chat-model:
+#      api-key: ${OPENAI_API_KEY}
+#      model-name: gpt-4
+#      log-requests: true
+#      log-responses: true
+#      temperature: 0.7

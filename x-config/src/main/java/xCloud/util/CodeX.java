@@ -1388,6 +1388,26 @@ public class CodeX {
     }
 
     /**
+     * 重新写入到原来的文件
+     *
+     * @param path
+     */
+    public static void overWrite(String path, StringBuilder stringBuilder) {
+        try {
+            Path path2 = Paths.get(path);
+            //1-原来的文件清空
+            Files.write(path2, new byte[0]);         // 写入空字节数组以清空文件
+            System.out.println("文件已清空!");
+            System.out.println("开始写入新文件...");
+            CodeX.writeFile(path, stringBuilder.toString(), true);
+            System.out.println("done。。。");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    /**
      * 全局替换该文件夹下的所有文件（并清除原文件）
      *
      * @param path，文件夹
@@ -2539,8 +2559,68 @@ public class CodeX {
             System.out.println("Matched: " + matched);
             return matchedString;
         }
-
         return permission;
+    }
+
+    /**
+     * 提取“”中的内容
+     * name = "HcOrderMerchant", description = "商家订单"
+     */
+    public static List<String> regexGetContentByDoubleQuotes(String str) {
+        List<String> list = new ArrayList<>();
+
+        // 正则表达式匹配双引号中的内容
+        Pattern pattern = Pattern.compile("\"([^\"]*)\"");
+        Matcher matcher = pattern.matcher(str);
+
+        // 提取所有匹配结果
+        while (matcher.find()) {
+            String group = matcher.group(1);
+            System.out.println("提取的内容: " + group);
+            list.add(group);
+        }
+        return list;
+    }
+
+    /**
+     * swagger ----
+     *
+     * @param root 把当前目录下所有的swaggerV3ToV2，注解替换，并写入原来的文件
+     */
+    public static void swaggerV3ToV2(String root) {
+//        String root = "/Users/andy_mac/Documents/CodeSpace/andyProject0/demi_vue_boot/";
+        Set<String> strings2 = CodeX.readFileNameList(root);
+        for (String path : strings2) {
+            System.out.println(path);
+            CodeX codeX = new CodeX();
+            List<String> strings = codeX.readFileLines(path);
+
+            StringBuilder stringBuilder = new StringBuilder();
+            for (String string : strings) {
+                if (string.contains("@Schema") && string.contains("description") && !string.contains("name")) {
+                    String replace = string.replace("Schema", "ApiModelProperty").replace("description", "value");
+                    stringBuilder.append(replace + "\n");
+                    System.out.println("****************swagger v3 to v2 ****\n" + path);
+                    continue;
+                }
+                if (string.contains("@Schema") && string.contains("name") && string.contains("description")) {
+                    List<String> strings1 = CodeX.regexGetContentByDoubleQuotes(string);
+                    string = "@ApiModel(description =\"" + strings1 + "\")";
+                    stringBuilder.append(string + "\n");
+                    continue;
+                }
+                if (string.contains("v3.oas")) {
+                    continue;
+                }
+                stringBuilder.append(string + "\n");
+            }
+
+            CodeX.overWrite(path, stringBuilder);
+
+        }
+        if (true) {
+            return;
+        }
     }
 
     public static void demiReplacePermission(String path) {

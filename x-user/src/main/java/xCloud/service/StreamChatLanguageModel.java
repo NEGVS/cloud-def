@@ -20,7 +20,7 @@ public class StreamChatLanguageModel {
 
     public StreamChatLanguageModel() {
         this.model = OpenAiStreamingChatModel.builder()
-                .apiKey("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")
+                .apiKey("xxxxxx")
                 .modelName("gpt-4o-mini")
                 .build();
     }

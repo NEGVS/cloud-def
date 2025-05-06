@@ -3,7 +3,11 @@ hello read me
 System.out.println("Hello world! OrderApplication start...");
 SpringApplication.run(OrderApplication.class, args);
 System.out.println("Hello world! OrderApplication done...");
+—— OpenAI API Key ————————————————————————————————————    
+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
 
+发现refs/heads/kafka违反了存储库规则。 Repository rule violations found for refs/heads/kafka.
+Push cannot contain secrets     ，推送不能包含秘密
 本项目版本:: Spring Boot (v3.4.3)
 
 server:

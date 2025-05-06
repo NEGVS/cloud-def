@@ -24,7 +24,7 @@ public class OpenAiChatModel {
     public static void chat() {
         // 构造 Chat 模型（这里以 gpt-4o-mini 为例）
         dev.langchain4j.model.openai.OpenAiChatModel model = dev.langchain4j.model.openai.OpenAiChatModel.builder()
-                .apiKey("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")
+                .apiKey("xxx")
                 .modelName("gpt-4o-mini")
                 .build();
 
@@ -38,7 +38,7 @@ public class OpenAiChatModel {
      */
     public static void stream() {
         OpenAiStreamingChatModel model = OpenAiStreamingChatModel.builder().modelName("gpt-4o-mini")
-                .apiKey("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")
+                .apiKey("sk-XXXX")
                 .build();
 
         // 最简单的 String 输入输出

@@ -1,0 +1,1170 @@
+2025-04-21 15:18:22.634 [main] INFO  c.a.nacos.client.utils.ParamUtil - [settings] [req-serv] nacos-server port:8848
+2025-04-21 15:18:22.638 [main] INFO  c.a.nacos.client.utils.ParamUtil - [settings] [http-client] connect timeout:1000
+2025-04-21 15:18:22.638 [main] INFO  c.a.nacos.client.utils.ParamUtil - PER_TASK_CONFIG_SIZE: 3000.0
+2025-04-21 15:18:22.648 [main] INFO  com.alibaba.nacos.common.labels - DefaultLabelsCollectorManager get labels.....
+2025-04-21 15:18:22.648 [main] INFO  com.alibaba.nacos.common.labels - Process LabelsCollector with [name:defaultNacosLabelsCollector]
+2025-04-21 15:18:22.648 [main] INFO  com.alibaba.nacos.common.labels - default nacos collect properties raw labels: null
+2025-04-21 15:18:22.648 [main] INFO  com.alibaba.nacos.common.labels - default nacos collect properties labels: {}
+2025-04-21 15:18:22.648 [main] INFO  com.alibaba.nacos.common.labels - default nacos collect jvm raw labels: null
+2025-04-21 15:18:22.648 [main] INFO  com.alibaba.nacos.common.labels - default nacos collect jvm labels: {}
+2025-04-21 15:18:22.648 [main] INFO  com.alibaba.nacos.common.labels - default nacos collect env raw labels: null
+2025-04-21 15:18:22.648 [main] INFO  com.alibaba.nacos.common.labels - default nacos collect env labels: {}
+2025-04-21 15:18:22.649 [main] INFO  com.alibaba.nacos.common.labels - DefaultLabelsCollectorManager get labels finished,labels :{}
+2025-04-21 15:18:22.649 [Thread-2] INFO  c.a.n.c.a.r.i.CredentialWatcher - null No credential found
+2025-04-21 15:18:22.651 [main] INFO  c.a.n.p.a.s.c.ClientAuthPluginManager - [ClientAuthPluginManager] Load ClientAuthService com.alibaba.nacos.client.auth.impl.NacosClientAuthServiceImpl success.
+2025-04-21 15:18:22.651 [main] INFO  c.a.n.p.a.s.c.ClientAuthPluginManager - [ClientAuthPluginManager] Load ClientAuthService com.alibaba.nacos.client.auth.ram.RamClientAuthServiceImpl success.
+2025-04-21 15:18:22.653 [main] INFO  c.a.n.c.c.i.LocalConfigInfoProcessor - LOCAL_SNAPSHOT_PATH:/Users/andy_mac/nacos/config
+2025-04-21 15:18:22.654 [main] INFO  c.alibaba.nacos.common.remote.client - [RpcClientFactory] create a new rpc client of ec3241c2-c605-44fd-bf71-8216b9b44131_config-0
+2025-04-21 15:18:22.661 [main] INFO  c.alibaba.nacos.common.remote.client - [ec3241c2-c605-44fd-bf71-8216b9b44131_config-0] Register server push request handler:com.alibaba.nacos.client.config.impl.ClientWorker$ConfigRpcTransportClient$$Lambda/0x0000007001387ba8
+2025-04-21 15:18:22.661 [main] INFO  c.alibaba.nacos.common.remote.client - [ec3241c2-c605-44fd-bf71-8216b9b44131_config-0] Register server push request handler:com.alibaba.nacos.client.config.impl.ClientWorker$ConfigRpcTransportClient$$Lambda/0x0000007001388000
+2025-04-21 15:18:22.661 [main] INFO  c.alibaba.nacos.common.remote.client - [ec3241c2-c605-44fd-bf71-8216b9b44131_config-0] Registry connection listener to current client:com.alibaba.nacos.client.config.impl.ClientWorker$ConfigRpcTransportClient$1
+2025-04-21 15:18:22.661 [main] INFO  c.alibaba.nacos.common.remote.client - [ec3241c2-c605-44fd-bf71-8216b9b44131_config-0] RpcClient init, ServerListFactory = com.alibaba.nacos.client.config.impl.ClientWorker$ConfigRpcTransportClient$2
+2025-04-21 15:18:22.663 [main] INFO  c.alibaba.nacos.common.remote.client - [ec3241c2-c605-44fd-bf71-8216b9b44131_config-0] Try to connect to server on start up, server: {serverIp = '127.0.0.1', server main port = 8848}
+2025-04-21 15:18:22.678 [main] INFO  c.a.n.c.r.client.grpc.GrpcClient - grpc client connection server:127.0.0.1 ip,serverPort:9848,grpcTslConfig:{"sslProvider":"","enableTls":false,"mutualAuthEnable":false,"trustAll":false}
+2025-04-21 15:18:22.924 [main] INFO  c.a.n.c.a.AbstractAbilityControlManager - Ready to get current node abilities...
+2025-04-21 15:18:22.924 [main] INFO  c.a.n.c.a.AbstractAbilityControlManager - Ready to initialize current node abilities, support modes: [SDK_CLIENT]
+2025-04-21 15:18:22.924 [main] INFO  c.a.n.c.a.AbstractAbilityControlManager - Initialize current abilities finish...
+2025-04-21 15:18:22.925 [main] INFO  c.a.n.c.a.d.NacosAbilityManagerHolder - [AbilityControlManager] Successfully initialize AbilityControlManager
+2025-04-21 15:18:22.939 [main] INFO  c.alibaba.nacos.common.remote.client - [ec3241c2-c605-44fd-bf71-8216b9b44131_config-0] Success to connect to server [127.0.0.1:8848] on start up, connectionId = 1745219902878_127.0.0.1_59101
+2025-04-21 15:18:22.940 [com.alibaba.nacos.client.remote.worker.0] INFO  c.alibaba.nacos.common.remote.client - [ec3241c2-c605-44fd-bf71-8216b9b44131_config-0] Notify connected event to listeners.
+2025-04-21 15:18:22.940 [com.alibaba.nacos.client.remote.worker.0] INFO  c.a.n.c.config.impl.ClientWorker - [ec3241c2-c605-44fd-bf71-8216b9b44131_config-0] Connected,notify listen context...
+2025-04-21 15:18:22.940 [main] INFO  c.alibaba.nacos.common.remote.client - [ec3241c2-c605-44fd-bf71-8216b9b44131_config-0] Register server push request handler:com.alibaba.nacos.common.remote.client.RpcClient$ConnectResetRequestHandler
+2025-04-21 15:18:22.940 [main] INFO  c.alibaba.nacos.common.remote.client - [ec3241c2-c605-44fd-bf71-8216b9b44131_config-0] Register server push request handler:com.alibaba.nacos.common.remote.client.RpcClient$$Lambda/0x000000700151edd0
+2025-04-21 15:18:22.960 [main] INFO  c.a.nacos.client.config.impl.Limiter - limitTime:5.0
+2025-04-21 15:18:22.971 [main] WARN  c.a.c.n.c.NacosPropertySourceBuilder - Ignore the empty nacos configuration and get it based on dataId[x-payment] & group[DEFAULT_GROUP]
+2025-04-21 15:18:22.974 [main] WARN  c.a.c.n.c.NacosPropertySourceBuilder - Ignore the empty nacos configuration and get it based on dataId[x-payment.properties] & group[DEFAULT_GROUP]
+2025-04-21 15:18:22.974 [main] INFO  o.s.c.b.c.PropertySourceBootstrapConfiguration - Located property source: [BootstrapPropertySource {name='bootstrapProperties-x-payment.properties,DEFAULT_GROUP'}, BootstrapPropertySource {name='bootstrapProperties-x-payment,DEFAULT_GROUP'}]
+2025-04-21 15:18:22.983 [main] INFO  xCloud.XPaymentApplication - No active profile set, falling back to 1 default profile: "default"
+2025-04-21 15:18:23.352 [main] INFO  o.s.cloud.context.scope.GenericScope - BeanFactory id=0f9a4990-cbf8-344e-a3ae-ac9fd1fa81b8
+2025-04-21 15:18:23.471 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8077 (http)
+2025-04-21 15:18:23.479 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-04-21 15:18:23.479 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.36]
+2025-04-21 15:18:23.506 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-04-21 15:18:23.506 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 514 ms
+2025-04-21 15:18:23.632 [main] INFO  o.s.c.o.FeignClientFactoryBean - For 'order-service' URL not provided. Will try picking an instance via load-balancing.
+2025-04-21 15:18:23.741 [main] WARN  o.s.b.w.s.c.AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'chatController' defined in file [/Users/andy_mac/Documents/CodeSpace/cloud-def/x-payment/target/classes/xCloud/controller/ChatController.class]: Unsatisfied dependency expressed through constructor parameter 0: Error creating bean with name 'openAiChatModel' defined in class path resource [dev/langchain4j/openai/spring/AutoConfig.class]: Failed to instantiate [dev.langchain4j.model.openai.OpenAiChatModel]: Factory method 'openAiChatModel' threw exception with message: If you wish to continue using the 'demo' key, please specify the base URL explicitly:
+OpenAiChatModel.builder().baseUrl("http://langchain4j.dev/demo/openai/v1").apiKey("demo").build();
+
+2025-04-21 15:18:23.741 [main] WARN  o.s.c.a.AnnotationConfigApplicationContext - Exception thrown from ApplicationListener handling ContextClosedEvent
+org.springframework.beans.factory.BeanCreationNotAllowedException: Error creating bean with name 'applicationTaskExecutor': Singleton bean creation not allowed while singletons of this factory are in destruction (Do not request a bean from a BeanFactory in a destroy method implementation!)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:275)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:334)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:204)
+	at org.springframework.context.event.AbstractApplicationEventMulticaster.retrieveApplicationListeners(AbstractApplicationEventMulticaster.java:267)
+	at org.springframework.context.event.AbstractApplicationEventMulticaster.getApplicationListeners(AbstractApplicationEventMulticaster.java:223)
+	at org.springframework.context.event.SimpleApplicationEventMulticaster.multicastEvent(SimpleApplicationEventMulticaster.java:145)
+	at org.springframework.context.support.AbstractApplicationContext.publishEvent(AbstractApplicationContext.java:454)
+	at org.springframework.context.support.AbstractApplicationContext.publishEvent(AbstractApplicationContext.java:460)
+	at org.springframework.context.support.AbstractApplicationContext.publishEvent(AbstractApplicationContext.java:387)
+	at org.springframework.context.support.AbstractApplicationContext.doClose(AbstractApplicationContext.java:1163)
+	at org.springframework.context.support.AbstractApplicationContext.close(AbstractApplicationContext.java:1126)
+	at org.springframework.cloud.context.named.NamedContextFactory.destroy(NamedContextFactory.java:114)
+	at org.springframework.beans.factory.support.DisposableBeanAdapter.destroy(DisposableBeanAdapter.java:211)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.destroyBean(DefaultSingletonBeanRegistry.java:686)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.destroySingleton(DefaultSingletonBeanRegistry.java:643)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.destroySingleton(DefaultListableBeanFactory.java:1368)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.destroySingletons(DefaultSingletonBeanRegistry.java:602)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.destroySingletons(DefaultListableBeanFactory.java:1361)
+	at org.springframework.context.support.AbstractApplicationContext.destroyBeans(AbstractApplicationContext.java:1219)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:640)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146)
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:752)
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:439)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:318)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1361)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1350)
+	at xCloud.XPaymentApplication.main(XPaymentApplication.java:24)
+2025-04-21 15:18:23.743 [main] INFO  o.a.catalina.core.StandardService - Stopping service [Tomcat]
+2025-04-21 15:18:23.752 [main] INFO  o.s.b.a.l.ConditionEvaluationReportLogger - 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2025-04-21 15:18:23.760 [main] ERROR o.s.boot.SpringApplication - Application run failed
+org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'chatController' defined in file [/Users/andy_mac/Documents/CodeSpace/cloud-def/x-payment/target/classes/xCloud/controller/ChatController.class]: Unsatisfied dependency expressed through constructor parameter 0: Error creating bean with name 'openAiChatModel' defined in class path resource [dev/langchain4j/openai/spring/AutoConfig.class]: Failed to instantiate [dev.langchain4j.model.openai.OpenAiChatModel]: Factory method 'openAiChatModel' threw exception with message: If you wish to continue using the 'demo' key, please specify the base URL explicitly:
+OpenAiChatModel.builder().baseUrl("http://langchain4j.dev/demo/openai/v1").apiKey("demo").build();
+
+	at org.springframework.beans.factory.support.ConstructorResolver.createArgumentArray(ConstructorResolver.java:804)
+	at org.springframework.beans.factory.support.ConstructorResolver.autowireConstructor(ConstructorResolver.java:240)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.autowireConstructor(AbstractAutowireCapableBeanFactory.java:1381)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1218)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:563)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:523)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:336)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:307)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:334)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:199)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.instantiateSingleton(DefaultListableBeanFactory.java:1122)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingleton(DefaultListableBeanFactory.java:1093)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:1030)
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:987)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:627)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146)
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:752)
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:439)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:318)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1361)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1350)
+	at xCloud.XPaymentApplication.main(XPaymentApplication.java:24)
+Caused by: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'openAiChatModel' defined in class path resource [dev/langchain4j/openai/spring/AutoConfig.class]: Failed to instantiate [dev.langchain4j.model.openai.OpenAiChatModel]: Factory method 'openAiChatModel' threw exception with message: If you wish to continue using the 'demo' key, please specify the base URL explicitly:
+OpenAiChatModel.builder().baseUrl("http://langchain4j.dev/demo/openai/v1").apiKey("demo").build();
+
+	at org.springframework.beans.factory.support.ConstructorResolver.instantiate(ConstructorResolver.java:657)
+	at org.springframework.beans.factory.support.ConstructorResolver.instantiateUsingFactoryMethod(ConstructorResolver.java:645)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.instantiateUsingFactoryMethod(AbstractAutowireCapableBeanFactory.java:1361)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1191)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:563)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:523)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:336)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:307)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:334)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:199)
+	at org.springframework.beans.factory.config.DependencyDescriptor.resolveCandidate(DependencyDescriptor.java:254)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.doResolveDependency(DefaultListableBeanFactory.java:1631)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.resolveDependency(DefaultListableBeanFactory.java:1519)
+	at org.springframework.beans.factory.support.ConstructorResolver.resolveAutowiredArgument(ConstructorResolver.java:913)
+	at org.springframework.beans.factory.support.ConstructorResolver.createArgumentArray(ConstructorResolver.java:791)
+	... 21 common frames omitted
+Caused by: org.springframework.beans.BeanInstantiationException: Failed to instantiate [dev.langchain4j.model.openai.OpenAiChatModel]: Factory method 'openAiChatModel' threw exception with message: If you wish to continue using the 'demo' key, please specify the base URL explicitly:
+OpenAiChatModel.builder().baseUrl("http://langchain4j.dev/demo/openai/v1").apiKey("demo").build();
+
+	at org.springframework.beans.factory.support.SimpleInstantiationStrategy.lambda$instantiate$0(SimpleInstantiationStrategy.java:199)
+	at org.springframework.beans.factory.support.SimpleInstantiationStrategy.instantiateWithFactoryMethod(SimpleInstantiationStrategy.java:88)
+	at org.springframework.beans.factory.support.SimpleInstantiationStrategy.instantiate(SimpleInstantiationStrategy.java:168)
+	at org.springframework.beans.factory.support.ConstructorResolver.instantiate(ConstructorResolver.java:653)
+	... 35 common frames omitted
+Caused by: java.lang.RuntimeException: If you wish to continue using the 'demo' key, please specify the base URL explicitly:
+OpenAiChatModel.builder().baseUrl("http://langchain4j.dev/demo/openai/v1").apiKey("demo").build();
+
+	at dev.langchain4j.model.openai.OpenAiChatModel.<init>(OpenAiChatModel.java:63)
+	at dev.langchain4j.model.openai.OpenAiChatModel$OpenAiChatModelBuilder.build(OpenAiChatModel.java:397)
+	at dev.langchain4j.openai.spring.AutoConfig.openAiChatModel(AutoConfig.java:88)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.springframework.beans.factory.support.SimpleInstantiationStrategy.lambda$instantiate$0(SimpleInstantiationStrategy.java:171)
+	... 38 common frames omitted
+2025-04-21 15:18:23.761 [Thread-3] WARN  c.a.n.c.http.HttpClientBeanHolder - [HttpClientBeanHolder] Start destroying common HttpClient
+2025-04-21 15:18:23.761 [Thread-5] WARN  c.a.nacos.common.notify.NotifyCenter - [NotifyCenter] Start destroying Publisher
+2025-04-21 15:18:23.761 [Thread-5] WARN  c.a.nacos.common.notify.NotifyCenter - [NotifyCenter] Destruction of the end
+2025-04-21 15:18:57.894 [main] INFO  c.a.nacos.client.utils.ParamUtil - [settings] [req-serv] nacos-server port:8848
+2025-04-21 15:18:57.895 [main] INFO  c.a.nacos.client.utils.ParamUtil - [settings] [http-client] connect timeout:1000
+2025-04-21 15:18:57.895 [main] INFO  c.a.nacos.client.utils.ParamUtil - PER_TASK_CONFIG_SIZE: 3000.0
+2025-04-21 15:18:57.906 [main] INFO  com.alibaba.nacos.common.labels - DefaultLabelsCollectorManager get labels.....
+2025-04-21 15:18:57.906 [main] INFO  com.alibaba.nacos.common.labels - Process LabelsCollector with [name:defaultNacosLabelsCollector]
+2025-04-21 15:18:57.906 [main] INFO  com.alibaba.nacos.common.labels - default nacos collect properties raw labels: null
+2025-04-21 15:18:57.906 [main] INFO  com.alibaba.nacos.common.labels - default nacos collect properties labels: {}
+2025-04-21 15:18:57.906 [main] INFO  com.alibaba.nacos.common.labels - default nacos collect jvm raw labels: null
+2025-04-21 15:18:57.906 [main] INFO  com.alibaba.nacos.common.labels - default nacos collect jvm labels: {}
+2025-04-21 15:18:57.906 [main] INFO  com.alibaba.nacos.common.labels - default nacos collect env raw labels: null
+2025-04-21 15:18:57.906 [main] INFO  com.alibaba.nacos.common.labels - default nacos collect env labels: {}
+2025-04-21 15:18:57.907 [main] INFO  com.alibaba.nacos.common.labels - DefaultLabelsCollectorManager get labels finished,labels :{}
+2025-04-21 15:18:57.909 [main] INFO  c.a.n.p.a.s.c.ClientAuthPluginManager - [ClientAuthPluginManager] Load ClientAuthService com.alibaba.nacos.client.auth.impl.NacosClientAuthServiceImpl success.
+2025-04-21 15:18:57.910 [main] INFO  c.a.n.p.a.s.c.ClientAuthPluginManager - [ClientAuthPluginManager] Load ClientAuthService com.alibaba.nacos.client.auth.ram.RamClientAuthServiceImpl success.
+2025-04-21 15:18:57.911 [Thread-2] INFO  c.a.n.c.a.r.i.CredentialWatcher - null No credential found
+2025-04-21 15:18:57.913 [main] INFO  c.a.n.c.c.i.LocalConfigInfoProcessor - LOCAL_SNAPSHOT_PATH:/Users/andy_mac/nacos/config
+2025-04-21 15:18:57.914 [main] INFO  c.alibaba.nacos.common.remote.client - [RpcClientFactory] create a new rpc client of 125a25ee-6186-4f7e-b262-cfbe46047634_config-0
+2025-04-21 15:18:57.921 [main] INFO  c.alibaba.nacos.common.remote.client - [125a25ee-6186-4f7e-b262-cfbe46047634_config-0] Register server push request handler:com.alibaba.nacos.client.config.impl.ClientWorker$ConfigRpcTransportClient$$Lambda/0x0000000301385b50
+2025-04-21 15:18:57.921 [main] INFO  c.alibaba.nacos.common.remote.client - [125a25ee-6186-4f7e-b262-cfbe46047634_config-0] Register server push request handler:com.alibaba.nacos.client.config.impl.ClientWorker$ConfigRpcTransportClient$$Lambda/0x0000000301385f70
+2025-04-21 15:18:57.921 [main] INFO  c.alibaba.nacos.common.remote.client - [125a25ee-6186-4f7e-b262-cfbe46047634_config-0] Registry connection listener to current client:com.alibaba.nacos.client.config.impl.ClientWorker$ConfigRpcTransportClient$1
+2025-04-21 15:18:57.921 [main] INFO  c.alibaba.nacos.common.remote.client - [125a25ee-6186-4f7e-b262-cfbe46047634_config-0] RpcClient init, ServerListFactory = com.alibaba.nacos.client.config.impl.ClientWorker$ConfigRpcTransportClient$2
+2025-04-21 15:18:57.923 [main] INFO  c.alibaba.nacos.common.remote.client - [125a25ee-6186-4f7e-b262-cfbe46047634_config-0] Try to connect to server on start up, server: {serverIp = '127.0.0.1', server main port = 8848}
+2025-04-21 15:18:57.939 [main] INFO  c.a.n.c.r.client.grpc.GrpcClient - grpc client connection server:127.0.0.1 ip,serverPort:9848,grpcTslConfig:{"sslProvider":"","enableTls":false,"mutualAuthEnable":false,"trustAll":false}
+2025-04-21 15:18:58.174 [main] INFO  c.a.n.c.a.AbstractAbilityControlManager - Ready to get current node abilities...
+2025-04-21 15:18:58.175 [main] INFO  c.a.n.c.a.AbstractAbilityControlManager - Ready to initialize current node abilities, support modes: [SDK_CLIENT]
+2025-04-21 15:18:58.175 [main] INFO  c.a.n.c.a.AbstractAbilityControlManager - Initialize current abilities finish...
+2025-04-21 15:18:58.175 [main] INFO  c.a.n.c.a.d.NacosAbilityManagerHolder - [AbilityControlManager] Successfully initialize AbilityControlManager
+2025-04-21 15:18:58.185 [main] INFO  c.alibaba.nacos.common.remote.client - [125a25ee-6186-4f7e-b262-cfbe46047634_config-0] Success to connect to server [127.0.0.1:8848] on start up, connectionId = 1745219938133_127.0.0.1_59202
+2025-04-21 15:18:58.185 [com.alibaba.nacos.client.remote.worker.0] INFO  c.alibaba.nacos.common.remote.client - [125a25ee-6186-4f7e-b262-cfbe46047634_config-0] Notify connected event to listeners.
+2025-04-21 15:18:58.185 [main] INFO  c.alibaba.nacos.common.remote.client - [125a25ee-6186-4f7e-b262-cfbe46047634_config-0] Register server push request handler:com.alibaba.nacos.common.remote.client.RpcClient$ConnectResetRequestHandler
+2025-04-21 15:18:58.185 [com.alibaba.nacos.client.remote.worker.0] INFO  c.a.n.c.config.impl.ClientWorker - [125a25ee-6186-4f7e-b262-cfbe46047634_config-0] Connected,notify listen context...
+2025-04-21 15:18:58.185 [main] INFO  c.alibaba.nacos.common.remote.client - [125a25ee-6186-4f7e-b262-cfbe46047634_config-0] Register server push request handler:com.alibaba.nacos.common.remote.client.RpcClient$$Lambda/0x0000000301520688
+2025-04-21 15:18:58.205 [main] INFO  c.a.nacos.client.config.impl.Limiter - limitTime:5.0
+2025-04-21 15:18:58.215 [main] WARN  c.a.c.n.c.NacosPropertySourceBuilder - Ignore the empty nacos configuration and get it based on dataId[x-payment] & group[DEFAULT_GROUP]
+2025-04-21 15:18:58.218 [main] WARN  c.a.c.n.c.NacosPropertySourceBuilder - Ignore the empty nacos configuration and get it based on dataId[x-payment.properties] & group[DEFAULT_GROUP]
+2025-04-21 15:18:58.218 [main] INFO  o.s.c.b.c.PropertySourceBootstrapConfiguration - Located property source: [BootstrapPropertySource {name='bootstrapProperties-x-payment.properties,DEFAULT_GROUP'}, BootstrapPropertySource {name='bootstrapProperties-x-payment,DEFAULT_GROUP'}]
+2025-04-21 15:18:58.227 [main] INFO  xCloud.XPaymentApplication - No active profile set, falling back to 1 default profile: "default"
+2025-04-21 15:18:58.587 [main] INFO  o.s.cloud.context.scope.GenericScope - BeanFactory id=0f9a4990-cbf8-344e-a3ae-ac9fd1fa81b8
+2025-04-21 15:18:58.704 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8077 (http)
+2025-04-21 15:18:58.711 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-04-21 15:18:58.711 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.36]
+2025-04-21 15:18:58.736 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-04-21 15:18:58.736 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 500 ms
+2025-04-21 15:18:58.839 [main] INFO  o.s.c.o.FeignClientFactoryBean - For 'order-service' URL not provided. Will try picking an instance via load-balancing.
+2025-04-21 15:18:58.931 [main] WARN  o.s.b.w.s.c.AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'chatController' defined in file [/Users/andy_mac/Documents/CodeSpace/cloud-def/x-payment/target/classes/xCloud/controller/ChatController.class]: Unsatisfied dependency expressed through constructor parameter 0: Error creating bean with name 'openAiChatModel' defined in class path resource [dev/langchain4j/openai/spring/AutoConfig.class]: Failed to instantiate [dev.langchain4j.model.openai.OpenAiChatModel]: Factory method 'openAiChatModel' threw exception with message: If you wish to continue using the 'demo' key, please specify the base URL explicitly:
+OpenAiChatModel.builder().baseUrl("http://langchain4j.dev/demo/openai/v1").apiKey("demo").build();
+
+2025-04-21 15:18:58.932 [main] WARN  o.s.c.a.AnnotationConfigApplicationContext - Exception thrown from ApplicationListener handling ContextClosedEvent
+org.springframework.beans.factory.BeanCreationNotAllowedException: Error creating bean with name 'applicationTaskExecutor': Singleton bean creation not allowed while singletons of this factory are in destruction (Do not request a bean from a BeanFactory in a destroy method implementation!)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:275)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:334)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:204)
+	at org.springframework.context.event.AbstractApplicationEventMulticaster.retrieveApplicationListeners(AbstractApplicationEventMulticaster.java:267)
+	at org.springframework.context.event.AbstractApplicationEventMulticaster.getApplicationListeners(AbstractApplicationEventMulticaster.java:223)
+	at org.springframework.context.event.SimpleApplicationEventMulticaster.multicastEvent(SimpleApplicationEventMulticaster.java:145)
+	at org.springframework.context.support.AbstractApplicationContext.publishEvent(AbstractApplicationContext.java:454)
+	at org.springframework.context.support.AbstractApplicationContext.publishEvent(AbstractApplicationContext.java:460)
+	at org.springframework.context.support.AbstractApplicationContext.publishEvent(AbstractApplicationContext.java:387)
+	at org.springframework.context.support.AbstractApplicationContext.doClose(AbstractApplicationContext.java:1163)
+	at org.springframework.context.support.AbstractApplicationContext.close(AbstractApplicationContext.java:1126)
+	at org.springframework.cloud.context.named.NamedContextFactory.destroy(NamedContextFactory.java:114)
+	at org.springframework.beans.factory.support.DisposableBeanAdapter.destroy(DisposableBeanAdapter.java:211)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.destroyBean(DefaultSingletonBeanRegistry.java:686)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.destroySingleton(DefaultSingletonBeanRegistry.java:643)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.destroySingleton(DefaultListableBeanFactory.java:1368)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.destroySingletons(DefaultSingletonBeanRegistry.java:602)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.destroySingletons(DefaultListableBeanFactory.java:1361)
+	at org.springframework.context.support.AbstractApplicationContext.destroyBeans(AbstractApplicationContext.java:1219)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:640)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146)
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:752)
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:439)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:318)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1361)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1350)
+	at xCloud.XPaymentApplication.main(XPaymentApplication.java:24)
+2025-04-21 15:18:58.933 [main] INFO  o.a.catalina.core.StandardService - Stopping service [Tomcat]
+2025-04-21 15:18:58.943 [main] INFO  o.s.b.a.l.ConditionEvaluationReportLogger - 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2025-04-21 15:18:58.951 [main] ERROR o.s.boot.SpringApplication - Application run failed
+org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'chatController' defined in file [/Users/andy_mac/Documents/CodeSpace/cloud-def/x-payment/target/classes/xCloud/controller/ChatController.class]: Unsatisfied dependency expressed through constructor parameter 0: Error creating bean with name 'openAiChatModel' defined in class path resource [dev/langchain4j/openai/spring/AutoConfig.class]: Failed to instantiate [dev.langchain4j.model.openai.OpenAiChatModel]: Factory method 'openAiChatModel' threw exception with message: If you wish to continue using the 'demo' key, please specify the base URL explicitly:
+OpenAiChatModel.builder().baseUrl("http://langchain4j.dev/demo/openai/v1").apiKey("demo").build();
+
+	at org.springframework.beans.factory.support.ConstructorResolver.createArgumentArray(ConstructorResolver.java:804)
+	at org.springframework.beans.factory.support.ConstructorResolver.autowireConstructor(ConstructorResolver.java:240)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.autowireConstructor(AbstractAutowireCapableBeanFactory.java:1381)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1218)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:563)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:523)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:336)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:307)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:334)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:199)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.instantiateSingleton(DefaultListableBeanFactory.java:1122)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingleton(DefaultListableBeanFactory.java:1093)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:1030)
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:987)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:627)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146)
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:752)
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:439)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:318)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1361)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1350)
+	at xCloud.XPaymentApplication.main(XPaymentApplication.java:24)
+Caused by: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'openAiChatModel' defined in class path resource [dev/langchain4j/openai/spring/AutoConfig.class]: Failed to instantiate [dev.langchain4j.model.openai.OpenAiChatModel]: Factory method 'openAiChatModel' threw exception with message: If you wish to continue using the 'demo' key, please specify the base URL explicitly:
+OpenAiChatModel.builder().baseUrl("http://langchain4j.dev/demo/openai/v1").apiKey("demo").build();
+
+	at org.springframework.beans.factory.support.ConstructorResolver.instantiate(ConstructorResolver.java:657)
+	at org.springframework.beans.factory.support.ConstructorResolver.instantiateUsingFactoryMethod(ConstructorResolver.java:645)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.instantiateUsingFactoryMethod(AbstractAutowireCapableBeanFactory.java:1361)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1191)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:563)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:523)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:336)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:307)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:334)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:199)
+	at org.springframework.beans.factory.config.DependencyDescriptor.resolveCandidate(DependencyDescriptor.java:254)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.doResolveDependency(DefaultListableBeanFactory.java:1631)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.resolveDependency(DefaultListableBeanFactory.java:1519)
+	at org.springframework.beans.factory.support.ConstructorResolver.resolveAutowiredArgument(ConstructorResolver.java:913)
+	at org.springframework.beans.factory.support.ConstructorResolver.createArgumentArray(ConstructorResolver.java:791)
+	... 21 common frames omitted
+Caused by: org.springframework.beans.BeanInstantiationException: Failed to instantiate [dev.langchain4j.model.openai.OpenAiChatModel]: Factory method 'openAiChatModel' threw exception with message: If you wish to continue using the 'demo' key, please specify the base URL explicitly:
+OpenAiChatModel.builder().baseUrl("http://langchain4j.dev/demo/openai/v1").apiKey("demo").build();
+
+	at org.springframework.beans.factory.support.SimpleInstantiationStrategy.lambda$instantiate$0(SimpleInstantiationStrategy.java:199)
+	at org.springframework.beans.factory.support.SimpleInstantiationStrategy.instantiateWithFactoryMethod(SimpleInstantiationStrategy.java:88)
+	at org.springframework.beans.factory.support.SimpleInstantiationStrategy.instantiate(SimpleInstantiationStrategy.java:168)
+	at org.springframework.beans.factory.support.ConstructorResolver.instantiate(ConstructorResolver.java:653)
+	... 35 common frames omitted
+Caused by: java.lang.RuntimeException: If you wish to continue using the 'demo' key, please specify the base URL explicitly:
+OpenAiChatModel.builder().baseUrl("http://langchain4j.dev/demo/openai/v1").apiKey("demo").build();
+
+	at dev.langchain4j.model.openai.OpenAiChatModel.<init>(OpenAiChatModel.java:63)
+	at dev.langchain4j.model.openai.OpenAiChatModel$OpenAiChatModelBuilder.build(OpenAiChatModel.java:397)
+	at dev.langchain4j.openai.spring.AutoConfig.openAiChatModel(AutoConfig.java:88)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.springframework.beans.factory.support.SimpleInstantiationStrategy.lambda$instantiate$0(SimpleInstantiationStrategy.java:171)
+	... 38 common frames omitted
+2025-04-21 15:18:58.951 [Thread-5] WARN  c.a.nacos.common.notify.NotifyCenter - [NotifyCenter] Start destroying Publisher
+2025-04-21 15:18:58.951 [Thread-5] WARN  c.a.nacos.common.notify.NotifyCenter - [NotifyCenter] Destruction of the end
+2025-04-21 15:18:58.951 [Thread-3] WARN  c.a.n.c.http.HttpClientBeanHolder - [HttpClientBeanHolder] Start destroying common HttpClient
+2025-04-21 15:20:54.085 [main] INFO  c.a.nacos.client.utils.ParamUtil - [settings] [req-serv] nacos-server port:8848
+2025-04-21 15:20:54.086 [main] INFO  c.a.nacos.client.utils.ParamUtil - [settings] [http-client] connect timeout:1000
+2025-04-21 15:20:54.086 [main] INFO  c.a.nacos.client.utils.ParamUtil - PER_TASK_CONFIG_SIZE: 3000.0
+2025-04-21 15:20:54.096 [main] INFO  com.alibaba.nacos.common.labels - DefaultLabelsCollectorManager get labels.....
+2025-04-21 15:20:54.096 [main] INFO  com.alibaba.nacos.common.labels - Process LabelsCollector with [name:defaultNacosLabelsCollector]
+2025-04-21 15:20:54.096 [main] INFO  com.alibaba.nacos.common.labels - default nacos collect properties raw labels: null
+2025-04-21 15:20:54.096 [main] INFO  com.alibaba.nacos.common.labels - default nacos collect properties labels: {}
+2025-04-21 15:20:54.096 [main] INFO  com.alibaba.nacos.common.labels - default nacos collect jvm raw labels: null
+2025-04-21 15:20:54.096 [main] INFO  com.alibaba.nacos.common.labels - default nacos collect jvm labels: {}
+2025-04-21 15:20:54.096 [main] INFO  com.alibaba.nacos.common.labels - default nacos collect env raw labels: null
+2025-04-21 15:20:54.097 [main] INFO  com.alibaba.nacos.common.labels - default nacos collect env labels: {}
+2025-04-21 15:20:54.097 [main] INFO  com.alibaba.nacos.common.labels - DefaultLabelsCollectorManager get labels finished,labels :{}
+2025-04-21 15:20:54.101 [main] INFO  c.a.n.p.a.s.c.ClientAuthPluginManager - [ClientAuthPluginManager] Load ClientAuthService com.alibaba.nacos.client.auth.impl.NacosClientAuthServiceImpl success.
+2025-04-21 15:20:54.101 [main] INFO  c.a.n.p.a.s.c.ClientAuthPluginManager - [ClientAuthPluginManager] Load ClientAuthService com.alibaba.nacos.client.auth.ram.RamClientAuthServiceImpl success.
+2025-04-21 15:20:54.103 [Thread-2] INFO  c.a.n.c.a.r.i.CredentialWatcher - null No credential found
+2025-04-21 15:20:54.105 [main] INFO  c.a.n.c.c.i.LocalConfigInfoProcessor - LOCAL_SNAPSHOT_PATH:/Users/andy_mac/nacos/config
+2025-04-21 15:20:54.107 [main] INFO  c.alibaba.nacos.common.remote.client - [RpcClientFactory] create a new rpc client of 865f35c1-005a-4658-8ddf-81b486cda0c5_config-0
+2025-04-21 15:20:54.115 [main] INFO  c.alibaba.nacos.common.remote.client - [865f35c1-005a-4658-8ddf-81b486cda0c5_config-0] Register server push request handler:com.alibaba.nacos.client.config.impl.ClientWorker$ConfigRpcTransportClient$$Lambda/0x0000007001385208
+2025-04-21 15:20:54.115 [main] INFO  c.alibaba.nacos.common.remote.client - [865f35c1-005a-4658-8ddf-81b486cda0c5_config-0] Register server push request handler:com.alibaba.nacos.client.config.impl.ClientWorker$ConfigRpcTransportClient$$Lambda/0x0000007001385628
+2025-04-21 15:20:54.116 [main] INFO  c.alibaba.nacos.common.remote.client - [865f35c1-005a-4658-8ddf-81b486cda0c5_config-0] Registry connection listener to current client:com.alibaba.nacos.client.config.impl.ClientWorker$ConfigRpcTransportClient$1
+2025-04-21 15:20:54.116 [main] INFO  c.alibaba.nacos.common.remote.client - [865f35c1-005a-4658-8ddf-81b486cda0c5_config-0] RpcClient init, ServerListFactory = com.alibaba.nacos.client.config.impl.ClientWorker$ConfigRpcTransportClient$2
+2025-04-21 15:20:54.118 [main] INFO  c.alibaba.nacos.common.remote.client - [865f35c1-005a-4658-8ddf-81b486cda0c5_config-0] Try to connect to server on start up, server: {serverIp = '127.0.0.1', server main port = 8848}
+2025-04-21 15:20:54.134 [main] INFO  c.a.n.c.r.client.grpc.GrpcClient - grpc client connection server:127.0.0.1 ip,serverPort:9848,grpcTslConfig:{"sslProvider":"","enableTls":false,"mutualAuthEnable":false,"trustAll":false}
+2025-04-21 15:20:54.380 [main] INFO  c.a.n.c.a.AbstractAbilityControlManager - Ready to get current node abilities...
+2025-04-21 15:20:54.381 [main] INFO  c.a.n.c.a.AbstractAbilityControlManager - Ready to initialize current node abilities, support modes: [SDK_CLIENT]
+2025-04-21 15:20:54.381 [main] INFO  c.a.n.c.a.AbstractAbilityControlManager - Initialize current abilities finish...
+2025-04-21 15:20:54.381 [main] INFO  c.a.n.c.a.d.NacosAbilityManagerHolder - [AbilityControlManager] Successfully initialize AbilityControlManager
+2025-04-21 15:20:54.393 [main] INFO  c.alibaba.nacos.common.remote.client - [865f35c1-005a-4658-8ddf-81b486cda0c5_config-0] Success to connect to server [127.0.0.1:8848] on start up, connectionId = 1745220054342_127.0.0.1_59603
+2025-04-21 15:20:54.393 [com.alibaba.nacos.client.remote.worker.0] INFO  c.alibaba.nacos.common.remote.client - [865f35c1-005a-4658-8ddf-81b486cda0c5_config-0] Notify connected event to listeners.
+2025-04-21 15:20:54.394 [com.alibaba.nacos.client.remote.worker.0] INFO  c.a.n.c.config.impl.ClientWorker - [865f35c1-005a-4658-8ddf-81b486cda0c5_config-0] Connected,notify listen context...
+2025-04-21 15:20:54.394 [main] INFO  c.alibaba.nacos.common.remote.client - [865f35c1-005a-4658-8ddf-81b486cda0c5_config-0] Register server push request handler:com.alibaba.nacos.common.remote.client.RpcClient$ConnectResetRequestHandler
+2025-04-21 15:20:54.394 [main] INFO  c.alibaba.nacos.common.remote.client - [865f35c1-005a-4658-8ddf-81b486cda0c5_config-0] Register server push request handler:com.alibaba.nacos.common.remote.client.RpcClient$$Lambda/0x0000007001520688
+2025-04-21 15:20:54.414 [main] INFO  c.a.nacos.client.config.impl.Limiter - limitTime:5.0
+2025-04-21 15:20:54.425 [main] WARN  c.a.c.n.c.NacosPropertySourceBuilder - Ignore the empty nacos configuration and get it based on dataId[x-payment] & group[DEFAULT_GROUP]
+2025-04-21 15:20:54.429 [main] WARN  c.a.c.n.c.NacosPropertySourceBuilder - Ignore the empty nacos configuration and get it based on dataId[x-payment.properties] & group[DEFAULT_GROUP]
+2025-04-21 15:20:54.429 [main] INFO  o.s.c.b.c.PropertySourceBootstrapConfiguration - Located property source: [BootstrapPropertySource {name='bootstrapProperties-x-payment.properties,DEFAULT_GROUP'}, BootstrapPropertySource {name='bootstrapProperties-x-payment,DEFAULT_GROUP'}]
+2025-04-21 15:20:54.438 [main] INFO  xCloud.XPaymentApplication - No active profile set, falling back to 1 default profile: "default"
+2025-04-21 15:20:54.793 [main] INFO  o.s.cloud.context.scope.GenericScope - BeanFactory id=0f9a4990-cbf8-344e-a3ae-ac9fd1fa81b8
+2025-04-21 15:20:54.905 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8077 (http)
+2025-04-21 15:20:54.912 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-04-21 15:20:54.912 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.36]
+2025-04-21 15:20:54.948 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-04-21 15:20:54.948 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 502 ms
+2025-04-21 15:20:55.046 [main] INFO  o.s.c.o.FeignClientFactoryBean - For 'order-service' URL not provided. Will try picking an instance via load-balancing.
+2025-04-21 15:20:55.140 [main] WARN  o.s.b.w.s.c.AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'chatController' defined in file [/Users/andy_mac/Documents/CodeSpace/cloud-def/x-payment/target/classes/xCloud/controller/ChatController.class]: Unsatisfied dependency expressed through constructor parameter 0: Error creating bean with name 'openAiChatModel' defined in class path resource [dev/langchain4j/openai/spring/AutoConfig.class]: Failed to instantiate [dev.langchain4j.model.openai.OpenAiChatModel]: Factory method 'openAiChatModel' threw exception with message: If you wish to continue using the 'demo' key, please specify the base URL explicitly:
+OpenAiChatModel.builder().baseUrl("http://langchain4j.dev/demo/openai/v1").apiKey("demo").build();
+
+2025-04-21 15:20:55.141 [main] WARN  o.s.c.a.AnnotationConfigApplicationContext - Exception thrown from ApplicationListener handling ContextClosedEvent
+org.springframework.beans.factory.BeanCreationNotAllowedException: Error creating bean with name 'applicationTaskExecutor': Singleton bean creation not allowed while singletons of this factory are in destruction (Do not request a bean from a BeanFactory in a destroy method implementation!)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:275)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:334)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:204)
+	at org.springframework.context.event.AbstractApplicationEventMulticaster.retrieveApplicationListeners(AbstractApplicationEventMulticaster.java:267)
+	at org.springframework.context.event.AbstractApplicationEventMulticaster.getApplicationListeners(AbstractApplicationEventMulticaster.java:223)
+	at org.springframework.context.event.SimpleApplicationEventMulticaster.multicastEvent(SimpleApplicationEventMulticaster.java:145)
+	at org.springframework.context.support.AbstractApplicationContext.publishEvent(AbstractApplicationContext.java:454)
+	at org.springframework.context.support.AbstractApplicationContext.publishEvent(AbstractApplicationContext.java:460)
+	at org.springframework.context.support.AbstractApplicationContext.publishEvent(AbstractApplicationContext.java:387)
+	at org.springframework.context.support.AbstractApplicationContext.doClose(AbstractApplicationContext.java:1163)
+	at org.springframework.context.support.AbstractApplicationContext.close(AbstractApplicationContext.java:1126)
+	at org.springframework.cloud.context.named.NamedContextFactory.destroy(NamedContextFactory.java:114)
+	at org.springframework.beans.factory.support.DisposableBeanAdapter.destroy(DisposableBeanAdapter.java:211)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.destroyBean(DefaultSingletonBeanRegistry.java:686)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.destroySingleton(DefaultSingletonBeanRegistry.java:643)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.destroySingleton(DefaultListableBeanFactory.java:1368)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.destroySingletons(DefaultSingletonBeanRegistry.java:602)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.destroySingletons(DefaultListableBeanFactory.java:1361)
+	at org.springframework.context.support.AbstractApplicationContext.destroyBeans(AbstractApplicationContext.java:1219)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:640)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146)
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:752)
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:439)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:318)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1361)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1350)
+	at xCloud.XPaymentApplication.main(XPaymentApplication.java:24)
+2025-04-21 15:20:55.142 [main] INFO  o.a.catalina.core.StandardService - Stopping service [Tomcat]
+2025-04-21 15:20:55.152 [main] INFO  o.s.b.a.l.ConditionEvaluationReportLogger - 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2025-04-21 15:20:55.160 [main] ERROR o.s.boot.SpringApplication - Application run failed
+org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'chatController' defined in file [/Users/andy_mac/Documents/CodeSpace/cloud-def/x-payment/target/classes/xCloud/controller/ChatController.class]: Unsatisfied dependency expressed through constructor parameter 0: Error creating bean with name 'openAiChatModel' defined in class path resource [dev/langchain4j/openai/spring/AutoConfig.class]: Failed to instantiate [dev.langchain4j.model.openai.OpenAiChatModel]: Factory method 'openAiChatModel' threw exception with message: If you wish to continue using the 'demo' key, please specify the base URL explicitly:
+OpenAiChatModel.builder().baseUrl("http://langchain4j.dev/demo/openai/v1").apiKey("demo").build();
+
+	at org.springframework.beans.factory.support.ConstructorResolver.createArgumentArray(ConstructorResolver.java:804)
+	at org.springframework.beans.factory.support.ConstructorResolver.autowireConstructor(ConstructorResolver.java:240)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.autowireConstructor(AbstractAutowireCapableBeanFactory.java:1381)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1218)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:563)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:523)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:336)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:307)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:334)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:199)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.instantiateSingleton(DefaultListableBeanFactory.java:1122)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingleton(DefaultListableBeanFactory.java:1093)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:1030)
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:987)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:627)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146)
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:752)
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:439)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:318)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1361)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1350)
+	at xCloud.XPaymentApplication.main(XPaymentApplication.java:24)
+Caused by: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'openAiChatModel' defined in class path resource [dev/langchain4j/openai/spring/AutoConfig.class]: Failed to instantiate [dev.langchain4j.model.openai.OpenAiChatModel]: Factory method 'openAiChatModel' threw exception with message: If you wish to continue using the 'demo' key, please specify the base URL explicitly:
+OpenAiChatModel.builder().baseUrl("http://langchain4j.dev/demo/openai/v1").apiKey("demo").build();
+
+	at org.springframework.beans.factory.support.ConstructorResolver.instantiate(ConstructorResolver.java:657)
+	at org.springframework.beans.factory.support.ConstructorResolver.instantiateUsingFactoryMethod(ConstructorResolver.java:645)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.instantiateUsingFactoryMethod(AbstractAutowireCapableBeanFactory.java:1361)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1191)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:563)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:523)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:336)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:307)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:334)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:199)
+	at org.springframework.beans.factory.config.DependencyDescriptor.resolveCandidate(DependencyDescriptor.java:254)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.doResolveDependency(DefaultListableBeanFactory.java:1631)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.resolveDependency(DefaultListableBeanFactory.java:1519)
+	at org.springframework.beans.factory.support.ConstructorResolver.resolveAutowiredArgument(ConstructorResolver.java:913)
+	at org.springframework.beans.factory.support.ConstructorResolver.createArgumentArray(ConstructorResolver.java:791)
+	... 21 common frames omitted
+Caused by: org.springframework.beans.BeanInstantiationException: Failed to instantiate [dev.langchain4j.model.openai.OpenAiChatModel]: Factory method 'openAiChatModel' threw exception with message: If you wish to continue using the 'demo' key, please specify the base URL explicitly:
+OpenAiChatModel.builder().baseUrl("http://langchain4j.dev/demo/openai/v1").apiKey("demo").build();
+
+	at org.springframework.beans.factory.support.SimpleInstantiationStrategy.lambda$instantiate$0(SimpleInstantiationStrategy.java:199)
+	at org.springframework.beans.factory.support.SimpleInstantiationStrategy.instantiateWithFactoryMethod(SimpleInstantiationStrategy.java:88)
+	at org.springframework.beans.factory.support.SimpleInstantiationStrategy.instantiate(SimpleInstantiationStrategy.java:168)
+	at org.springframework.beans.factory.support.ConstructorResolver.instantiate(ConstructorResolver.java:653)
+	... 35 common frames omitted
+Caused by: java.lang.RuntimeException: If you wish to continue using the 'demo' key, please specify the base URL explicitly:
+OpenAiChatModel.builder().baseUrl("http://langchain4j.dev/demo/openai/v1").apiKey("demo").build();
+
+	at dev.langchain4j.model.openai.OpenAiChatModel.<init>(OpenAiChatModel.java:63)
+	at dev.langchain4j.model.openai.OpenAiChatModel$OpenAiChatModelBuilder.build(OpenAiChatModel.java:397)
+	at dev.langchain4j.openai.spring.AutoConfig.openAiChatModel(AutoConfig.java:88)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.springframework.beans.factory.support.SimpleInstantiationStrategy.lambda$instantiate$0(SimpleInstantiationStrategy.java:171)
+	... 38 common frames omitted
+2025-04-21 15:20:55.161 [Thread-5] WARN  c.a.nacos.common.notify.NotifyCenter - [NotifyCenter] Start destroying Publisher
+2025-04-21 15:20:55.161 [Thread-5] WARN  c.a.nacos.common.notify.NotifyCenter - [NotifyCenter] Destruction of the end
+2025-04-21 15:20:55.161 [Thread-3] WARN  c.a.n.c.http.HttpClientBeanHolder - [HttpClientBeanHolder] Start destroying common HttpClient
+2025-04-21 15:23:06.628 [main] INFO  c.a.nacos.client.utils.ParamUtil - [settings] [req-serv] nacos-server port:8848
+2025-04-21 15:23:06.629 [main] INFO  c.a.nacos.client.utils.ParamUtil - [settings] [http-client] connect timeout:1000
+2025-04-21 15:23:06.629 [main] INFO  c.a.nacos.client.utils.ParamUtil - PER_TASK_CONFIG_SIZE: 3000.0
+2025-04-21 15:23:06.638 [main] INFO  com.alibaba.nacos.common.labels - DefaultLabelsCollectorManager get labels.....
+2025-04-21 15:23:06.638 [main] INFO  com.alibaba.nacos.common.labels - Process LabelsCollector with [name:defaultNacosLabelsCollector]
+2025-04-21 15:23:06.638 [main] INFO  com.alibaba.nacos.common.labels - default nacos collect properties raw labels: null
+2025-04-21 15:23:06.639 [main] INFO  com.alibaba.nacos.common.labels - default nacos collect properties labels: {}
+2025-04-21 15:23:06.639 [main] INFO  com.alibaba.nacos.common.labels - default nacos collect jvm raw labels: null
+2025-04-21 15:23:06.639 [main] INFO  com.alibaba.nacos.common.labels - default nacos collect jvm labels: {}
+2025-04-21 15:23:06.639 [main] INFO  com.alibaba.nacos.common.labels - default nacos collect env raw labels: null
+2025-04-21 15:23:06.639 [main] INFO  com.alibaba.nacos.common.labels - default nacos collect env labels: {}
+2025-04-21 15:23:06.639 [main] INFO  com.alibaba.nacos.common.labels - DefaultLabelsCollectorManager get labels finished,labels :{}
+2025-04-21 15:23:06.642 [main] INFO  c.a.n.p.a.s.c.ClientAuthPluginManager - [ClientAuthPluginManager] Load ClientAuthService com.alibaba.nacos.client.auth.impl.NacosClientAuthServiceImpl success.
+2025-04-21 15:23:06.642 [main] INFO  c.a.n.p.a.s.c.ClientAuthPluginManager - [ClientAuthPluginManager] Load ClientAuthService com.alibaba.nacos.client.auth.ram.RamClientAuthServiceImpl success.
+2025-04-21 15:23:06.647 [Thread-2] INFO  c.a.n.c.a.r.i.CredentialWatcher - null No credential found
+2025-04-21 15:23:06.649 [main] INFO  c.a.n.c.c.i.LocalConfigInfoProcessor - LOCAL_SNAPSHOT_PATH:/Users/andy_mac/nacos/config
+2025-04-21 15:23:06.651 [main] INFO  c.alibaba.nacos.common.remote.client - [RpcClientFactory] create a new rpc client of a928d76f-55bc-41ae-8afe-a4282f6b5448_config-0
+2025-04-21 15:23:06.658 [main] INFO  c.alibaba.nacos.common.remote.client - [a928d76f-55bc-41ae-8afe-a4282f6b5448_config-0] Register server push request handler:com.alibaba.nacos.client.config.impl.ClientWorker$ConfigRpcTransportClient$$Lambda/0x0000007001384cb0
+2025-04-21 15:23:06.658 [main] INFO  c.alibaba.nacos.common.remote.client - [a928d76f-55bc-41ae-8afe-a4282f6b5448_config-0] Register server push request handler:com.alibaba.nacos.client.config.impl.ClientWorker$ConfigRpcTransportClient$$Lambda/0x00000070013850d0
+2025-04-21 15:23:06.658 [main] INFO  c.alibaba.nacos.common.remote.client - [a928d76f-55bc-41ae-8afe-a4282f6b5448_config-0] Registry connection listener to current client:com.alibaba.nacos.client.config.impl.ClientWorker$ConfigRpcTransportClient$1
+2025-04-21 15:23:06.658 [main] INFO  c.alibaba.nacos.common.remote.client - [a928d76f-55bc-41ae-8afe-a4282f6b5448_config-0] RpcClient init, ServerListFactory = com.alibaba.nacos.client.config.impl.ClientWorker$ConfigRpcTransportClient$2
+2025-04-21 15:23:06.660 [main] INFO  c.alibaba.nacos.common.remote.client - [a928d76f-55bc-41ae-8afe-a4282f6b5448_config-0] Try to connect to server on start up, server: {serverIp = '127.0.0.1', server main port = 8848}
+2025-04-21 15:23:06.675 [main] INFO  c.a.n.c.r.client.grpc.GrpcClient - grpc client connection server:127.0.0.1 ip,serverPort:9848,grpcTslConfig:{"sslProvider":"","enableTls":false,"mutualAuthEnable":false,"trustAll":false}
+2025-04-21 15:23:06.914 [main] INFO  c.a.n.c.a.AbstractAbilityControlManager - Ready to get current node abilities...
+2025-04-21 15:23:06.914 [main] INFO  c.a.n.c.a.AbstractAbilityControlManager - Ready to initialize current node abilities, support modes: [SDK_CLIENT]
+2025-04-21 15:23:06.914 [main] INFO  c.a.n.c.a.AbstractAbilityControlManager - Initialize current abilities finish...
+2025-04-21 15:23:06.915 [main] INFO  c.a.n.c.a.d.NacosAbilityManagerHolder - [AbilityControlManager] Successfully initialize AbilityControlManager
+2025-04-21 15:23:06.926 [main] INFO  c.alibaba.nacos.common.remote.client - [a928d76f-55bc-41ae-8afe-a4282f6b5448_config-0] Success to connect to server [127.0.0.1:8848] on start up, connectionId = 1745220186876_127.0.0.1_60044
+2025-04-21 15:23:06.926 [com.alibaba.nacos.client.remote.worker.0] INFO  c.alibaba.nacos.common.remote.client - [a928d76f-55bc-41ae-8afe-a4282f6b5448_config-0] Notify connected event to listeners.
+2025-04-21 15:23:06.926 [com.alibaba.nacos.client.remote.worker.0] INFO  c.a.n.c.config.impl.ClientWorker - [a928d76f-55bc-41ae-8afe-a4282f6b5448_config-0] Connected,notify listen context...
+2025-04-21 15:23:06.926 [main] INFO  c.alibaba.nacos.common.remote.client - [a928d76f-55bc-41ae-8afe-a4282f6b5448_config-0] Register server push request handler:com.alibaba.nacos.common.remote.client.RpcClient$ConnectResetRequestHandler
+2025-04-21 15:23:06.927 [main] INFO  c.alibaba.nacos.common.remote.client - [a928d76f-55bc-41ae-8afe-a4282f6b5448_config-0] Register server push request handler:com.alibaba.nacos.common.remote.client.RpcClient$$Lambda/0x0000007001519c40
+2025-04-21 15:23:06.945 [main] INFO  c.a.nacos.client.config.impl.Limiter - limitTime:5.0
+2025-04-21 15:23:06.956 [main] WARN  c.a.c.n.c.NacosPropertySourceBuilder - Ignore the empty nacos configuration and get it based on dataId[x-payment] & group[DEFAULT_GROUP]
+2025-04-21 15:23:06.960 [main] WARN  c.a.c.n.c.NacosPropertySourceBuilder - Ignore the empty nacos configuration and get it based on dataId[x-payment.properties] & group[DEFAULT_GROUP]
+2025-04-21 15:23:06.961 [main] INFO  o.s.c.b.c.PropertySourceBootstrapConfiguration - Located property source: [BootstrapPropertySource {name='bootstrapProperties-x-payment.properties,DEFAULT_GROUP'}, BootstrapPropertySource {name='bootstrapProperties-x-payment,DEFAULT_GROUP'}]
+2025-04-21 15:23:06.969 [main] INFO  xCloud.XPaymentApplication - No active profile set, falling back to 1 default profile: "default"
+2025-04-21 15:23:07.337 [main] INFO  o.s.cloud.context.scope.GenericScope - BeanFactory id=0f9a4990-cbf8-344e-a3ae-ac9fd1fa81b8
+2025-04-21 15:23:07.455 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8077 (http)
+2025-04-21 15:23:07.462 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-04-21 15:23:07.463 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.36]
+2025-04-21 15:23:07.491 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-04-21 15:23:07.493 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 515 ms
+2025-04-21 15:23:07.605 [main] INFO  o.s.c.o.FeignClientFactoryBean - For 'order-service' URL not provided. Will try picking an instance via load-balancing.
+2025-04-21 15:23:07.702 [main] WARN  o.s.b.w.s.c.AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'chatController' defined in file [/Users/andy_mac/Documents/CodeSpace/cloud-def/x-payment/target/classes/xCloud/controller/ChatController.class]: Unsatisfied dependency expressed through constructor parameter 0: Error creating bean with name 'openAiChatModel' defined in class path resource [dev/langchain4j/openai/spring/AutoConfig.class]: Failed to instantiate [dev.langchain4j.model.openai.OpenAiChatModel]: Factory method 'openAiChatModel' threw exception with message: If you wish to continue using the 'demo' key, please specify the base URL explicitly:
+OpenAiChatModel.builder().baseUrl("http://langchain4j.dev/demo/openai/v1").apiKey("demo").build();
+
+2025-04-21 15:23:07.702 [main] WARN  o.s.c.a.AnnotationConfigApplicationContext - Exception thrown from ApplicationListener handling ContextClosedEvent
+org.springframework.beans.factory.BeanCreationNotAllowedException: Error creating bean with name 'applicationTaskExecutor': Singleton bean creation not allowed while singletons of this factory are in destruction (Do not request a bean from a BeanFactory in a destroy method implementation!)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:275)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:334)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:204)
+	at org.springframework.context.event.AbstractApplicationEventMulticaster.retrieveApplicationListeners(AbstractApplicationEventMulticaster.java:267)
+	at org.springframework.context.event.AbstractApplicationEventMulticaster.getApplicationListeners(AbstractApplicationEventMulticaster.java:223)
+	at org.springframework.context.event.SimpleApplicationEventMulticaster.multicastEvent(SimpleApplicationEventMulticaster.java:145)
+	at org.springframework.context.support.AbstractApplicationContext.publishEvent(AbstractApplicationContext.java:454)
+	at org.springframework.context.support.AbstractApplicationContext.publishEvent(AbstractApplicationContext.java:460)
+	at org.springframework.context.support.AbstractApplicationContext.publishEvent(AbstractApplicationContext.java:387)
+	at org.springframework.context.support.AbstractApplicationContext.doClose(AbstractApplicationContext.java:1163)
+	at org.springframework.context.support.AbstractApplicationContext.close(AbstractApplicationContext.java:1126)
+	at org.springframework.cloud.context.named.NamedContextFactory.destroy(NamedContextFactory.java:114)
+	at org.springframework.beans.factory.support.DisposableBeanAdapter.destroy(DisposableBeanAdapter.java:211)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.destroyBean(DefaultSingletonBeanRegistry.java:686)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.destroySingleton(DefaultSingletonBeanRegistry.java:643)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.destroySingleton(DefaultListableBeanFactory.java:1368)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.destroySingletons(DefaultSingletonBeanRegistry.java:602)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.destroySingletons(DefaultListableBeanFactory.java:1361)
+	at org.springframework.context.support.AbstractApplicationContext.destroyBeans(AbstractApplicationContext.java:1219)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:640)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146)
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:752)
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:439)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:318)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1361)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1350)
+	at xCloud.XPaymentApplication.main(XPaymentApplication.java:24)
+2025-04-21 15:23:07.704 [main] INFO  o.a.catalina.core.StandardService - Stopping service [Tomcat]
+2025-04-21 15:23:07.714 [main] INFO  o.s.b.a.l.ConditionEvaluationReportLogger - 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2025-04-21 15:23:07.722 [main] ERROR o.s.boot.SpringApplication - Application run failed
+org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'chatController' defined in file [/Users/andy_mac/Documents/CodeSpace/cloud-def/x-payment/target/classes/xCloud/controller/ChatController.class]: Unsatisfied dependency expressed through constructor parameter 0: Error creating bean with name 'openAiChatModel' defined in class path resource [dev/langchain4j/openai/spring/AutoConfig.class]: Failed to instantiate [dev.langchain4j.model.openai.OpenAiChatModel]: Factory method 'openAiChatModel' threw exception with message: If you wish to continue using the 'demo' key, please specify the base URL explicitly:
+OpenAiChatModel.builder().baseUrl("http://langchain4j.dev/demo/openai/v1").apiKey("demo").build();
+
+	at org.springframework.beans.factory.support.ConstructorResolver.createArgumentArray(ConstructorResolver.java:804)
+	at org.springframework.beans.factory.support.ConstructorResolver.autowireConstructor(ConstructorResolver.java:240)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.autowireConstructor(AbstractAutowireCapableBeanFactory.java:1381)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1218)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:563)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:523)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:336)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:307)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:334)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:199)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.instantiateSingleton(DefaultListableBeanFactory.java:1122)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingleton(DefaultListableBeanFactory.java:1093)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:1030)
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:987)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:627)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146)
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:752)
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:439)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:318)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1361)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1350)
+	at xCloud.XPaymentApplication.main(XPaymentApplication.java:24)
+Caused by: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'openAiChatModel' defined in class path resource [dev/langchain4j/openai/spring/AutoConfig.class]: Failed to instantiate [dev.langchain4j.model.openai.OpenAiChatModel]: Factory method 'openAiChatModel' threw exception with message: If you wish to continue using the 'demo' key, please specify the base URL explicitly:
+OpenAiChatModel.builder().baseUrl("http://langchain4j.dev/demo/openai/v1").apiKey("demo").build();
+
+	at org.springframework.beans.factory.support.ConstructorResolver.instantiate(ConstructorResolver.java:657)
+	at org.springframework.beans.factory.support.ConstructorResolver.instantiateUsingFactoryMethod(ConstructorResolver.java:645)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.instantiateUsingFactoryMethod(AbstractAutowireCapableBeanFactory.java:1361)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1191)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:563)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:523)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:336)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:307)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:334)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:199)
+	at org.springframework.beans.factory.config.DependencyDescriptor.resolveCandidate(DependencyDescriptor.java:254)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.doResolveDependency(DefaultListableBeanFactory.java:1631)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.resolveDependency(DefaultListableBeanFactory.java:1519)
+	at org.springframework.beans.factory.support.ConstructorResolver.resolveAutowiredArgument(ConstructorResolver.java:913)
+	at org.springframework.beans.factory.support.ConstructorResolver.createArgumentArray(ConstructorResolver.java:791)
+	... 21 common frames omitted
+Caused by: org.springframework.beans.BeanInstantiationException: Failed to instantiate [dev.langchain4j.model.openai.OpenAiChatModel]: Factory method 'openAiChatModel' threw exception with message: If you wish to continue using the 'demo' key, please specify the base URL explicitly:
+OpenAiChatModel.builder().baseUrl("http://langchain4j.dev/demo/openai/v1").apiKey("demo").build();
+
+	at org.springframework.beans.factory.support.SimpleInstantiationStrategy.lambda$instantiate$0(SimpleInstantiationStrategy.java:199)
+	at org.springframework.beans.factory.support.SimpleInstantiationStrategy.instantiateWithFactoryMethod(SimpleInstantiationStrategy.java:88)
+	at org.springframework.beans.factory.support.SimpleInstantiationStrategy.instantiate(SimpleInstantiationStrategy.java:168)
+	at org.springframework.beans.factory.support.ConstructorResolver.instantiate(ConstructorResolver.java:653)
+	... 35 common frames omitted
+Caused by: java.lang.RuntimeException: If you wish to continue using the 'demo' key, please specify the base URL explicitly:
+OpenAiChatModel.builder().baseUrl("http://langchain4j.dev/demo/openai/v1").apiKey("demo").build();
+
+	at dev.langchain4j.model.openai.OpenAiChatModel.<init>(OpenAiChatModel.java:63)
+	at dev.langchain4j.model.openai.OpenAiChatModel$OpenAiChatModelBuilder.build(OpenAiChatModel.java:397)
+	at dev.langchain4j.openai.spring.AutoConfig.openAiChatModel(AutoConfig.java:88)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.springframework.beans.factory.support.SimpleInstantiationStrategy.lambda$instantiate$0(SimpleInstantiationStrategy.java:171)
+	... 38 common frames omitted
+2025-04-21 15:23:07.722 [Thread-5] WARN  c.a.nacos.common.notify.NotifyCenter - [NotifyCenter] Start destroying Publisher
+2025-04-21 15:23:07.722 [Thread-5] WARN  c.a.nacos.common.notify.NotifyCenter - [NotifyCenter] Destruction of the end
+2025-04-21 15:23:07.722 [Thread-3] WARN  c.a.n.c.http.HttpClientBeanHolder - [HttpClientBeanHolder] Start destroying common HttpClient
+2025-04-21 15:23:07.722 [Thread-3] WARN  c.a.n.c.http.HttpClientBeanHolder - [HttpClientBeanHolder] Destruction of the end
+2025-04-21 15:28:05.729 [main] INFO  c.a.nacos.client.utils.ParamUtil - [settings] [req-serv] nacos-server port:8848
+2025-04-21 15:28:05.730 [main] INFO  c.a.nacos.client.utils.ParamUtil - [settings] [http-client] connect timeout:1000
+2025-04-21 15:28:05.731 [main] INFO  c.a.nacos.client.utils.ParamUtil - PER_TASK_CONFIG_SIZE: 3000.0
+2025-04-21 15:28:05.740 [main] INFO  com.alibaba.nacos.common.labels - DefaultLabelsCollectorManager get labels.....
+2025-04-21 15:28:05.740 [main] INFO  com.alibaba.nacos.common.labels - Process LabelsCollector with [name:defaultNacosLabelsCollector]
+2025-04-21 15:28:05.740 [main] INFO  com.alibaba.nacos.common.labels - default nacos collect properties raw labels: null
+2025-04-21 15:28:05.740 [main] INFO  com.alibaba.nacos.common.labels - default nacos collect properties labels: {}
+2025-04-21 15:28:05.740 [main] INFO  com.alibaba.nacos.common.labels - default nacos collect jvm raw labels: null
+2025-04-21 15:28:05.741 [main] INFO  com.alibaba.nacos.common.labels - default nacos collect jvm labels: {}
+2025-04-21 15:28:05.741 [main] INFO  com.alibaba.nacos.common.labels - default nacos collect env raw labels: null
+2025-04-21 15:28:05.741 [main] INFO  com.alibaba.nacos.common.labels - default nacos collect env labels: {}
+2025-04-21 15:28:05.741 [main] INFO  com.alibaba.nacos.common.labels - DefaultLabelsCollectorManager get labels finished,labels :{}
+2025-04-21 15:28:05.743 [main] INFO  c.a.n.p.a.s.c.ClientAuthPluginManager - [ClientAuthPluginManager] Load ClientAuthService com.alibaba.nacos.client.auth.impl.NacosClientAuthServiceImpl success.
+2025-04-21 15:28:05.743 [main] INFO  c.a.n.p.a.s.c.ClientAuthPluginManager - [ClientAuthPluginManager] Load ClientAuthService com.alibaba.nacos.client.auth.ram.RamClientAuthServiceImpl success.
+2025-04-21 15:28:05.750 [Thread-2] INFO  c.a.n.c.a.r.i.CredentialWatcher - null No credential found
+2025-04-21 15:28:05.752 [main] INFO  c.a.n.c.c.i.LocalConfigInfoProcessor - LOCAL_SNAPSHOT_PATH:/Users/andy_mac/nacos/config
+2025-04-21 15:28:05.753 [main] INFO  c.alibaba.nacos.common.remote.client - [RpcClientFactory] create a new rpc client of 4c594a06-fb0c-4335-95ce-43e574edad70_config-0
+2025-04-21 15:28:05.760 [main] INFO  c.alibaba.nacos.common.remote.client - [4c594a06-fb0c-4335-95ce-43e574edad70_config-0] Register server push request handler:com.alibaba.nacos.client.config.impl.ClientWorker$ConfigRpcTransportClient$$Lambda/0x0000007001384a58
+2025-04-21 15:28:05.760 [main] INFO  c.alibaba.nacos.common.remote.client - [4c594a06-fb0c-4335-95ce-43e574edad70_config-0] Register server push request handler:com.alibaba.nacos.client.config.impl.ClientWorker$ConfigRpcTransportClient$$Lambda/0x0000007001384e78
+2025-04-21 15:28:05.760 [main] INFO  c.alibaba.nacos.common.remote.client - [4c594a06-fb0c-4335-95ce-43e574edad70_config-0] Registry connection listener to current client:com.alibaba.nacos.client.config.impl.ClientWorker$ConfigRpcTransportClient$1
+2025-04-21 15:28:05.761 [main] INFO  c.alibaba.nacos.common.remote.client - [4c594a06-fb0c-4335-95ce-43e574edad70_config-0] RpcClient init, ServerListFactory = com.alibaba.nacos.client.config.impl.ClientWorker$ConfigRpcTransportClient$2
+2025-04-21 15:28:05.763 [main] INFO  c.alibaba.nacos.common.remote.client - [4c594a06-fb0c-4335-95ce-43e574edad70_config-0] Try to connect to server on start up, server: {serverIp = '127.0.0.1', server main port = 8848}
+2025-04-21 15:28:05.778 [main] INFO  c.a.n.c.r.client.grpc.GrpcClient - grpc client connection server:127.0.0.1 ip,serverPort:9848,grpcTslConfig:{"sslProvider":"","enableTls":false,"mutualAuthEnable":false,"trustAll":false}
+2025-04-21 15:28:06.064 [main] INFO  c.a.n.c.a.AbstractAbilityControlManager - Ready to get current node abilities...
+2025-04-21 15:28:06.065 [main] INFO  c.a.n.c.a.AbstractAbilityControlManager - Ready to initialize current node abilities, support modes: [SDK_CLIENT]
+2025-04-21 15:28:06.065 [main] INFO  c.a.n.c.a.AbstractAbilityControlManager - Initialize current abilities finish...
+2025-04-21 15:28:06.065 [main] INFO  c.a.n.c.a.d.NacosAbilityManagerHolder - [AbilityControlManager] Successfully initialize AbilityControlManager
+2025-04-21 15:28:06.079 [main] INFO  c.alibaba.nacos.common.remote.client - [4c594a06-fb0c-4335-95ce-43e574edad70_config-0] Success to connect to server [127.0.0.1:8848] on start up, connectionId = 1745220486006_127.0.0.1_61103
+2025-04-21 15:28:06.079 [com.alibaba.nacos.client.remote.worker.0] INFO  c.alibaba.nacos.common.remote.client - [4c594a06-fb0c-4335-95ce-43e574edad70_config-0] Notify connected event to listeners.
+2025-04-21 15:28:06.079 [com.alibaba.nacos.client.remote.worker.0] INFO  c.a.n.c.config.impl.ClientWorker - [4c594a06-fb0c-4335-95ce-43e574edad70_config-0] Connected,notify listen context...
+2025-04-21 15:28:06.079 [main] INFO  c.alibaba.nacos.common.remote.client - [4c594a06-fb0c-4335-95ce-43e574edad70_config-0] Register server push request handler:com.alibaba.nacos.common.remote.client.RpcClient$ConnectResetRequestHandler
+2025-04-21 15:28:06.079 [main] INFO  c.alibaba.nacos.common.remote.client - [4c594a06-fb0c-4335-95ce-43e574edad70_config-0] Register server push request handler:com.alibaba.nacos.common.remote.client.RpcClient$$Lambda/0x0000007001519a28
+2025-04-21 15:28:06.101 [main] INFO  c.a.nacos.client.config.impl.Limiter - limitTime:5.0
+2025-04-21 15:28:06.116 [main] WARN  c.a.c.n.c.NacosPropertySourceBuilder - Ignore the empty nacos configuration and get it based on dataId[x-payment] & group[DEFAULT_GROUP]
+2025-04-21 15:28:06.121 [main] WARN  c.a.c.n.c.NacosPropertySourceBuilder - Ignore the empty nacos configuration and get it based on dataId[x-payment.properties] & group[DEFAULT_GROUP]
+2025-04-21 15:28:06.122 [main] INFO  o.s.c.b.c.PropertySourceBootstrapConfiguration - Located property source: [BootstrapPropertySource {name='bootstrapProperties-x-payment.properties,DEFAULT_GROUP'}, BootstrapPropertySource {name='bootstrapProperties-x-payment,DEFAULT_GROUP'}]
+2025-04-21 15:28:06.132 [main] INFO  xCloud.XPaymentApplication - No active profile set, falling back to 1 default profile: "default"
+2025-04-21 15:28:06.521 [main] INFO  o.s.cloud.context.scope.GenericScope - BeanFactory id=0f9a4990-cbf8-344e-a3ae-ac9fd1fa81b8
+2025-04-21 15:28:06.641 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8077 (http)
+2025-04-21 15:28:06.647 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-04-21 15:28:06.648 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.36]
+2025-04-21 15:28:06.673 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-04-21 15:28:06.673 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 518 ms
+2025-04-21 15:28:06.770 [main] INFO  o.s.c.o.FeignClientFactoryBean - For 'order-service' URL not provided. Will try picking an instance via load-balancing.
+2025-04-21 15:28:06.874 [main] WARN  o.s.b.w.s.c.AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'chatController' defined in file [/Users/andy_mac/Documents/CodeSpace/cloud-def/x-payment/target/classes/xCloud/controller/ChatController.class]: Unsatisfied dependency expressed through constructor parameter 0: Error creating bean with name 'openAiChatModel' defined in class path resource [dev/langchain4j/openai/spring/AutoConfig.class]: Failed to instantiate [dev.langchain4j.model.openai.OpenAiChatModel]: Factory method 'openAiChatModel' threw exception with message: If you wish to continue using the 'demo' key, please specify the base URL explicitly:
+OpenAiChatModel.builder().baseUrl("http://langchain4j.dev/demo/openai/v1").apiKey("demo").build();
+
+2025-04-21 15:28:06.874 [main] WARN  o.s.c.a.AnnotationConfigApplicationContext - Exception thrown from ApplicationListener handling ContextClosedEvent
+org.springframework.beans.factory.BeanCreationNotAllowedException: Error creating bean with name 'applicationTaskExecutor': Singleton bean creation not allowed while singletons of this factory are in destruction (Do not request a bean from a BeanFactory in a destroy method implementation!)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:275)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:334)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:204)
+	at org.springframework.context.event.AbstractApplicationEventMulticaster.retrieveApplicationListeners(AbstractApplicationEventMulticaster.java:267)
+	at org.springframework.context.event.AbstractApplicationEventMulticaster.getApplicationListeners(AbstractApplicationEventMulticaster.java:223)
+	at org.springframework.context.event.SimpleApplicationEventMulticaster.multicastEvent(SimpleApplicationEventMulticaster.java:145)
+	at org.springframework.context.support.AbstractApplicationContext.publishEvent(AbstractApplicationContext.java:454)
+	at org.springframework.context.support.AbstractApplicationContext.publishEvent(AbstractApplicationContext.java:460)
+	at org.springframework.context.support.AbstractApplicationContext.publishEvent(AbstractApplicationContext.java:387)
+	at org.springframework.context.support.AbstractApplicationContext.doClose(AbstractApplicationContext.java:1163)
+	at org.springframework.context.support.AbstractApplicationContext.close(AbstractApplicationContext.java:1126)
+	at org.springframework.cloud.context.named.NamedContextFactory.destroy(NamedContextFactory.java:114)
+	at org.springframework.beans.factory.support.DisposableBeanAdapter.destroy(DisposableBeanAdapter.java:211)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.destroyBean(DefaultSingletonBeanRegistry.java:686)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.destroySingleton(DefaultSingletonBeanRegistry.java:643)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.destroySingleton(DefaultListableBeanFactory.java:1368)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.destroySingletons(DefaultSingletonBeanRegistry.java:602)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.destroySingletons(DefaultListableBeanFactory.java:1361)
+	at org.springframework.context.support.AbstractApplicationContext.destroyBeans(AbstractApplicationContext.java:1219)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:640)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146)
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:752)
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:439)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:318)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1361)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1350)
+	at xCloud.XPaymentApplication.main(XPaymentApplication.java:24)
+2025-04-21 15:28:06.875 [main] INFO  o.a.catalina.core.StandardService - Stopping service [Tomcat]
+2025-04-21 15:28:06.886 [main] INFO  o.s.b.a.l.ConditionEvaluationReportLogger - 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2025-04-21 15:28:06.894 [main] ERROR o.s.boot.SpringApplication - Application run failed
+org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'chatController' defined in file [/Users/andy_mac/Documents/CodeSpace/cloud-def/x-payment/target/classes/xCloud/controller/ChatController.class]: Unsatisfied dependency expressed through constructor parameter 0: Error creating bean with name 'openAiChatModel' defined in class path resource [dev/langchain4j/openai/spring/AutoConfig.class]: Failed to instantiate [dev.langchain4j.model.openai.OpenAiChatModel]: Factory method 'openAiChatModel' threw exception with message: If you wish to continue using the 'demo' key, please specify the base URL explicitly:
+OpenAiChatModel.builder().baseUrl("http://langchain4j.dev/demo/openai/v1").apiKey("demo").build();
+
+	at org.springframework.beans.factory.support.ConstructorResolver.createArgumentArray(ConstructorResolver.java:804)
+	at org.springframework.beans.factory.support.ConstructorResolver.autowireConstructor(ConstructorResolver.java:240)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.autowireConstructor(AbstractAutowireCapableBeanFactory.java:1381)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1218)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:563)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:523)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:336)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:307)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:334)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:199)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.instantiateSingleton(DefaultListableBeanFactory.java:1122)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingleton(DefaultListableBeanFactory.java:1093)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:1030)
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:987)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:627)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146)
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:752)
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:439)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:318)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1361)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1350)
+	at xCloud.XPaymentApplication.main(XPaymentApplication.java:24)
+Caused by: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'openAiChatModel' defined in class path resource [dev/langchain4j/openai/spring/AutoConfig.class]: Failed to instantiate [dev.langchain4j.model.openai.OpenAiChatModel]: Factory method 'openAiChatModel' threw exception with message: If you wish to continue using the 'demo' key, please specify the base URL explicitly:
+OpenAiChatModel.builder().baseUrl("http://langchain4j.dev/demo/openai/v1").apiKey("demo").build();
+
+	at org.springframework.beans.factory.support.ConstructorResolver.instantiate(ConstructorResolver.java:657)
+	at org.springframework.beans.factory.support.ConstructorResolver.instantiateUsingFactoryMethod(ConstructorResolver.java:645)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.instantiateUsingFactoryMethod(AbstractAutowireCapableBeanFactory.java:1361)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1191)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:563)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:523)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:336)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:307)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:334)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:199)
+	at org.springframework.beans.factory.config.DependencyDescriptor.resolveCandidate(DependencyDescriptor.java:254)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.doResolveDependency(DefaultListableBeanFactory.java:1631)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.resolveDependency(DefaultListableBeanFactory.java:1519)
+	at org.springframework.beans.factory.support.ConstructorResolver.resolveAutowiredArgument(ConstructorResolver.java:913)
+	at org.springframework.beans.factory.support.ConstructorResolver.createArgumentArray(ConstructorResolver.java:791)
+	... 21 common frames omitted
+Caused by: org.springframework.beans.BeanInstantiationException: Failed to instantiate [dev.langchain4j.model.openai.OpenAiChatModel]: Factory method 'openAiChatModel' threw exception with message: If you wish to continue using the 'demo' key, please specify the base URL explicitly:
+OpenAiChatModel.builder().baseUrl("http://langchain4j.dev/demo/openai/v1").apiKey("demo").build();
+
+	at org.springframework.beans.factory.support.SimpleInstantiationStrategy.lambda$instantiate$0(SimpleInstantiationStrategy.java:199)
+	at org.springframework.beans.factory.support.SimpleInstantiationStrategy.instantiateWithFactoryMethod(SimpleInstantiationStrategy.java:88)
+	at org.springframework.beans.factory.support.SimpleInstantiationStrategy.instantiate(SimpleInstantiationStrategy.java:168)
+	at org.springframework.beans.factory.support.ConstructorResolver.instantiate(ConstructorResolver.java:653)
+	... 35 common frames omitted
+Caused by: java.lang.RuntimeException: If you wish to continue using the 'demo' key, please specify the base URL explicitly:
+OpenAiChatModel.builder().baseUrl("http://langchain4j.dev/demo/openai/v1").apiKey("demo").build();
+
+	at dev.langchain4j.model.openai.OpenAiChatModel.<init>(OpenAiChatModel.java:63)
+	at dev.langchain4j.model.openai.OpenAiChatModel$OpenAiChatModelBuilder.build(OpenAiChatModel.java:397)
+	at dev.langchain4j.openai.spring.AutoConfig.openAiChatModel(AutoConfig.java:88)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.springframework.beans.factory.support.SimpleInstantiationStrategy.lambda$instantiate$0(SimpleInstantiationStrategy.java:171)
+	... 38 common frames omitted
+2025-04-21 15:28:06.895 [Thread-5] WARN  c.a.nacos.common.notify.NotifyCenter - [NotifyCenter] Start destroying Publisher
+2025-04-21 15:28:06.895 [Thread-3] WARN  c.a.n.c.http.HttpClientBeanHolder - [HttpClientBeanHolder] Start destroying common HttpClient
+2025-04-21 15:28:06.895 [Thread-5] WARN  c.a.nacos.common.notify.NotifyCenter - [NotifyCenter] Destruction of the end
+2025-04-21 15:28:15.853 [main] INFO  c.a.nacos.client.utils.ParamUtil - [settings] [req-serv] nacos-server port:8848
+2025-04-21 15:28:15.853 [main] INFO  c.a.nacos.client.utils.ParamUtil - [settings] [http-client] connect timeout:1000
+2025-04-21 15:28:15.854 [main] INFO  c.a.nacos.client.utils.ParamUtil - PER_TASK_CONFIG_SIZE: 3000.0
+2025-04-21 15:28:15.863 [main] INFO  com.alibaba.nacos.common.labels - DefaultLabelsCollectorManager get labels.....
+2025-04-21 15:28:15.863 [main] INFO  com.alibaba.nacos.common.labels - Process LabelsCollector with [name:defaultNacosLabelsCollector]
+2025-04-21 15:28:15.863 [main] INFO  com.alibaba.nacos.common.labels - default nacos collect properties raw labels: null
+2025-04-21 15:28:15.863 [main] INFO  com.alibaba.nacos.common.labels - default nacos collect properties labels: {}
+2025-04-21 15:28:15.863 [main] INFO  com.alibaba.nacos.common.labels - default nacos collect jvm raw labels: null
+2025-04-21 15:28:15.863 [main] INFO  com.alibaba.nacos.common.labels - default nacos collect jvm labels: {}
+2025-04-21 15:28:15.863 [main] INFO  com.alibaba.nacos.common.labels - default nacos collect env raw labels: null
+2025-04-21 15:28:15.863 [main] INFO  com.alibaba.nacos.common.labels - default nacos collect env labels: {}
+2025-04-21 15:28:15.864 [main] INFO  com.alibaba.nacos.common.labels - DefaultLabelsCollectorManager get labels finished,labels :{}
+2025-04-21 15:28:15.866 [main] INFO  c.a.n.p.a.s.c.ClientAuthPluginManager - [ClientAuthPluginManager] Load ClientAuthService com.alibaba.nacos.client.auth.impl.NacosClientAuthServiceImpl success.
+2025-04-21 15:28:15.866 [main] INFO  c.a.n.p.a.s.c.ClientAuthPluginManager - [ClientAuthPluginManager] Load ClientAuthService com.alibaba.nacos.client.auth.ram.RamClientAuthServiceImpl success.
+2025-04-21 15:28:15.875 [Thread-2] INFO  c.a.n.c.a.r.i.CredentialWatcher - null No credential found
+2025-04-21 15:28:15.877 [main] INFO  c.a.n.c.c.i.LocalConfigInfoProcessor - LOCAL_SNAPSHOT_PATH:/Users/andy_mac/nacos/config
+2025-04-21 15:28:15.879 [main] INFO  c.alibaba.nacos.common.remote.client - [RpcClientFactory] create a new rpc client of a2cd1880-c3c4-4a2c-8d95-09057e7f0a66_config-0
+2025-04-21 15:28:15.886 [main] INFO  c.alibaba.nacos.common.remote.client - [a2cd1880-c3c4-4a2c-8d95-09057e7f0a66_config-0] Register server push request handler:com.alibaba.nacos.client.config.impl.ClientWorker$ConfigRpcTransportClient$$Lambda/0x0000007001384268
+2025-04-21 15:28:15.886 [main] INFO  c.alibaba.nacos.common.remote.client - [a2cd1880-c3c4-4a2c-8d95-09057e7f0a66_config-0] Register server push request handler:com.alibaba.nacos.client.config.impl.ClientWorker$ConfigRpcTransportClient$$Lambda/0x0000007001384688
+2025-04-21 15:28:15.886 [main] INFO  c.alibaba.nacos.common.remote.client - [a2cd1880-c3c4-4a2c-8d95-09057e7f0a66_config-0] Registry connection listener to current client:com.alibaba.nacos.client.config.impl.ClientWorker$ConfigRpcTransportClient$1
+2025-04-21 15:28:15.886 [main] INFO  c.alibaba.nacos.common.remote.client - [a2cd1880-c3c4-4a2c-8d95-09057e7f0a66_config-0] RpcClient init, ServerListFactory = com.alibaba.nacos.client.config.impl.ClientWorker$ConfigRpcTransportClient$2
+2025-04-21 15:28:15.888 [main] INFO  c.alibaba.nacos.common.remote.client - [a2cd1880-c3c4-4a2c-8d95-09057e7f0a66_config-0] Try to connect to server on start up, server: {serverIp = '127.0.0.1', server main port = 8848}
+2025-04-21 15:28:15.903 [main] INFO  c.a.n.c.r.client.grpc.GrpcClient - grpc client connection server:127.0.0.1 ip,serverPort:9848,grpcTslConfig:{"sslProvider":"","enableTls":false,"mutualAuthEnable":false,"trustAll":false}
+2025-04-21 15:28:16.148 [main] INFO  c.a.n.c.a.AbstractAbilityControlManager - Ready to get current node abilities...
+2025-04-21 15:28:16.148 [main] INFO  c.a.n.c.a.AbstractAbilityControlManager - Ready to initialize current node abilities, support modes: [SDK_CLIENT]
+2025-04-21 15:28:16.149 [main] INFO  c.a.n.c.a.AbstractAbilityControlManager - Initialize current abilities finish...
+2025-04-21 15:28:16.149 [main] INFO  c.a.n.c.a.d.NacosAbilityManagerHolder - [AbilityControlManager] Successfully initialize AbilityControlManager
+2025-04-21 15:28:16.160 [main] INFO  c.alibaba.nacos.common.remote.client - [a2cd1880-c3c4-4a2c-8d95-09057e7f0a66_config-0] Success to connect to server [127.0.0.1:8848] on start up, connectionId = 1745220496102_127.0.0.1_61164
+2025-04-21 15:28:16.160 [com.alibaba.nacos.client.remote.worker.0] INFO  c.alibaba.nacos.common.remote.client - [a2cd1880-c3c4-4a2c-8d95-09057e7f0a66_config-0] Notify connected event to listeners.
+2025-04-21 15:28:16.160 [com.alibaba.nacos.client.remote.worker.0] INFO  c.a.n.c.config.impl.ClientWorker - [a2cd1880-c3c4-4a2c-8d95-09057e7f0a66_config-0] Connected,notify listen context...
+2025-04-21 15:28:16.160 [main] INFO  c.alibaba.nacos.common.remote.client - [a2cd1880-c3c4-4a2c-8d95-09057e7f0a66_config-0] Register server push request handler:com.alibaba.nacos.common.remote.client.RpcClient$ConnectResetRequestHandler
+2025-04-21 15:28:16.160 [main] INFO  c.alibaba.nacos.common.remote.client - [a2cd1880-c3c4-4a2c-8d95-09057e7f0a66_config-0] Register server push request handler:com.alibaba.nacos.common.remote.client.RpcClient$$Lambda/0x000000700151f918
+2025-04-21 15:28:16.179 [main] INFO  c.a.nacos.client.config.impl.Limiter - limitTime:5.0
+2025-04-21 15:28:16.190 [main] WARN  c.a.c.n.c.NacosPropertySourceBuilder - Ignore the empty nacos configuration and get it based on dataId[x-payment] & group[DEFAULT_GROUP]
+2025-04-21 15:28:16.193 [main] WARN  c.a.c.n.c.NacosPropertySourceBuilder - Ignore the empty nacos configuration and get it based on dataId[x-payment.properties] & group[DEFAULT_GROUP]
+2025-04-21 15:28:16.194 [main] INFO  o.s.c.b.c.PropertySourceBootstrapConfiguration - Located property source: [BootstrapPropertySource {name='bootstrapProperties-x-payment.properties,DEFAULT_GROUP'}, BootstrapPropertySource {name='bootstrapProperties-x-payment,DEFAULT_GROUP'}]
+2025-04-21 15:28:16.202 [main] INFO  xCloud.XPaymentApplication - No active profile set, falling back to 1 default profile: "default"
+2025-04-21 15:28:16.553 [main] INFO  o.s.cloud.context.scope.GenericScope - BeanFactory id=0f9a4990-cbf8-344e-a3ae-ac9fd1fa81b8
+2025-04-21 15:28:16.685 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8077 (http)
+2025-04-21 15:28:16.694 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-04-21 15:28:16.695 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.36]
+2025-04-21 15:28:16.727 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-04-21 15:28:16.728 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 518 ms
+2025-04-21 15:28:16.842 [main] INFO  o.s.c.o.FeignClientFactoryBean - For 'order-service' URL not provided. Will try picking an instance via load-balancing.
+2025-04-21 15:28:16.956 [main] WARN  o.s.b.w.s.c.AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'chatController' defined in file [/Users/andy_mac/Documents/CodeSpace/cloud-def/x-payment/target/classes/xCloud/controller/ChatController.class]: Unsatisfied dependency expressed through constructor parameter 0: Error creating bean with name 'openAiChatModel' defined in class path resource [dev/langchain4j/openai/spring/AutoConfig.class]: Failed to instantiate [dev.langchain4j.model.openai.OpenAiChatModel]: Factory method 'openAiChatModel' threw exception with message: If you wish to continue using the 'demo' key, please specify the base URL explicitly:
+OpenAiChatModel.builder().baseUrl("http://langchain4j.dev/demo/openai/v1").apiKey("demo").build();
+
+2025-04-21 15:28:16.957 [main] WARN  o.s.c.a.AnnotationConfigApplicationContext - Exception thrown from ApplicationListener handling ContextClosedEvent
+org.springframework.beans.factory.BeanCreationNotAllowedException: Error creating bean with name 'applicationTaskExecutor': Singleton bean creation not allowed while singletons of this factory are in destruction (Do not request a bean from a BeanFactory in a destroy method implementation!)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:275)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:334)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:204)
+	at org.springframework.context.event.AbstractApplicationEventMulticaster.retrieveApplicationListeners(AbstractApplicationEventMulticaster.java:267)
+	at org.springframework.context.event.AbstractApplicationEventMulticaster.getApplicationListeners(AbstractApplicationEventMulticaster.java:223)
+	at org.springframework.context.event.SimpleApplicationEventMulticaster.multicastEvent(SimpleApplicationEventMulticaster.java:145)
+	at org.springframework.context.support.AbstractApplicationContext.publishEvent(AbstractApplicationContext.java:454)
+	at org.springframework.context.support.AbstractApplicationContext.publishEvent(AbstractApplicationContext.java:460)
+	at org.springframework.context.support.AbstractApplicationContext.publishEvent(AbstractApplicationContext.java:387)
+	at org.springframework.context.support.AbstractApplicationContext.doClose(AbstractApplicationContext.java:1163)
+	at org.springframework.context.support.AbstractApplicationContext.close(AbstractApplicationContext.java:1126)
+	at org.springframework.cloud.context.named.NamedContextFactory.destroy(NamedContextFactory.java:114)
+	at org.springframework.beans.factory.support.DisposableBeanAdapter.destroy(DisposableBeanAdapter.java:211)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.destroyBean(DefaultSingletonBeanRegistry.java:686)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.destroySingleton(DefaultSingletonBeanRegistry.java:643)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.destroySingleton(DefaultListableBeanFactory.java:1368)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.destroySingletons(DefaultSingletonBeanRegistry.java:602)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.destroySingletons(DefaultListableBeanFactory.java:1361)
+	at org.springframework.context.support.AbstractApplicationContext.destroyBeans(AbstractApplicationContext.java:1219)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:640)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146)
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:752)
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:439)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:318)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1361)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1350)
+	at xCloud.XPaymentApplication.main(XPaymentApplication.java:24)
+2025-04-21 15:28:16.958 [main] INFO  o.a.catalina.core.StandardService - Stopping service [Tomcat]
+2025-04-21 15:28:16.968 [main] INFO  o.s.b.a.l.ConditionEvaluationReportLogger - 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2025-04-21 15:28:16.976 [main] ERROR o.s.boot.SpringApplication - Application run failed
+org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'chatController' defined in file [/Users/andy_mac/Documents/CodeSpace/cloud-def/x-payment/target/classes/xCloud/controller/ChatController.class]: Unsatisfied dependency expressed through constructor parameter 0: Error creating bean with name 'openAiChatModel' defined in class path resource [dev/langchain4j/openai/spring/AutoConfig.class]: Failed to instantiate [dev.langchain4j.model.openai.OpenAiChatModel]: Factory method 'openAiChatModel' threw exception with message: If you wish to continue using the 'demo' key, please specify the base URL explicitly:
+OpenAiChatModel.builder().baseUrl("http://langchain4j.dev/demo/openai/v1").apiKey("demo").build();
+
+	at org.springframework.beans.factory.support.ConstructorResolver.createArgumentArray(ConstructorResolver.java:804)
+	at org.springframework.beans.factory.support.ConstructorResolver.autowireConstructor(ConstructorResolver.java:240)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.autowireConstructor(AbstractAutowireCapableBeanFactory.java:1381)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1218)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:563)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:523)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:336)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:307)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:334)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:199)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.instantiateSingleton(DefaultListableBeanFactory.java:1122)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingleton(DefaultListableBeanFactory.java:1093)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:1030)
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:987)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:627)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146)
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:752)
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:439)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:318)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1361)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1350)
+	at xCloud.XPaymentApplication.main(XPaymentApplication.java:24)
+Caused by: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'openAiChatModel' defined in class path resource [dev/langchain4j/openai/spring/AutoConfig.class]: Failed to instantiate [dev.langchain4j.model.openai.OpenAiChatModel]: Factory method 'openAiChatModel' threw exception with message: If you wish to continue using the 'demo' key, please specify the base URL explicitly:
+OpenAiChatModel.builder().baseUrl("http://langchain4j.dev/demo/openai/v1").apiKey("demo").build();
+
+	at org.springframework.beans.factory.support.ConstructorResolver.instantiate(ConstructorResolver.java:657)
+	at org.springframework.beans.factory.support.ConstructorResolver.instantiateUsingFactoryMethod(ConstructorResolver.java:645)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.instantiateUsingFactoryMethod(AbstractAutowireCapableBeanFactory.java:1361)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1191)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:563)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:523)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:336)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:307)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:334)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:199)
+	at org.springframework.beans.factory.config.DependencyDescriptor.resolveCandidate(DependencyDescriptor.java:254)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.doResolveDependency(DefaultListableBeanFactory.java:1631)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.resolveDependency(DefaultListableBeanFactory.java:1519)
+	at org.springframework.beans.factory.support.ConstructorResolver.resolveAutowiredArgument(ConstructorResolver.java:913)
+	at org.springframework.beans.factory.support.ConstructorResolver.createArgumentArray(ConstructorResolver.java:791)
+	... 21 common frames omitted
+Caused by: org.springframework.beans.BeanInstantiationException: Failed to instantiate [dev.langchain4j.model.openai.OpenAiChatModel]: Factory method 'openAiChatModel' threw exception with message: If you wish to continue using the 'demo' key, please specify the base URL explicitly:
+OpenAiChatModel.builder().baseUrl("http://langchain4j.dev/demo/openai/v1").apiKey("demo").build();
+
+	at org.springframework.beans.factory.support.SimpleInstantiationStrategy.lambda$instantiate$0(SimpleInstantiationStrategy.java:199)
+	at org.springframework.beans.factory.support.SimpleInstantiationStrategy.instantiateWithFactoryMethod(SimpleInstantiationStrategy.java:88)
+	at org.springframework.beans.factory.support.SimpleInstantiationStrategy.instantiate(SimpleInstantiationStrategy.java:168)
+	at org.springframework.beans.factory.support.ConstructorResolver.instantiate(ConstructorResolver.java:653)
+	... 35 common frames omitted
+Caused by: java.lang.RuntimeException: If you wish to continue using the 'demo' key, please specify the base URL explicitly:
+OpenAiChatModel.builder().baseUrl("http://langchain4j.dev/demo/openai/v1").apiKey("demo").build();
+
+	at dev.langchain4j.model.openai.OpenAiChatModel.<init>(OpenAiChatModel.java:63)
+	at dev.langchain4j.model.openai.OpenAiChatModel$OpenAiChatModelBuilder.build(OpenAiChatModel.java:397)
+	at dev.langchain4j.openai.spring.AutoConfig.openAiChatModel(AutoConfig.java:88)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.springframework.beans.factory.support.SimpleInstantiationStrategy.lambda$instantiate$0(SimpleInstantiationStrategy.java:171)
+	... 38 common frames omitted
+2025-04-21 15:28:16.977 [Thread-5] WARN  c.a.nacos.common.notify.NotifyCenter - [NotifyCenter] Start destroying Publisher
+2025-04-21 15:28:16.977 [Thread-3] WARN  c.a.n.c.http.HttpClientBeanHolder - [HttpClientBeanHolder] Start destroying common HttpClient
+2025-04-21 15:28:16.977 [Thread-5] WARN  c.a.nacos.common.notify.NotifyCenter - [NotifyCenter] Destruction of the end
+2025-04-21 15:28:16.977 [Thread-3] WARN  c.a.n.c.http.HttpClientBeanHolder - [HttpClientBeanHolder] Destruction of the end
+2025-04-21 15:28:52.723 [main] INFO  c.a.nacos.client.utils.ParamUtil - [settings] [req-serv] nacos-server port:8848
+2025-04-21 15:28:52.723 [main] INFO  c.a.nacos.client.utils.ParamUtil - [settings] [http-client] connect timeout:1000
+2025-04-21 15:28:52.724 [main] INFO  c.a.nacos.client.utils.ParamUtil - PER_TASK_CONFIG_SIZE: 3000.0
+2025-04-21 15:28:52.735 [main] INFO  com.alibaba.nacos.common.labels - DefaultLabelsCollectorManager get labels.....
+2025-04-21 15:28:52.735 [main] INFO  com.alibaba.nacos.common.labels - Process LabelsCollector with [name:defaultNacosLabelsCollector]
+2025-04-21 15:28:52.735 [main] INFO  com.alibaba.nacos.common.labels - default nacos collect properties raw labels: null
+2025-04-21 15:28:52.735 [main] INFO  com.alibaba.nacos.common.labels - default nacos collect properties labels: {}
+2025-04-21 15:28:52.735 [main] INFO  com.alibaba.nacos.common.labels - default nacos collect jvm raw labels: null
+2025-04-21 15:28:52.735 [main] INFO  com.alibaba.nacos.common.labels - default nacos collect jvm labels: {}
+2025-04-21 15:28:52.735 [main] INFO  com.alibaba.nacos.common.labels - default nacos collect env raw labels: null
+2025-04-21 15:28:52.735 [main] INFO  com.alibaba.nacos.common.labels - default nacos collect env labels: {}
+2025-04-21 15:28:52.736 [main] INFO  com.alibaba.nacos.common.labels - DefaultLabelsCollectorManager get labels finished,labels :{}
+2025-04-21 15:28:52.738 [main] INFO  c.a.n.p.a.s.c.ClientAuthPluginManager - [ClientAuthPluginManager] Load ClientAuthService com.alibaba.nacos.client.auth.impl.NacosClientAuthServiceImpl success.
+2025-04-21 15:28:52.738 [main] INFO  c.a.n.p.a.s.c.ClientAuthPluginManager - [ClientAuthPluginManager] Load ClientAuthService com.alibaba.nacos.client.auth.ram.RamClientAuthServiceImpl success.
+2025-04-21 15:28:52.747 [Thread-2] INFO  c.a.n.c.a.r.i.CredentialWatcher - null No credential found
+2025-04-21 15:28:52.750 [main] INFO  c.a.n.c.c.i.LocalConfigInfoProcessor - LOCAL_SNAPSHOT_PATH:/Users/andy_mac/nacos/config
+2025-04-21 15:28:52.752 [main] INFO  c.alibaba.nacos.common.remote.client - [RpcClientFactory] create a new rpc client of a1a2547f-49c9-4196-b410-646284af423a_config-0
+2025-04-21 15:28:52.759 [main] INFO  c.alibaba.nacos.common.remote.client - [a1a2547f-49c9-4196-b410-646284af423a_config-0] Register server push request handler:com.alibaba.nacos.client.config.impl.ClientWorker$ConfigRpcTransportClient$$Lambda/0x00000004013a3570
+2025-04-21 15:28:52.759 [main] INFO  c.alibaba.nacos.common.remote.client - [a1a2547f-49c9-4196-b410-646284af423a_config-0] Register server push request handler:com.alibaba.nacos.client.config.impl.ClientWorker$ConfigRpcTransportClient$$Lambda/0x00000004013a3990
+2025-04-21 15:28:52.759 [main] INFO  c.alibaba.nacos.common.remote.client - [a1a2547f-49c9-4196-b410-646284af423a_config-0] Registry connection listener to current client:com.alibaba.nacos.client.config.impl.ClientWorker$ConfigRpcTransportClient$1
+2025-04-21 15:28:52.759 [main] INFO  c.alibaba.nacos.common.remote.client - [a1a2547f-49c9-4196-b410-646284af423a_config-0] RpcClient init, ServerListFactory = com.alibaba.nacos.client.config.impl.ClientWorker$ConfigRpcTransportClient$2
+2025-04-21 15:28:52.761 [main] INFO  c.alibaba.nacos.common.remote.client - [a1a2547f-49c9-4196-b410-646284af423a_config-0] Try to connect to server on start up, server: {serverIp = '127.0.0.1', server main port = 8848}
+2025-04-21 15:28:52.776 [main] INFO  c.a.n.c.r.client.grpc.GrpcClient - grpc client connection server:127.0.0.1 ip,serverPort:9848,grpcTslConfig:{"sslProvider":"","enableTls":false,"mutualAuthEnable":false,"trustAll":false}
+2025-04-21 15:28:53.000 [main] INFO  c.a.n.c.a.AbstractAbilityControlManager - Ready to get current node abilities...
+2025-04-21 15:28:53.000 [main] INFO  c.a.n.c.a.AbstractAbilityControlManager - Ready to initialize current node abilities, support modes: [SDK_CLIENT]
+2025-04-21 15:28:53.001 [main] INFO  c.a.n.c.a.AbstractAbilityControlManager - Initialize current abilities finish...
+2025-04-21 15:28:53.001 [main] INFO  c.a.n.c.a.d.NacosAbilityManagerHolder - [AbilityControlManager] Successfully initialize AbilityControlManager
+2025-04-21 15:28:53.012 [main] INFO  c.alibaba.nacos.common.remote.client - [a1a2547f-49c9-4196-b410-646284af423a_config-0] Success to connect to server [127.0.0.1:8848] on start up, connectionId = 1745220532956_127.0.0.1_61268
+2025-04-21 15:28:53.012 [com.alibaba.nacos.client.remote.worker.0] INFO  c.alibaba.nacos.common.remote.client - [a1a2547f-49c9-4196-b410-646284af423a_config-0] Notify connected event to listeners.
+2025-04-21 15:28:53.012 [com.alibaba.nacos.client.remote.worker.0] INFO  c.a.n.c.config.impl.ClientWorker - [a1a2547f-49c9-4196-b410-646284af423a_config-0] Connected,notify listen context...
+2025-04-21 15:28:53.012 [main] INFO  c.alibaba.nacos.common.remote.client - [a1a2547f-49c9-4196-b410-646284af423a_config-0] Register server push request handler:com.alibaba.nacos.common.remote.client.RpcClient$ConnectResetRequestHandler
+2025-04-21 15:28:53.012 [main] INFO  c.alibaba.nacos.common.remote.client - [a1a2547f-49c9-4196-b410-646284af423a_config-0] Register server push request handler:com.alibaba.nacos.common.remote.client.RpcClient$$Lambda/0x00000004014f35d8
+2025-04-21 15:28:53.031 [main] INFO  c.a.nacos.client.config.impl.Limiter - limitTime:5.0
+2025-04-21 15:28:53.045 [main] WARN  c.a.c.n.c.NacosPropertySourceBuilder - Ignore the empty nacos configuration and get it based on dataId[x-payment] & group[DEFAULT_GROUP]
+2025-04-21 15:28:53.049 [main] WARN  c.a.c.n.c.NacosPropertySourceBuilder - Ignore the empty nacos configuration and get it based on dataId[x-payment.properties] & group[DEFAULT_GROUP]
+2025-04-21 15:28:53.049 [main] INFO  o.s.c.b.c.PropertySourceBootstrapConfiguration - Located property source: [BootstrapPropertySource {name='bootstrapProperties-x-payment.properties,DEFAULT_GROUP'}, BootstrapPropertySource {name='bootstrapProperties-x-payment,DEFAULT_GROUP'}]
+2025-04-21 15:28:53.058 [main] INFO  xCloud.XPaymentApplication - No active profile set, falling back to 1 default profile: "default"
+2025-04-21 15:28:53.409 [main] INFO  o.s.cloud.context.scope.GenericScope - BeanFactory id=0f9a4990-cbf8-344e-a3ae-ac9fd1fa81b8
+2025-04-21 15:28:53.516 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8077 (http)
+2025-04-21 15:28:53.523 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-04-21 15:28:53.523 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.36]
+2025-04-21 15:28:53.547 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-04-21 15:28:53.547 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 480 ms
+2025-04-21 15:28:53.641 [main] INFO  o.s.c.o.FeignClientFactoryBean - For 'order-service' URL not provided. Will try picking an instance via load-balancing.
+2025-04-21 15:28:53.727 [main] WARN  o.s.b.w.s.c.AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'chatController' defined in file [/Users/andy_mac/Documents/CodeSpace/cloud-def/x-payment/target/classes/xCloud/controller/ChatController.class]: Unsatisfied dependency expressed through constructor parameter 0: Error creating bean with name 'openAiChatModel' defined in class path resource [dev/langchain4j/openai/spring/AutoConfig.class]: Failed to instantiate [dev.langchain4j.model.openai.OpenAiChatModel]: Factory method 'openAiChatModel' threw exception with message: If you wish to continue using the 'demo' key, please specify the base URL explicitly:
+OpenAiChatModel.builder().baseUrl("http://langchain4j.dev/demo/openai/v1").apiKey("demo").build();
+
+2025-04-21 15:28:53.728 [main] WARN  o.s.c.a.AnnotationConfigApplicationContext - Exception thrown from ApplicationListener handling ContextClosedEvent
+org.springframework.beans.factory.BeanCreationNotAllowedException: Error creating bean with name 'applicationTaskExecutor': Singleton bean creation not allowed while singletons of this factory are in destruction (Do not request a bean from a BeanFactory in a destroy method implementation!)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:275)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:334)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:204)
+	at org.springframework.context.event.AbstractApplicationEventMulticaster.retrieveApplicationListeners(AbstractApplicationEventMulticaster.java:267)
+	at org.springframework.context.event.AbstractApplicationEventMulticaster.getApplicationListeners(AbstractApplicationEventMulticaster.java:223)
+	at org.springframework.context.event.SimpleApplicationEventMulticaster.multicastEvent(SimpleApplicationEventMulticaster.java:145)
+	at org.springframework.context.support.AbstractApplicationContext.publishEvent(AbstractApplicationContext.java:454)
+	at org.springframework.context.support.AbstractApplicationContext.publishEvent(AbstractApplicationContext.java:460)
+	at org.springframework.context.support.AbstractApplicationContext.publishEvent(AbstractApplicationContext.java:387)
+	at org.springframework.context.support.AbstractApplicationContext.doClose(AbstractApplicationContext.java:1163)
+	at org.springframework.context.support.AbstractApplicationContext.close(AbstractApplicationContext.java:1126)
+	at org.springframework.cloud.context.named.NamedContextFactory.destroy(NamedContextFactory.java:114)
+	at org.springframework.beans.factory.support.DisposableBeanAdapter.destroy(DisposableBeanAdapter.java:211)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.destroyBean(DefaultSingletonBeanRegistry.java:686)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.destroySingleton(DefaultSingletonBeanRegistry.java:643)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.destroySingleton(DefaultListableBeanFactory.java:1368)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.destroySingletons(DefaultSingletonBeanRegistry.java:602)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.destroySingletons(DefaultListableBeanFactory.java:1361)
+	at org.springframework.context.support.AbstractApplicationContext.destroyBeans(AbstractApplicationContext.java:1219)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:640)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146)
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:752)
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:439)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:318)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1361)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1350)
+	at xCloud.XPaymentApplication.main(XPaymentApplication.java:24)
+2025-04-21 15:28:53.729 [main] INFO  o.a.catalina.core.StandardService - Stopping service [Tomcat]
+2025-04-21 15:28:53.739 [main] INFO  o.s.b.a.l.ConditionEvaluationReportLogger - 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2025-04-21 15:28:53.747 [main] ERROR o.s.boot.SpringApplication - Application run failed
+org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'chatController' defined in file [/Users/andy_mac/Documents/CodeSpace/cloud-def/x-payment/target/classes/xCloud/controller/ChatController.class]: Unsatisfied dependency expressed through constructor parameter 0: Error creating bean with name 'openAiChatModel' defined in class path resource [dev/langchain4j/openai/spring/AutoConfig.class]: Failed to instantiate [dev.langchain4j.model.openai.OpenAiChatModel]: Factory method 'openAiChatModel' threw exception with message: If you wish to continue using the 'demo' key, please specify the base URL explicitly:
+OpenAiChatModel.builder().baseUrl("http://langchain4j.dev/demo/openai/v1").apiKey("demo").build();
+
+	at org.springframework.beans.factory.support.ConstructorResolver.createArgumentArray(ConstructorResolver.java:804)
+	at org.springframework.beans.factory.support.ConstructorResolver.autowireConstructor(ConstructorResolver.java:240)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.autowireConstructor(AbstractAutowireCapableBeanFactory.java:1381)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1218)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:563)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:523)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:336)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:307)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:334)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:199)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.instantiateSingleton(DefaultListableBeanFactory.java:1122)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingleton(DefaultListableBeanFactory.java:1093)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:1030)
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:987)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:627)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146)
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:752)
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:439)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:318)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1361)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1350)
+	at xCloud.XPaymentApplication.main(XPaymentApplication.java:24)
+Caused by: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'openAiChatModel' defined in class path resource [dev/langchain4j/openai/spring/AutoConfig.class]: Failed to instantiate [dev.langchain4j.model.openai.OpenAiChatModel]: Factory method 'openAiChatModel' threw exception with message: If you wish to continue using the 'demo' key, please specify the base URL explicitly:
+OpenAiChatModel.builder().baseUrl("http://langchain4j.dev/demo/openai/v1").apiKey("demo").build();
+
+	at org.springframework.beans.factory.support.ConstructorResolver.instantiate(ConstructorResolver.java:657)
+	at org.springframework.beans.factory.support.ConstructorResolver.instantiateUsingFactoryMethod(ConstructorResolver.java:645)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.instantiateUsingFactoryMethod(AbstractAutowireCapableBeanFactory.java:1361)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1191)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:563)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:523)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:336)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:307)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:334)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:199)
+	at org.springframework.beans.factory.config.DependencyDescriptor.resolveCandidate(DependencyDescriptor.java:254)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.doResolveDependency(DefaultListableBeanFactory.java:1631)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.resolveDependency(DefaultListableBeanFactory.java:1519)
+	at org.springframework.beans.factory.support.ConstructorResolver.resolveAutowiredArgument(ConstructorResolver.java:913)
+	at org.springframework.beans.factory.support.ConstructorResolver.createArgumentArray(ConstructorResolver.java:791)
+	... 21 common frames omitted
+Caused by: org.springframework.beans.BeanInstantiationException: Failed to instantiate [dev.langchain4j.model.openai.OpenAiChatModel]: Factory method 'openAiChatModel' threw exception with message: If you wish to continue using the 'demo' key, please specify the base URL explicitly:
+OpenAiChatModel.builder().baseUrl("http://langchain4j.dev/demo/openai/v1").apiKey("demo").build();
+
+	at org.springframework.beans.factory.support.SimpleInstantiationStrategy.lambda$instantiate$0(SimpleInstantiationStrategy.java:199)
+	at org.springframework.beans.factory.support.SimpleInstantiationStrategy.instantiateWithFactoryMethod(SimpleInstantiationStrategy.java:88)
+	at org.springframework.beans.factory.support.SimpleInstantiationStrategy.instantiate(SimpleInstantiationStrategy.java:168)
+	at org.springframework.beans.factory.support.ConstructorResolver.instantiate(ConstructorResolver.java:653)
+	... 35 common frames omitted
+Caused by: java.lang.RuntimeException: If you wish to continue using the 'demo' key, please specify the base URL explicitly:
+OpenAiChatModel.builder().baseUrl("http://langchain4j.dev/demo/openai/v1").apiKey("demo").build();
+
+	at dev.langchain4j.model.openai.OpenAiChatModel.<init>(OpenAiChatModel.java:63)
+	at dev.langchain4j.model.openai.OpenAiChatModel$OpenAiChatModelBuilder.build(OpenAiChatModel.java:397)
+	at dev.langchain4j.openai.spring.AutoConfig.openAiChatModel(AutoConfig.java:88)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.springframework.beans.factory.support.SimpleInstantiationStrategy.lambda$instantiate$0(SimpleInstantiationStrategy.java:171)
+	... 38 common frames omitted
+2025-04-21 15:28:53.747 [Thread-3] WARN  c.a.n.c.http.HttpClientBeanHolder - [HttpClientBeanHolder] Start destroying common HttpClient
+2025-04-21 15:28:53.747 [Thread-5] WARN  c.a.nacos.common.notify.NotifyCenter - [NotifyCenter] Start destroying Publisher
+2025-04-21 15:29:06.956 [main] INFO  c.a.nacos.client.utils.ParamUtil - [settings] [req-serv] nacos-server port:8848
+2025-04-21 15:29:06.957 [main] INFO  c.a.nacos.client.utils.ParamUtil - [settings] [http-client] connect timeout:1000
+2025-04-21 15:29:06.957 [main] INFO  c.a.nacos.client.utils.ParamUtil - PER_TASK_CONFIG_SIZE: 3000.0
+2025-04-21 15:29:06.966 [main] INFO  com.alibaba.nacos.common.labels - DefaultLabelsCollectorManager get labels.....
+2025-04-21 15:29:06.966 [main] INFO  com.alibaba.nacos.common.labels - Process LabelsCollector with [name:defaultNacosLabelsCollector]
+2025-04-21 15:29:06.966 [main] INFO  com.alibaba.nacos.common.labels - default nacos collect properties raw labels: null
+2025-04-21 15:29:06.966 [main] INFO  com.alibaba.nacos.common.labels - default nacos collect properties labels: {}
+2025-04-21 15:29:06.966 [main] INFO  com.alibaba.nacos.common.labels - default nacos collect jvm raw labels: null
+2025-04-21 15:29:06.966 [main] INFO  com.alibaba.nacos.common.labels - default nacos collect jvm labels: {}
+2025-04-21 15:29:06.966 [main] INFO  com.alibaba.nacos.common.labels - default nacos collect env raw labels: null
+2025-04-21 15:29:06.966 [main] INFO  com.alibaba.nacos.common.labels - default nacos collect env labels: {}
+2025-04-21 15:29:06.966 [main] INFO  com.alibaba.nacos.common.labels - DefaultLabelsCollectorManager get labels finished,labels :{}
+2025-04-21 15:29:06.968 [main] INFO  c.a.n.p.a.s.c.ClientAuthPluginManager - [ClientAuthPluginManager] Load ClientAuthService com.alibaba.nacos.client.auth.impl.NacosClientAuthServiceImpl success.
+2025-04-21 15:29:06.968 [main] INFO  c.a.n.p.a.s.c.ClientAuthPluginManager - [ClientAuthPluginManager] Load ClientAuthService com.alibaba.nacos.client.auth.ram.RamClientAuthServiceImpl success.
+2025-04-21 15:29:06.976 [Thread-2] INFO  c.a.n.c.a.r.i.CredentialWatcher - null No credential found
+2025-04-21 15:29:06.978 [main] INFO  c.a.n.c.c.i.LocalConfigInfoProcessor - LOCAL_SNAPSHOT_PATH:/Users/andy_mac/nacos/config
+2025-04-21 15:29:06.980 [main] INFO  c.alibaba.nacos.common.remote.client - [RpcClientFactory] create a new rpc client of c84a964e-55e6-413e-9698-177630841a65_config-0
+2025-04-21 15:29:06.986 [main] INFO  c.alibaba.nacos.common.remote.client - [c84a964e-55e6-413e-9698-177630841a65_config-0] Register server push request handler:com.alibaba.nacos.client.config.impl.ClientWorker$ConfigRpcTransportClient$$Lambda/0x0000007001384268
+2025-04-21 15:29:06.986 [main] INFO  c.alibaba.nacos.common.remote.client - [c84a964e-55e6-413e-9698-177630841a65_config-0] Register server push request handler:com.alibaba.nacos.client.config.impl.ClientWorker$ConfigRpcTransportClient$$Lambda/0x0000007001384688
+2025-04-21 15:29:06.986 [main] INFO  c.alibaba.nacos.common.remote.client - [c84a964e-55e6-413e-9698-177630841a65_config-0] Registry connection listener to current client:com.alibaba.nacos.client.config.impl.ClientWorker$ConfigRpcTransportClient$1
+2025-04-21 15:29:06.986 [main] INFO  c.alibaba.nacos.common.remote.client - [c84a964e-55e6-413e-9698-177630841a65_config-0] RpcClient init, ServerListFactory = com.alibaba.nacos.client.config.impl.ClientWorker$ConfigRpcTransportClient$2
+2025-04-21 15:29:06.988 [main] INFO  c.alibaba.nacos.common.remote.client - [c84a964e-55e6-413e-9698-177630841a65_config-0] Try to connect to server on start up, server: {serverIp = '127.0.0.1', server main port = 8848}
+2025-04-21 15:29:07.004 [main] INFO  c.a.n.c.r.client.grpc.GrpcClient - grpc client connection server:127.0.0.1 ip,serverPort:9848,grpcTslConfig:{"sslProvider":"","enableTls":false,"mutualAuthEnable":false,"trustAll":false}
+2025-04-21 15:29:07.218 [main] INFO  c.a.n.c.a.AbstractAbilityControlManager - Ready to get current node abilities...
+2025-04-21 15:29:07.219 [main] INFO  c.a.n.c.a.AbstractAbilityControlManager - Ready to initialize current node abilities, support modes: [SDK_CLIENT]
+2025-04-21 15:29:07.219 [main] INFO  c.a.n.c.a.AbstractAbilityControlManager - Initialize current abilities finish...
+2025-04-21 15:29:07.219 [main] INFO  c.a.n.c.a.d.NacosAbilityManagerHolder - [AbilityControlManager] Successfully initialize AbilityControlManager
+2025-04-21 15:29:07.229 [main] INFO  c.alibaba.nacos.common.remote.client - [c84a964e-55e6-413e-9698-177630841a65_config-0] Success to connect to server [127.0.0.1:8848] on start up, connectionId = 1745220547177_127.0.0.1_61295
+2025-04-21 15:29:07.229 [com.alibaba.nacos.client.remote.worker.0] INFO  c.alibaba.nacos.common.remote.client - [c84a964e-55e6-413e-9698-177630841a65_config-0] Notify connected event to listeners.
+2025-04-21 15:29:07.230 [com.alibaba.nacos.client.remote.worker.0] INFO  c.a.n.c.config.impl.ClientWorker - [c84a964e-55e6-413e-9698-177630841a65_config-0] Connected,notify listen context...
+2025-04-21 15:29:07.230 [main] INFO  c.alibaba.nacos.common.remote.client - [c84a964e-55e6-413e-9698-177630841a65_config-0] Register server push request handler:com.alibaba.nacos.common.remote.client.RpcClient$ConnectResetRequestHandler
+2025-04-21 15:29:07.230 [main] INFO  c.alibaba.nacos.common.remote.client - [c84a964e-55e6-413e-9698-177630841a65_config-0] Register server push request handler:com.alibaba.nacos.common.remote.client.RpcClient$$Lambda/0x00000070014d6880
+2025-04-21 15:29:07.248 [main] INFO  c.a.nacos.client.config.impl.Limiter - limitTime:5.0
+2025-04-21 15:29:07.258 [main] WARN  c.a.c.n.c.NacosPropertySourceBuilder - Ignore the empty nacos configuration and get it based on dataId[x-payment] & group[DEFAULT_GROUP]
+2025-04-21 15:29:07.262 [main] WARN  c.a.c.n.c.NacosPropertySourceBuilder - Ignore the empty nacos configuration and get it based on dataId[x-payment.properties] & group[DEFAULT_GROUP]
+2025-04-21 15:29:07.262 [main] INFO  o.s.c.b.c.PropertySourceBootstrapConfiguration - Located property source: [BootstrapPropertySource {name='bootstrapProperties-x-payment.properties,DEFAULT_GROUP'}, BootstrapPropertySource {name='bootstrapProperties-x-payment,DEFAULT_GROUP'}]
+2025-04-21 15:29:07.271 [main] INFO  xCloud.XPaymentApplication - No active profile set, falling back to 1 default profile: "default"
+2025-04-21 15:29:07.614 [main] INFO  o.s.cloud.context.scope.GenericScope - BeanFactory id=0f9a4990-cbf8-344e-a3ae-ac9fd1fa81b8
+2025-04-21 15:29:07.727 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8077 (http)
+2025-04-21 15:29:07.735 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-04-21 15:29:07.736 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.36]
+2025-04-21 15:29:07.769 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-04-21 15:29:07.769 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 489 ms
+2025-04-21 15:29:07.867 [main] INFO  o.s.c.o.FeignClientFactoryBean - For 'order-service' URL not provided. Will try picking an instance via load-balancing.
+2025-04-21 15:29:07.957 [main] WARN  o.s.b.w.s.c.AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'chatController' defined in file [/Users/andy_mac/Documents/CodeSpace/cloud-def/x-payment/target/classes/xCloud/controller/ChatController.class]: Unsatisfied dependency expressed through constructor parameter 0: Error creating bean with name 'openAiChatModel' defined in class path resource [dev/langchain4j/openai/spring/AutoConfig.class]: Failed to instantiate [dev.langchain4j.model.openai.OpenAiChatModel]: Factory method 'openAiChatModel' threw exception with message: If you wish to continue using the 'demo' key, please specify the base URL explicitly:
+OpenAiChatModel.builder().baseUrl("http://langchain4j.dev/demo/openai/v1").apiKey("demo").build();
+
+2025-04-21 15:29:07.958 [main] WARN  o.s.c.a.AnnotationConfigApplicationContext - Exception thrown from ApplicationListener handling ContextClosedEvent
+org.springframework.beans.factory.BeanCreationNotAllowedException: Error creating bean with name 'applicationTaskExecutor': Singleton bean creation not allowed while singletons of this factory are in destruction (Do not request a bean from a BeanFactory in a destroy method implementation!)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:275)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:334)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:204)
+	at org.springframework.context.event.AbstractApplicationEventMulticaster.retrieveApplicationListeners(AbstractApplicationEventMulticaster.java:267)
+	at org.springframework.context.event.AbstractApplicationEventMulticaster.getApplicationListeners(AbstractApplicationEventMulticaster.java:223)
+	at org.springframework.context.event.SimpleApplicationEventMulticaster.multicastEvent(SimpleApplicationEventMulticaster.java:145)
+	at org.springframework.context.support.AbstractApplicationContext.publishEvent(AbstractApplicationContext.java:454)
+	at org.springframework.context.support.AbstractApplicationContext.publishEvent(AbstractApplicationContext.java:460)
+	at org.springframework.context.support.AbstractApplicationContext.publishEvent(AbstractApplicationContext.java:387)
+	at org.springframework.context.support.AbstractApplicationContext.doClose(AbstractApplicationContext.java:1163)
+	at org.springframework.context.support.AbstractApplicationContext.close(AbstractApplicationContext.java:1126)
+	at org.springframework.cloud.context.named.NamedContextFactory.destroy(NamedContextFactory.java:114)
+	at org.springframework.beans.factory.support.DisposableBeanAdapter.destroy(DisposableBeanAdapter.java:211)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.destroyBean(DefaultSingletonBeanRegistry.java:686)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.destroySingleton(DefaultSingletonBeanRegistry.java:643)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.destroySingleton(DefaultListableBeanFactory.java:1368)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.destroySingletons(DefaultSingletonBeanRegistry.java:602)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.destroySingletons(DefaultListableBeanFactory.java:1361)
+	at org.springframework.context.support.AbstractApplicationContext.destroyBeans(AbstractApplicationContext.java:1219)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:640)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146)
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:752)
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:439)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:318)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1361)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1350)
+	at xCloud.XPaymentApplication.main(XPaymentApplication.java:24)
+2025-04-21 15:29:07.959 [main] INFO  o.a.catalina.core.StandardService - Stopping service [Tomcat]
+2025-04-21 15:29:07.968 [main] INFO  o.s.b.a.l.ConditionEvaluationReportLogger - 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2025-04-21 15:29:07.976 [main] ERROR o.s.boot.SpringApplication - Application run failed
+org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'chatController' defined in file [/Users/andy_mac/Documents/CodeSpace/cloud-def/x-payment/target/classes/xCloud/controller/ChatController.class]: Unsatisfied dependency expressed through constructor parameter 0: Error creating bean with name 'openAiChatModel' defined in class path resource [dev/langchain4j/openai/spring/AutoConfig.class]: Failed to instantiate [dev.langchain4j.model.openai.OpenAiChatModel]: Factory method 'openAiChatModel' threw exception with message: If you wish to continue using the 'demo' key, please specify the base URL explicitly:
+OpenAiChatModel.builder().baseUrl("http://langchain4j.dev/demo/openai/v1").apiKey("demo").build();
+
+	at org.springframework.beans.factory.support.ConstructorResolver.createArgumentArray(ConstructorResolver.java:804)
+	at org.springframework.beans.factory.support.ConstructorResolver.autowireConstructor(ConstructorResolver.java:240)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.autowireConstructor(AbstractAutowireCapableBeanFactory.java:1381)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1218)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:563)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:523)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:336)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:307)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:334)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:199)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.instantiateSingleton(DefaultListableBeanFactory.java:1122)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingleton(DefaultListableBeanFactory.java:1093)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:1030)
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:987)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:627)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146)
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:752)
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:439)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:318)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1361)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1350)
+	at xCloud.XPaymentApplication.main(XPaymentApplication.java:24)
+Caused by: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'openAiChatModel' defined in class path resource [dev/langchain4j/openai/spring/AutoConfig.class]: Failed to instantiate [dev.langchain4j.model.openai.OpenAiChatModel]: Factory method 'openAiChatModel' threw exception with message: If you wish to continue using the 'demo' key, please specify the base URL explicitly:
+OpenAiChatModel.builder().baseUrl("http://langchain4j.dev/demo/openai/v1").apiKey("demo").build();
+
+	at org.springframework.beans.factory.support.ConstructorResolver.instantiate(ConstructorResolver.java:657)
+	at org.springframework.beans.factory.support.ConstructorResolver.instantiateUsingFactoryMethod(ConstructorResolver.java:645)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.instantiateUsingFactoryMethod(AbstractAutowireCapableBeanFactory.java:1361)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1191)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:563)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:523)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:336)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:307)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:334)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:199)
+	at org.springframework.beans.factory.config.DependencyDescriptor.resolveCandidate(DependencyDescriptor.java:254)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.doResolveDependency(DefaultListableBeanFactory.java:1631)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.resolveDependency(DefaultListableBeanFactory.java:1519)
+	at org.springframework.beans.factory.support.ConstructorResolver.resolveAutowiredArgument(ConstructorResolver.java:913)
+	at org.springframework.beans.factory.support.ConstructorResolver.createArgumentArray(ConstructorResolver.java:791)
+	... 21 common frames omitted
+Caused by: org.springframework.beans.BeanInstantiationException: Failed to instantiate [dev.langchain4j.model.openai.OpenAiChatModel]: Factory method 'openAiChatModel' threw exception with message: If you wish to continue using the 'demo' key, please specify the base URL explicitly:
+OpenAiChatModel.builder().baseUrl("http://langchain4j.dev/demo/openai/v1").apiKey("demo").build();
+
+	at org.springframework.beans.factory.support.SimpleInstantiationStrategy.lambda$instantiate$0(SimpleInstantiationStrategy.java:199)
+	at org.springframework.beans.factory.support.SimpleInstantiationStrategy.instantiateWithFactoryMethod(SimpleInstantiationStrategy.java:88)
+	at org.springframework.beans.factory.support.SimpleInstantiationStrategy.instantiate(SimpleInstantiationStrategy.java:168)
+	at org.springframework.beans.factory.support.ConstructorResolver.instantiate(ConstructorResolver.java:653)
+	... 35 common frames omitted
+Caused by: java.lang.RuntimeException: If you wish to continue using the 'demo' key, please specify the base URL explicitly:
+OpenAiChatModel.builder().baseUrl("http://langchain4j.dev/demo/openai/v1").apiKey("demo").build();
+
+	at dev.langchain4j.model.openai.OpenAiChatModel.<init>(OpenAiChatModel.java:63)
+	at dev.langchain4j.model.openai.OpenAiChatModel$OpenAiChatModelBuilder.build(OpenAiChatModel.java:397)
+	at dev.langchain4j.openai.spring.AutoConfig.openAiChatModel(AutoConfig.java:88)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.springframework.beans.factory.support.SimpleInstantiationStrategy.lambda$instantiate$0(SimpleInstantiationStrategy.java:171)
+	... 38 common frames omitted
+2025-04-21 15:29:07.977 [Thread-3] WARN  c.a.n.c.http.HttpClientBeanHolder - [HttpClientBeanHolder] Start destroying common HttpClient
+2025-04-21 15:29:07.977 [Thread-5] WARN  c.a.nacos.common.notify.NotifyCenter - [NotifyCenter] Start destroying Publisher
+2025-04-21 15:29:07.977 [Thread-5] WARN  c.a.nacos.common.notify.NotifyCenter - [NotifyCenter] Destruction of the end
+2025-04-21 15:29:07.977 [Thread-3] WARN  c.a.n.c.http.HttpClientBeanHolder - [HttpClientBeanHolder] Destruction of the end

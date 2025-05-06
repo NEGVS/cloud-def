@@ -24,9 +24,7 @@ spring:
 langchain4j:
   open-ai:
     chat-model:
-#      api-key: ${OPENAI_API_KEY}
-#      api-key: "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"
-      api-key: "xxxxxx"
+      api-key: ${OPENAI_API_KEY}
       model-name: "gpt-4o-mini"
     #      log-requests: true
     #If you need an instance of a StreamingChatLanguageModel, use the streaming-chat-model instead of the chat-model properties:

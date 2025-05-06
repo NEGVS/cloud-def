@@ -60,8 +60,7 @@ logging:
 langchain4j:
   open-ai:
     chat-model:
-      #      api-key: ${OPENAI_API_KEY}
-      api-key: "demo"
+      api-key: ${OPENAI_API_KEY}
       model-name: "gpt-4o-mini"
 #      log-requests: true
     #If you need an instance of a StreamingChatLanguageModel, use the streaming-chat-model instead of the chat-model properties:

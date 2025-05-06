@@ -10,7 +10,9 @@
     </parent>
     <!--公共配置-->
     <artifactId>x-config</artifactId>
-
+    <version>0.0.1-SNAPSHOT</version>
+    <packaging>jar</packaging>
+    <description>Configuration module (no main class)</description>
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
@@ -23,6 +25,7 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
@@ -40,7 +43,7 @@
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
         </dependency>
-        <!--        nacos, config-->
+<!--                nacos, config-->
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
@@ -73,6 +76,35 @@
             <artifactId>jackson-databind</artifactId>
         </dependency>
 
+        <!-- 仅添加需要的依赖 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
+        </dependency>
+
     </dependencies>
 
+<!--  1-config 模块是一个非可运行的纯配置模块（只包含配置类、工具类等，不需要 main 启动
+  移除所有与可执行 JAR 相关的插件（如 spring-boot-maven-plugin）：
+  2-确保打包类型是普通的 jar（不是可执行的 spring-boot 模块）：
+  <packaging>jar</packaging>
+
+  问题：IDE 仍然提示找不到主类
+在 IDEA/Eclipse 中：
+
+右键模块 → Mark Directory as → Sources Root
+
+确保没有误标记为 Spring Boot 模块
+  -->
+<!--    <build>-->
+<!--        <plugins>-->
+<!--            &lt;!&ndash; 仅保留标准编译插件 &ndash;&gt;-->
+<!--            <plugin>-->
+<!--                <groupId>org.apache.maven.plugins</groupId>-->
+<!--                <artifactId>maven-compiler-plugin</artifactId>-->
+<!--                <version>3.8.1</version>-->
+<!--            </plugin>-->
+<!--        </plugins>-->
+<!--    </build>-->
 </project>

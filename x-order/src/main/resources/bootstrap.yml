@@ -6,6 +6,7 @@ spring:
   application:
     name: shop-order
   cloud:
+
     nacos:
       config:
         namespace:
@@ -17,3 +18,19 @@ spring:
 #shop-order:
 #  ribbon:
 #    NFLoadBalancerRuleClassName: com.netflix.loadbalancer.RoundRobinRule
+
+
+#spring:
+#cloud:
+#sentinel:
+#transport:
+#port: 9999 #跟控制台交流的端口,随意指定一个未使用的端口即可
+#dashboard: localhost:8080 # 指定控制台服务的地址
+
+#配置文件中关闭sentinel的CommonFilter实例化
+#spring:
+#cloud:
+#sentinel:
+#filter:
+#enabled: false
+

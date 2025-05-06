@@ -24,15 +24,12 @@ public class Merchants implements Serializable {
 	@Serial
 	@TableField(exist = false)
 	private static final long serialVersionUID = 1L;
-
+//1-增加密码
+//	2-删除userid
 	@TableId(type = IdType.AUTO)
 	@Schema(name = "merchant_id",description = "商家ID")
 	@TableField("merchant_id")
 	private Integer merchant_id;
-
-	@Schema(name = "user_id",description = "商家用户ID")
-	@TableField("user_id")
-	private String user_id;
 
 	@Schema(name = "name",description = "商家名称")
 	@TableField("name")

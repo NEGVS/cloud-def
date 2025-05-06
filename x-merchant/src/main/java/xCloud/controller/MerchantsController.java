@@ -41,7 +41,7 @@ import java.util.Objects;
  * @ClassName MerchantsController
  */
 @RestController
-@RequestMapping("biz/merchants")
+@RequestMapping("/merchants")
 @Slf4j
 @Tag(name = "Merchants接口", description = "Merchants接口")
 public class MerchantsController {
@@ -56,13 +56,13 @@ public class MerchantsController {
      * @return 查询结果
      */
     @Operation(summary = "1.新增")
-    @Parameters(
-            value = {
-                    @Parameter(name = "merchantsName", description = "商户名称", required = true),
-                    @Parameter(name = "merchantsCode", description = "商户编码", required = true),
-                    @Parameter(name = "merchantsType", description = "商户类型", required = true),
-            }
-    )
+//    @Parameters(
+//            value = {
+//                    @Parameter(name = "name", description = "商户名称", required = true),
+//                    @Parameter(name = "logo", description = "logo", required = true),
+//                    @Parameter(name = "address", description = "address", required = true),
+//            }
+//    )
     @ApiResponse(responseCode = "200", description = "新增成功", content = @Content(schema = @Schema(implementation = Merchants.class)))
     @PostMapping("/add")
     public ResultEntity<Merchants> add(@RequestBody Merchants dto) {
@@ -114,17 +114,17 @@ public class MerchantsController {
     }
 
     /**
-     * 4-查询-列表
+     * 4.1-查询-列表--user use
      *
      * @param dto 列表搜索
-     * @return 列表
+     * @return 列表--merchants
      */
-    @Operation(summary = "4.获取列表-包含商品")
+    @Operation(summary = "4.1-获取列表-包含商品")
     @ApiResponse(responseCode = "200", description = "获取成功", content = @Content(schema = @Schema(implementation = MerchantsVO.class)))
-    @PostMapping(value = "/listMerchantAndProduct")
-    public ResultEntity<List<MerchantsVO>> listMerchantAndProduct(@RequestBody MerchantsDTO dto) {
+    @PostMapping(value = "/listMerchants")
+    public ResultEntity<List<Merchants>> listMerchants(@RequestBody MerchantsDTO dto) {
         log.info("列表查询参数：{}", JSONUtil.toJsonStr(dto));
-        List<MerchantsVO> merchantsWithProducts = merchantsService.listMerchantAndProduct(dto);
+        List<Merchants> merchantsWithProducts = merchantsService.listMerchantAndProduct(dto);
         return ResultEntity.success(merchantsWithProducts);
     }
 

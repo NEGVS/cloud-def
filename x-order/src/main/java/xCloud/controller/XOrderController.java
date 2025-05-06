@@ -1,6 +1,8 @@
 package xCloud.controller;
 
 import cn.hutool.core.util.ObjectUtil;
+import com.alibaba.csp.sentinel.annotation.SentinelResource;
+import com.alibaba.csp.sentinel.slots.block.BlockException;
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
@@ -34,6 +36,7 @@ import xCloud.feign.PaymentFeignClient;
 import xCloud.service.ProductService;
 import xCloud.service.XOrdersService;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -56,7 +59,7 @@ public class XOrderController {
     @Resource
     private ProductService productService;
 
-    //   DiscoveryClient是专门负责服务注册和发现的，我们可以通过它获取到注册到注册中心的所有服务
+    //DiscoveryClient是专门负责服务注册和发现的，可以通过它获取到注册到注册中心的所有服务
     @Autowired
     private PaymentFeignClient paymentClient;
 
@@ -74,6 +77,7 @@ public class XOrderController {
 
     /**
      * 更新订单状态--订单服务端点（示例）
+     *
      * @param orderId
      * @param status
      * @param transactionId
@@ -141,7 +145,8 @@ public class XOrderController {
     }
 
     /**
-     * create order
+     * 1-create order
+     * 根据商品ID，进行创建订单
      *
      * @param pid pid
      * @return order
@@ -151,36 +156,43 @@ public class XOrderController {
     public XOrders createOrder(@PathVariable("pid") String pid) {
         log.info("\n>>客户下单，调用商品微服务查询商品信息---");
         XOrders order1 = orderService.createOrder(pid);
+        log.info("\n>>创建订单成功：{}", JSON.toJSONString(order1));
         return order1;
     }
 
     /**
-     * create order by Fegin
+     * 1.1-模拟一个高并发的场景问题测试 1
      *
      * @param pid pid
      * @return order
      */
-    @Operation(summary = "Get user by ID", description = "Returns a single user based on their ID")
-    @GetMapping("/create/fegin/{pid}")
+    @Operation(summary = "模拟高并发场景-创建订单", description = "模拟一个高并发的场景问题测试")
+    @GetMapping("/create/prod/{pid}")
     public XOrders createOrder2(@PathVariable("pid") String pid) {
         log.info("\n>>客户下单，调用商品微服务查询商品信息---");
+
         log.info("\n>>----通过fegin调用商品微服务---");
         XProducts product = productService.findById(pid);
 
-        log.info("\n查询结果: " + JSON.toJSONString(product));
+        log.info("\n查询到{}的商品信息内容是{}", pid, JSON.toJSONString(product));
+
         try {
-            log.info("\n>>-模拟一个高并发的场景---sleep 2s---");
+            log.info("\n>>-模拟网络延迟，一个高并发的场景---sleep 2s---");
             Thread.sleep(2000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        // 创建订单
         XOrders order = new XOrders();
         order.setOrder_id(IdWorker.getId());
         order.setUser_id(1L);
-        assert product != null;
-        //System.out.println( "------product.getProductId() = " + product.getProductId() );
         order.setMerchant_id(1);
-        order.setAmount(product.getPrice());
+
+        if (product != null && product.getPrice() != null) {
+            order.setAmount(product.getPrice());
+        } else {
+            order.setAmount(new BigDecimal(12));
+        }
         boolean save = orderService.save(order);
         if (save) {
             log.info("\n>>----下单成功---");
@@ -191,12 +203,92 @@ public class XOrderController {
         return order;
     }
 
+    /**
+     * 1.3-模拟一个高并发的场景问题测试 1.2
+     *
+     * @return
+     */
     @GetMapping("/message")
     public String message() {
         return "Hello World,模拟一个高并发的场景问题测试";
     }
 
 
+    /**
+     * 1.4-测试sentinel--/Users/andy_mac/Documents/CodeSpace/andy_softWare/sentinel/sentinel-dashboard-1.8.8.jar
+     *
+     * @return
+     */
+    @GetMapping("/message1")
+    public String message1() {
+        orderService.message();
+        return "message1 测试sentinel";
+    }
+
+    /**
+     * 1.4-测试sentinel
+     *
+     * @return
+     */
+    @GetMapping("/message2")
+    public String message2() {
+        orderService.message();
+        return "message2 测试sentinel";
+    }
+
+    /**
+     * 1.5-测试sentinel
+     *
+     * @return
+     */
+    int i = 0;
+    @GetMapping("/message3")
+    @SentinelResource(value = "message3",
+            blockHandler = "blockHandlerForMessage3",//发生BlockException时进入的方法
+            fallback = "fallbackForMessage3")//发生Throwable时进入的方法
+    public String message3() {
+        i++;
+        //异常比例为0.333
+        if (i % 3 == 0) {
+            throw new RuntimeException();
+        }
+        return "message3";
+    }
+
+    /**
+     * 发生BlockException时进入的方法
+     */
+    public String blockHandlerForMessage3(BlockException blockException) {
+        log.error("{}", blockException);
+        return "message3 接口被限流或者降级了";
+    }
+
+    /**
+     * 发生Throwable时进入的方法
+     */
+    public String fallbackForMessage3(Throwable throwable) {
+        log.error("{}", throwable);
+        return "message3 接口发生异常了";
+    }
+
+    /**
+     * 1.6-测试sentinel热点规则
+     *
+     * @return
+     */
+    @GetMapping("/message4")
+    @SentinelResource("message4")
+    //注意这里必须使用这个注解标识,否则热点规则不生效
+    public String message4(String name, Integer age) {
+        return name + age;
+    }
+
+    /**
+     * 调用python程序demo
+     *
+     * @param order order
+     * @return String
+     */
     @Operation(summary = "flask", description = "flask java Python")
     @PostMapping("/flask")
     public String message2(@RequestBody XOrders order) {

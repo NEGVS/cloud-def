@@ -26,7 +26,7 @@ langchain4j:
     chat-model:
 #      api-key: ${OPENAI_API_KEY}
 #      api-key: "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"
-      api-key: "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"
+      api-key: "xxxxxx"
       model-name: "gpt-4o-mini"
     #      log-requests: true
     #If you need an instance of a StreamingChatLanguageModel, use the streaming-chat-model instead of the chat-model properties:

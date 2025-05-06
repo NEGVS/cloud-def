@@ -5,6 +5,7 @@ import dev.langchain4j.model.chat.response.ChatResponse;
 import dev.langchain4j.model.chat.response.StreamingChatResponseHandler;
 import dev.langchain4j.model.openai.OpenAiStreamingChatModel;
 import io.swagger.v3.oas.annotations.servers.Server;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 /**
@@ -18,9 +19,10 @@ public class StreamChatLanguageModel {
 
     private final OpenAiStreamingChatModel model;
 
+
     public StreamChatLanguageModel() {
         this.model = OpenAiStreamingChatModel.builder()
-                .apiKey("xxxxxx")
+//                .apiKey(key)
                 .modelName("gpt-4o-mini")
                 .build();
     }

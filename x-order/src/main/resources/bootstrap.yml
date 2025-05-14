@@ -34,3 +34,8 @@ spring:
 #filter:
 #enabled: false
 
+# grpc
+grpc:
+  server:
+    port: 9898
+

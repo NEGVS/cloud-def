@@ -2,7 +2,9 @@ package xCloud.util;
 
 import io.swagger.v3.oas.annotations.Operation;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -14,8 +16,12 @@ import java.util.Set;
 public class andyTest {
 
     public static void main(String[] args) {
-///Users/andy_mac/Documents/CodeSpace/andyProject0/demi_vue_boot/ruoyi-admin/src/main/java/com/ruoyi/web/controller/hc
+///Users/andy_mac/Documents/CodeSpace/andyProject0/demi_vue _boot/ruoyi-admin/src/main/java/com/ruoyi/web/controller/hc
+        lengthOfLongestSubstring("abcddadsx");
 
+        if (true) {
+            return;
+        }
         String root = "/Users/andy_mac/Documents/CodeSpace/andyProject0/demi_vue_boot/ruoyi-admin/src/main/java/com/ruoyi/web";
         Set<String> strings2 = CodeX.readFileNameList(root);
         for (String path : strings2) {
@@ -56,5 +62,25 @@ public class andyTest {
         }
 
 
+    }
+
+
+    public static int lengthOfLongestSubstring(String s) {
+        Map<Character, Integer> map = new HashMap<>(); // 记录字符最后出现的位置
+        int maxLen = 0; // 最长子串长度
+        int left = 0; // 窗口左边界
+
+        for (int right = 0; right < s.length(); right++) {
+            char c = s.charAt(right);
+            // 如果字符重复且在窗口内，移动左指针
+            if (map.containsKey(c) && map.get(c) >= left) {
+                left = map.get(c) + 1;
+            }
+            // 更新最大长度
+            maxLen = Math.max(maxLen, right - left + 1);
+            map.put(c, right); // 更新字符位置
+        }
+        map.entrySet().forEach(System.out::println);
+        return maxLen;
     }
 }

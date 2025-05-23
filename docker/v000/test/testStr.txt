@@ -1,0 +1,313 @@
+
+---------resultString----------
+<ap><resHead><tr_code>310101</tr_code><corp_no>9000007196</corp_no><req_no>0612d38816cd4692934a</req_no><serial_no>
+		</serial_no><ans_no>
+		</ans_no><next_no>
+		</next_no><tr_acdt>20250521</tr_acdt><tr_time>131840</tr_time><ans_code>0</ans_code><ans_info>
+		</ans_info><particular_code>0000</particular_code><particular_info>交易成功</particular_info><atom_tr_count>1</atom_tr_count><reserved></reserved></resHead><body><serial_record>户名|账号|币种|余额|可用余额|开户日期|账户类型|开户行|错误信息|成功标志|峡致禽些柯坯谦潞殷虑|110060576018150007238|CNY|749461855.49|749461855.49|20040616|2|110999|账户信息查询成功|0|</serial_record><field_num>10</field_num><record_num>1</record_num><file_flag>0</file_flag><filename></filename></body></ap>
+-------返回值------
+
+
+-------end------
+
+
+
+
+
+
+<ap>
+<resHead>
+    <tr_code>310101</tr_code>
+    <corp_no>9000007196</corp_no>
+    <req_no>0612d38816cd4692934a</req_no>
+    <serial_no></serial_no>
+    <ans_no></ans_no>
+    <next_no></next_no>
+    <tr_acdt>20250521</tr_acdt>
+    <tr_time>131840</tr_time>
+    <ans_code>0</ans_code>
+    <ans_info></ans_info>
+    <particular_code>0000</particular_code>
+    <particular_info>交易成功</particular_info>
+    <atom_tr_count>1</atom_tr_count>
+    <reserved></reserved>
+</resHead>
+	<body>
+	    <serial_record>
+	    户名|账号|币种|余额|可用余额|开户日期|账户类型|开户行|错误信息|成功标志|峡致禽些柯坯谦潞殷虑|110060576018150007238|CNY|749461855.49|749461855.49|20040616|2|110999|账户信息查询成功|0|
+	    </serial_record>
+	    <field_num>10</field_num>
+	    <record_num>1</record_num>
+	    <file_flag>0</file_flag>
+	    <filename></filename>
+	</body>
+</ap>
+
+
+
+1-账户信息明细--10
+命名：
+AccountInfo
+AccountInfoSerialRecord
+返回实体
+户名(C60)|账号(C40)|币种(C3)|余额(N14.2)|可用余额(N14.2)|开户日期(C8)|账户类型(C1)|开户行(C60)|错误信息(C200)| 成功标志(C1)|
+
+2-历史明细--24
+命名：
+HistoryTransaction
+HistoryTransactionSerialRecord
+返回实体
+状态(C1)|
+交易日期(C8)|
+交易时间(C6)|
+业务类型(C60)|
+流水号(C16)|
+流水序号(C4)|
+账号(C40)|
+户名(C60)|
+收支标志(C1)|
+币种(C3)|
+交易金额(N14.2)|
+余额(N14.2)|
+可用余额(N14.2)|
+对方账号(C40)|
+对方户名(C60)|
+对方地址(C60)|
+对方开户行行号(C12)|
+对方开户行行名(C60)|
+票据种类(C3)|
+票据号码(C35)|
+票据名称(C60)|
+票据签发日期(C8)|
+附言(C200)|
+备注(C200)|
+3-1.1.00001.1代发工资、报销差旅费支持非交行卡的批量接口-BTP（330008）(目前仅支持人民币不支持明细独立摘要)
+命名：
+PayAgency
+返回体，只有一个字段。
+
+4-对公转对私交易明细查询－按流水号查询（310207）--14
+命名：query
+QueryTransaction
+
+企业流水号（C20）|所属月份C(6)|付款账号（C40）|会计核心日期（C8）|批次流水号（C28）|序号（C8）|付款户名（C60）|付款币种（C3）|业务类型（C30）|付款金额（N14，2）|收款卡号(C40)|收款户名(C60)|状态(C1)| 错误原因(C30)|
+
+
+
+
+
+
+
+把下面的字段重新定义为一个实体的字段，实体命名为 HistoryTransactionSerialRecord，中文回答
+状态(C1)|
+交易日期(C8)|
+交易时间(C6)|
+业务类型(C60)|
+流水号(C16)|
+流水序号(C4)|
+账号(C40)|
+户名(C60)|
+收支标志(C1)|
+币种(C3)|
+交易金额(N14.2)|
+余额(N14.2)|
+可用余额(N14.2)|
+对方账号(C40)|
+对方户名(C60)|
+对方地址(C60)|
+对方开户行行号(C12)|
+对方开户行行名(C60)|
+票据种类(C3)|
+票据号码(C35)|
+票据名称(C60)|
+票据签发日期(C8)|
+附言(C200)|
+备注(C200)|
+
+参考示例：
+public class AccountInfoSerialRecord {
+    /**
+     * 企业流水号，类型：C20
+     */
+    private String enterpriseSerialNo;
+
+    /**
+     * 所属月份，类型：C6
+     */
+    private String month;
+
+    /**
+     * 付款账号，类型：C40
+     */
+    private String payerAccount;}
+
+
+
+
+
+package com.jan.base.util.bankOfCommunications.response;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+
+/**
+ * @Description 对公转对私交易明细查询（310207）--返回实体解析使用
+ * 户名|账号|币种|余额|可用余额|开户日期|账户类型|开户行|错误信息|成功标志|
+ * 峡致禽些柯坯谦潞殷虑|110060576018150007238|CNY|749461855.49|749461855.49|20040616|2|110999|账户信息查询成功|0|
+ * @Author Andy Fan
+ * @Date 2025/5/16 19:48
+ * @ClassName SerialRecord
+ */
+@XmlAccessorType(XmlAccessType.FIELD)
+public class AccountInfoSerialRecord {
+    /**
+     * 企业流水号，类型：C20
+     */
+    private String enterpriseSerialNo;
+
+    /**
+     * 所属月份，类型：C6
+     */
+    private String month;
+
+    /**
+     * 付款账号，类型：C40
+     */
+    private String payerAccount;
+
+    /**
+     * 会计核心日期，类型：C8
+     */
+    private String coreDate;
+
+    /**
+     * 批次流水号，类型：C28
+     */
+    private String batchSerialNo;
+
+    /**
+     * 序号，类型：C8
+     */
+    private String sequenceNo;
+
+    /**
+     * 付款户名，类型：C60
+     */
+    private String payerName;
+
+    /**
+     * 付款币种，类型：C3
+     */
+    private String currency;
+
+    /**
+     * 业务类型，类型：C30
+     */
+    private String businessType;
+
+    /**
+     * 付款金额，类型：N14,2（14位数字，2位小数）
+     */
+    private String amount;
+
+    /**
+     * 收款卡号，类型：C40
+     */
+    private String payeeCardNo;
+
+    /**
+     * 收款户名，类型：C60
+     */
+    private String payeeName;
+
+    /**
+     * 状态，类型：C1
+     * 取值：
+     * 0：未入账
+     * F：入账成功
+     * E：入账失败
+     * 3：可疑
+     */
+    private String status;
+
+    /**
+     * 错误原因，类型：C30
+     */
+    private String errorReason;
+}
+
+
+
+
+<ap><head><tr_code>310101</tr_code><corp_no>9000007196</corp_no><req_no>48dc9aa13ab9451baf55</req_no><serial_no>
+		</serial_no><ans_no>
+		</ans_no><next_no>
+		</next_no><tr_acdt>20250522</tr_acdt><tr_time>102001</tr_time><ans_code>0</ans_code><ans_info>
+		</ans_info><particular_code>0000</particular_code><particular_info>交易成功</particular_info><atom_tr_count>1</atom_tr_count><reserved></reserved></head><body><serial_record>户名|账号|币种|余额|可用余额|开户日期|账户类型|开户行|错误信息|成功标志|峡致禽些柯坯谦潞殷虑|110060576018150007238|CNY|749461855.49|749461855.49|20040616|2|110999|账户信息查询成功|0||110899999601003000358|||||||校验账户失败或未查询到对应授权账户，账户信息查询失败|1|</serial_record><field_num>10</field_num><record_num>2</record_num><file_flag>0</file_flag><filename></filename></body></ap>
+
+
+
+
+3-历史明细
+-------返回报文--resultString----------
+<ap>
+<head>
+    <tr_code>310101</tr_code>
+    <corp_no>9000007196</corp_no>
+    <req_no>e311841986754126b4e0</req_no>
+    <serial_no></serial_no>
+    <ans_no></ans_no><next_no>
+		</next_no><tr_acdt>20250522</tr_acdt>
+		<tr_time>135441</tr_time>
+		<ans_code>0</ans_code><ans_info>
+		</ans_info>
+		<particular_code>0000</particular_code>
+		<particular_info>交易成功</particular_info>
+		<atom_tr_count>1</atom_tr_count>
+		<reserved></reserved></head><body>
+		<serial_record>
+		户名|账号|币种|余额|可用余额|开户日期|账户类型|开户行|错误信息|成功标志|
+		峡致禽些柯坯谦潞殷虑|110060576018150007238|CNY|749461855.49|749461855.49|20040616|2|110999|账户信息查询成功|0|
+		</serial_record>
+		<field_num>10</field_num>
+		<record_num>1</record_num><file_flag>0</file_flag>
+		<filename></filename>
+		</body>
+		/ap>
+
+
+4-代发
+<ap><head>
+<tr_code>330008</tr_code>
+<corp_no>9000007196</corp_no>
+<req_no>04f29174d3f94c4a8ed0</req_no>
+<serial_no></serial_no>
+<ans_no></ans_no>
+<next_no></next_no>
+<tr_acdt>20250522</tr_acdt>
+<tr_time>142419</tr_time>
+<ans_code>0</ans_code>
+<ans_info></ans_info>
+<particular_code>1003</particular_code>
+<particular_info>指定的代发业务编号certNo协议对应的代发类型A554未签约</particular_info>
+<atom_tr_count>1</atom_tr_count>
+<reserved></reserved>
+</head></ap>
+
+5-代发 结果
+<ap><head>
+<tr_code>310207</tr_code>
+<corp_no>9000007196</corp_no>
+<req_no>a4718eb75d5b4fabb0de</req_no>
+<serial_no></serial_no>
+<ans_no></ans_no>
+<next_no></next_no>
+<tr_acdt>20250522</tr_acdt>
+<tr_time>155306</tr_time>
+<ans_code>0</ans_code>
+<ans_info></ans_info>
+<particular_code>1003</particular_code>
+<particular_info>流水号不存在</particular_info>
+<atom_tr_count>1</atom_tr_count>
+<reserved></reserved>
+</head></ap>

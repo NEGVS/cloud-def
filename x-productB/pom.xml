@@ -18,6 +18,13 @@
     </properties>
     <dependencies>
 
+<!--        activiti工作流-->
+        <dependency>
+            <groupId>org.activiti</groupId>
+            <artifactId>activiti-spring-boot-starter</artifactId>
+            <version>7.1.0.M6</version>
+        </dependency>
+
         <!-- gRPC -->
         <!-- https://mvnrepository.com/artifact/io.github.lognet/grpc-spring-boot-starter -->
         <dependency>

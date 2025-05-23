@@ -1,0 +1,94 @@
+/**
+     * 代发工资、报销差旅费支持非交行卡的批量接口-BTP（330008）(目前仅支持人民币不支持明细独立摘要)
+     */
+    public void executePayAgency2() throws JANException {
+        try {
+            /**
+             * 获取数据
+             */
+//            final List<PayDTO> payDTOs = this.getPayHeaderService().getUnpaidPayDTOsByAccountId(ACCOUNT_ID);
+            /**
+             * 构造数据
+             */
+            List<PayDTO> payDTOs = new ArrayList<>();
+            PayDTO payDTO2 = new PayDTO();
+            PayHeaderVO payHeaderVO1 = new PayHeaderVO();
+            payHeaderVO1.setHeaderId("123456789");
+            payHeaderVO1.setTotalAmount("1000");
+            payHeaderVO1.setEstimatePayDate("2025-05-15 17:00:00");
+            payHeaderVO1.setPaymentBankAccount("110060576018150007238");
+            ArrayList<PayDetailVO> payDetailVOs2 = new ArrayList<>();
+            PayDetailVO payDetailVO1 = new PayDetailVO();
+            payDetailVO1.setHeaderId(payHeaderVO1.getHeaderId());
+            payDetailVO1.setBankAccountName("中国交通银行");
+            payDetailVO1.setBankAccount("110060576018150007238");
+            payDetailVO1.setBankType("CCB");
+            payDetailVO1.setPaymentAmount("1000");
+            payDetailVOs2.add(payDetailVO1);
+            payDTO2.setPayHeaderVO(payHeaderVO1);
+            payDTO2.setPayDetailVOs(payDetailVOs2);
+            payDTOs.add(payDTO2);
+            for (PayDTO payDTO : payDTOs) {
+                PayHeaderVO payHeaderVO = payDTO.getPayHeaderVO();
+                List<PayDetailVO> payDetailVOs = payDTO.getPayDetailVOs();
+                /**
+                 * 赋值tran
+                 */
+                PayAgencyReqTran tran = new PayAgencyReqTran();
+                List<PayAgencyDetail> details = new ArrayList<>();
+                for (PayDetailVO payDetailVO : payDetailVOs) {
+                    PayAgencyDetail payAgencyDetail = new PayAgencyDetail();
+                    payAgencyDetail.setCardNo(payDetailVO.getBankAccount());
+                    payAgencyDetail.setAcname(payDetailVO.getBankAccountName());
+                    payAgencyDetail.setCardFlag(payDetailVO.getBankType().equalsIgnoreCase("CCB") ? BankOfCommunicationsConstants.CARD_FLAG_A : BankOfCommunicationsConstants.CARD_FLAG_B);
+                    payAgencyDetail.setAmt(new BigDecimal(payDetailVO.getPaymentAmount()).setScale(2, RoundingMode.HALF_UP));
+                    // 业务编号 n
+                    //payAgencyDetail.setBusino("2025xxad0526");
+                    //明细摘要 n
+                    payAgencyDetail.setBusummary("明细摘要");
+                    details.add(payAgencyDetail);
+                }
+                tran.setRcds(details);
+                PayAgencyRequest payAgencyRequest = new PayAgencyRequest();
+                /**
+                 * 赋值body
+                 */
+                PayAgencyReqBody body = new PayAgencyReqBody();
+                //todo 企业凭证号 c20
+                body.setCertNo("301100000099");
+                //付款账号
+                body.setPayAcno(payHeaderVO1.getPaymentBankAccount());
+                // 签约类型
+                body.setType(PaymentTypeEnum.SALARY.getCode());
+                body.setSum(details.size());
+                body.setSumAmt(new BigDecimal(payHeaderVO.getTotalAmount()).setScale(2, RoundingMode.HALF_UP));
+                //月份
+                body.setPayMonth(LocalDateTime.parse(payHeaderVO.getEstimatePayDate(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")).format(DateTimeFormatter.ofPattern("yyyyMM")));
+                //附言 非必填
+                //body.setSummary("附言");
+                //协议编号 必填
+                body.setBusiNo(BankOfCommunicationsConstants.BUSI_NO);
+                //密薪标志--C1--N 0 非密薪，1密薪
+                body.setSelsecFlg("0");
+                //传票汇总标志--C1--N 必填：汇总，N：不汇总，默认为Y：汇总
+                body.setMailflg(BankOfCommunicationsConstants.MAIL_FLG_Y);
+                body.setTran(tran);
+                /**
+                 * 赋值payAgencyRequest
+                 */
+                payAgencyRequest.setBody(body);
+                try {
+                    log.info("\n-------发送------");
+                    BankOfCommunicationsUtil bankOfCommunicationsUtil = new BankOfCommunicationsUtil();
+                    PayAgencyResponse payAgencyResponse = bankOfCommunicationsUtil.queryPayAgency(payAgencyRequest);
+                    log.info("\n-------返回值------");
+                    log.info("\n" + JSON.toJSONString(payAgencyResponse));
+                    log.info("\n-------end------");
+                } catch (Exception e) {
+                    log.error(e.getMessage());
+                }
+            }
+        } catch (DateTimeParseException e) {
+            log.error(e.getMessage());
+        }
+    }

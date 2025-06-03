@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.UUID;
 
 /**
  * @Description
@@ -35,6 +36,19 @@ public class RabbitMQService {
     @Value("${rabbitmq.dlx.queue}")
     private String dlxQueueName;
 
+    /**
+     * delay
+     */
+    @Value("${rabbitmq.delay.exchange}")
+    private String delayExchangeName;
+
+    @Value("${rabbitmq.delay.queue}")
+    private String delayQueueName;
+
+    @Value("${rabbitmq.delay.routing-key}")
+    private String delayRoutingKey;
+
+
     @Autowired
     private RabbitTemplate rabbitTemplate;
 
@@ -56,11 +70,36 @@ public class RabbitMQService {
             msg.getMessageProperties().setMessageId(String.valueOf(System.currentTimeMillis()));
             return msg;
         });
-       log.info("\n\n发送消息：" + message);
+        log.info("\n\n发送消息：" + message);
     }
 
     /**
-     * 接收消息
+     * 发送消息到延迟队列
+     * sendDelayedMessage：发送消息到延迟队列，消息在 TTL 过期后路由到目标队列。
+     * receiveMessage：监听目标队列，处理延迟后的消息。
+     * 使用 SpEL #{@messageService.targetQueueName} 解决 @RabbitListener 的常量问题。
+     * 手动确认（basicAck）确保消息处理成功。
+     * 如果延迟消息处理失败，可以进一步路由到死信队列（参考前文）。以下是扩展配置：
+     */
+    public void sendDelayedMessage(String message, long ttlMillis) {
+        try {
+            rabbitTemplate.convertAndSend(delayExchangeName, delayRoutingKey, message, msg -> {
+                msg.getMessageProperties().setDeliveryMode(MessageDeliveryMode.PERSISTENT);
+                msg.getMessageProperties().setMessageId(UUID.randomUUID().toString());
+                // 动态TTL,使用 setExpiration 设置消息级别的 TTL，覆盖队列的默认 TTL。
+                msg.getMessageProperties().setExpiration(String.valueOf(ttlMillis));
+                return msg;
+            });
+//            log.info("发送延迟消息到队列 [{}]，路由键 [{}]: {}", delayQueueName, delayRoutingKey, message);
+//            log.info("\n发送延迟消息到队列 [{}]，路由键 [{}]: {}", delayQueueName, delayRoutingKey, message );
+            log.info("\n发送延迟消息到队列 [{}]，路由键 [{}]: {}, ttlMillis:{}", delayQueueName, delayRoutingKey, message, ttlMillis);
+        } catch (Exception e) {
+            log.error("发送延迟消息失败: {}", message, e);
+        }
+    }
+
+    /**
+     * 接收消息--监听目标队列，处理延迟后的消息,
      * 使用 #{} 语法在 @RabbitListener 中引用 SpEL 表达式。
      * queueName 是类中的字段，通过 @Value 注入。
      *
@@ -79,6 +118,7 @@ public class RabbitMQService {
             channel.basicAck(amqpMessage.getMessageProperties().getDeliveryTag(), false);
         } catch (IOException e) {
             log.error("\n处理消息出错：{}", e.getMessage());
+            log.error("处理延迟消息失败，从队列 [{}]: {}", QUEUE_NAME, message, e);
             try {
                 // 拒绝消息并重新入队（可根据需求调整为死信队列）
                 //channel.basicNack(amqpMessage.getMessageProperties().getDeliveryTag(), false, true);
@@ -124,5 +164,10 @@ public class RabbitMQService {
     private void processMessage(String message) {
         // 示例业务逻辑
         log.debug("\n处理消息：{}", message);
+    }
+
+    private void processDelayMessage(String message) {
+        // 示例业务逻辑
+        log.debug("\n处理延迟消息: {}", message);
     }
 }

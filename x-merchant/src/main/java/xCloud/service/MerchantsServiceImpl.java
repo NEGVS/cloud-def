@@ -8,6 +8,8 @@ import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import xCloud.entity.ResultEntity;
 import xCloud.entity.merchants.Merchants;
@@ -37,6 +39,8 @@ public class MerchantsServiceImpl extends ServiceImpl<MerchantsMapper, Merchants
      * @return Map
      */
     @Override
+//    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public ResultEntity<Merchants> add(Merchants dto) {
 
         if (merchantsMapper.insertMerchants(dto) > 0) {

@@ -1,14 +1,112 @@
-spring:
+#spring:
 # 0-配置nacos
-  config:
-    import:
-      #      - optional:nacos:${spring.application.name}
-      - optional:nacos:x-merchant.yml
-  cloud:
-    nacos:
-      config:
-        namespace:
-        server-addr: 127.0.0.1:8848
-        group: ANDY_GROUP
-      discovery:
-        server-addr: 127.0.0.1:8848
+#  config:
+#    import:
+#      #      - optional:nacos:${spring.application.name}
+#      - optional:nacos:x-merchant.yml
+#  cloud:
+#    nacos:
+#      config:
+#        namespace:
+#        server-addr: 127.0.0.1:8848
+#        group: ANDY_GROUP
+#      discovery:
+#        server-addr: 127.0.0.1:8848
+server:
+  port: 8089
+spring:
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    driverClassName: com.mysql.cj.jdbc.Driver
+#    url: jdbc:mysql://115.190.21.58:3306/andy_database?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+
+      #多数据源配置：另外需要配置的地方：1- DynamicDataSource[不用修改]，2-DynamicDataSourceContextHolder[不用修改]，
+      #        文件3-DruidConfig.java[必须修改]，4-DataSourceType.java[必须修改]
+      # 主库数据源
+#      druid:
+#        url: jdbc:mysql://115.190.21.58:3306/andy_database?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+#        username: root
+#        password: hy123456
+      # 从库数据源---demo,tradition data
+      #      slave:
+      #        # 从数据源开关/默认关闭
+      #        enabled: true
+      #        url: jdbc:mysql://115.190.21.58:3306/demo_project?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+      #        username: root
+      #        password: hy123456
+
+      #      serverTimezone=GMT%2B8,北京时间东八区，
+      #      serverTimezone=Asia/Shanghai，上海时间，两个都是中国的标准时间
+      #      slave-demi:
+      #        # 从数据源开关/默认关闭--我的数据库
+      #        enabled: true
+      #        url: jdbc:mysql://115.190.21.58:3306/andy_database?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+      #        username: root
+      #        password: hy123456
+      #      slave-hc:
+      #        #深圳数据库
+      #        enabled: true
+      #        url: jdbc:mysql://119.23.235.14:3306/yong-shan-tuan?characterEncoding=UTF-8&useUnicode=true&useSSL=false&tinyInt1isBit=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Shanghai
+      #        username: root
+      #        password: Yongshantuan2023@
+      #        #hro 生产数据库
+      #      slave-hro:
+      #        # 从数据源开关/默认关闭
+      #        enabled: true
+      #        url: jdbc:mysql://rm-uf655k9802vf7i07hso.mysql.rds.aliyuncs.com:3306/rng_hro_pro?useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true
+      #        username: fanyingbin
+      #        password: a^BsgL36YWijqMsA(pfQAgzz7pIenoGg
+      #        #hro 测试数据库
+      #      slave-hro-test:
+      #        # 从数据源开关/默认关闭
+      #        enabled: true
+      #        url: jdbc:mysql://rm-uf655k9802vf7i07hso.mysql.rds.aliyuncs.com:3306/rng_hro_pre?useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true
+      #        username: hrosdba
+      #        password: hros0427
+
+      # 初始连接数
+#      initialSize: 5
+#      # 最小连接池数量
+#      minIdle: 10
+#      # 最大连接池数量
+#      maxActive: 20
+#      # 配置获取连接等待超时的时间
+#      maxWait: 60000
+#      # 配置连接超时时间
+#      connectTimeout: 30000
+#      # 配置网络超时时间
+#      socketTimeout: 60000
+#      # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
+#      timeBetweenEvictionRunsMillis: 60000
+#      # 配置一个连接在池中最小生存的时间，单位是毫秒
+#      minEvictableIdleTimeMillis: 300000
+#      # 配置一个连接在池中最大生存的时间，单位是毫秒
+#      maxEvictableIdleTimeMillis: 900000
+#      # 配置检测连接是否有效
+#      validationQuery: SELECT 1 FROM DUAL
+#      testWhileIdle: true
+#      testOnBorrow: false
+#      testOnReturn: false
+#      webStatFilter:
+#        enabled: true
+#      statViewServlet:
+#        enabled: true
+#        # 设置白名单，不填则允许所有访问
+#        allow:
+#        url-pattern: /druid/*
+#        # 控制台管理用户名和密码
+#        login-username: ruoyi
+#        login-password: 123456
+#      filter:
+#        stat:
+#          enabled: true
+#          # 慢SQL记录
+#          log-slow-sql: true
+#          slow-sql-millis: 5000
+#          merge-sql: true
+#        wall:
+#          config:
+#            multi-statement-allow: true
+    url: jdbc:mysql://115.190.21.58:3306/andy_database?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+    username: root
+    password: hy123456

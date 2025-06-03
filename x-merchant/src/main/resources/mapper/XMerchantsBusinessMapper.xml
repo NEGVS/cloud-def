@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="xCloud.merchantsBusiness.mapper.XMerchantsBusinessMapper">
+    <resultMap id="result" type="xCloud.merchantsBusiness.entity.XMerchantsBusiness">
+        <result property="business_id" column="business_id"/>
+        <result property="merchant_id" column="merchant_id"/>
+        <result property="startDate" column="startDate"/>
+        <result property="endDate" column="endDate"/>
+        <result property="dayOfWeek" column="dayOfWeek"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        merchant_id
+        , startDate, endDate, dayOfWeek
+    </sql>
+
+    <sql id="Base_Column_List_For_Join">
+        a
+        .
+        merchant_id
+        , a.startDate, a.endDate, a.dayOfWeek
+    </sql>
+
+    <!--1.新增-->
+    <insert id="insertXMerchantsBusiness" parameterType="xCloud.merchantsBusiness.entity.XMerchantsBusiness"
+            useGeneratedKeys="true" keyProperty="business_id">
+        INSERT INTO
+        x_merchants_business (<include refid="Base_Column_List"/>)
+        VALUES
+        (#{merchant_id}, #{startDate}, #{endDate}, #{dayOfWeek})
+    </insert>
+
+    <!--1.1 批量新增-->
+    <insert id="insertXMerchantsBusinessList" parameterType="xCloud.merchantsBusiness.entity.XMerchantsBusiness"
+            useGeneratedKeys="true" keyProperty="business_id">
+        INSERT INTO
+        x_merchants_business (<include refid="Base_Column_List"/>)
+        VALUES
+        <foreach collection="list" item="x" index="index" separator=",">#{x.merchant_id}, #{x.startDate}, #{x.endDate},
+            #{x.dayOfWeek})
+        </foreach>
+    </insert>
+
+    <!--2.删除-->
+    <delete id="deleteXMerchantsBusiness" parameterType="xCloud.merchantsBusiness.entity.XMerchantsBusiness">
+        UPDATE
+            x_merchants_business
+        SET deleted    = 2,
+            modifyBy   = #{modifyBy},
+            modifyDate = Now()
+        WHERE business_id = #{business_id}
+    </delete>
+
+    <!--3.修改-->
+    <update id="updateXMerchantsBusiness" parameterType="xCloud.merchantsBusiness.entity.XMerchantsBusiness">
+        UPDATE
+        x_merchants_business
+        <set>
+            <if test="merchant_id != null">
+                merchant_id = #{merchant_id},
+            </if>
+            <if test="startDate != null">
+                startDate = #{startDate},
+            </if>
+            <if test="endDate != null">
+                endDate = #{endDate},
+            </if>
+            <if test="dayOfWeek != null">
+                dayOfWeek = #{dayOfWeek},
+            </if>
+
+        </set>
+        WHERE
+        business_id = #{business_id}
+    </update>
+
+    <!--4.查询-->
+    <select id="selectXMerchantsBusiness" parameterType="xCloud.merchantsBusiness.entity.XMerchantsBusiness"
+            resultMap="result">
+        SELECT
+        a.business_id,
+        <include refid="Base_Column_List_For_Join"/>
+        FROM
+        x_merchants_business a
+        WHERE
+        a.deleted = 1
+        <if test="entity.business_id != null">
+            AND a.business_id = #{entity.business_id}
+        </if>
+        <if test="entity.merchant_id != null and entity.merchant_id != ''">
+            AND a.merchant_id = #{entity.merchant_id}
+        </if>
+        <if test="entity.startDate != null">
+            AND a.startDate = #{entity.startDate}
+        </if>
+        <if test="entity.endDate != null">
+            AND a.endDate = #{entity.endDate}
+        </if>
+        <if test="entity.dayOfWeek != null">
+            AND a.dayOfWeek = #{entity.dayOfWeek}
+        </if>
+
+    </select>
+
+</mapper>

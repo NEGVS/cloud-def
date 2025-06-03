@@ -15,9 +15,10 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
         )
 )
 //启用nacos
-@EnableDiscoveryClient
+//@EnableDiscoveryClient
 @SpringBootApplication
 @MapperScan("xCloud.mapper")
+@MapperScan("xCloud.merchantsBusiness.mapper")
 public class XMerchantApplication {
     public static void main(String[] args) {
         System.out.println("Hello world! XMerchantApplication start...");

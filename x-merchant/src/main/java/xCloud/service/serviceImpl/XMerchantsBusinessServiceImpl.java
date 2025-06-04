@@ -1,4 +1,4 @@
-package xCloud.merchantsBusiness.service;
+package xCloud.service.serviceImpl;
 
 import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
@@ -13,11 +13,12 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import xCloud.entity.ResultEntity;
 import xCloud.entity.merchants.Merchants;
-import xCloud.merchantsBusiness.entity.XMerchantsBusiness;
-import xCloud.merchantsBusiness.entity.XMerchantsBusinessDTO;
-import xCloud.merchantsBusiness.entity.XMerchantsBusinessVO;
-import xCloud.merchantsBusiness.mapper.XMerchantsBusinessMapper;
+import xCloud.entity.XMerchantsBusiness;
+import xCloud.entity.XMerchantsBusinessDTO;
+import xCloud.entity.XMerchantsBusinessVO;
+import xCloud.mapper.XMerchantsBusinessMapper;
 import xCloud.service.MerchantsService;
+import xCloud.service.XMerchantsBusinessService;
 
 import java.io.IOException;
 import java.math.BigDecimal;

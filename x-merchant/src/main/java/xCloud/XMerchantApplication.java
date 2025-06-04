@@ -5,7 +5,7 @@ import io.swagger.v3.oas.annotations.info.Info;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+//import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
 @OpenAPIDefinition(
         info = @Info(
@@ -18,7 +18,6 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 //@EnableDiscoveryClient
 @SpringBootApplication
 @MapperScan("xCloud.mapper")
-@MapperScan("xCloud.merchantsBusiness.mapper")
 public class XMerchantApplication {
     public static void main(String[] args) {
         System.out.println("Hello world! XMerchantApplication start...");

@@ -1,10 +1,10 @@
-package xCloud.merchantsBusiness.mapper;
+package xCloud.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
-import xCloud.merchantsBusiness.entity.XMerchantsBusiness;
+import xCloud.entity.XMerchantsBusiness;
 
 import java.util.List;
 

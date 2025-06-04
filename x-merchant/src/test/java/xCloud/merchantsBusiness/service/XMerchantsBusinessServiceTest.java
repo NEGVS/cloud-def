@@ -3,12 +3,11 @@ package xCloud.merchantsBusiness.service;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import jakarta.annotation.Resource;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import xCloud.merchantsBusiness.entity.XMerchantsBusiness;
-import xCloud.merchantsBusiness.mapper.XMerchantsBusinessMapper;
+import xCloud.entity.XMerchantsBusiness;
+import xCloud.mapper.XMerchantsBusinessMapper;
 
 import java.util.ArrayList;
 import java.util.Date;

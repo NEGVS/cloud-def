@@ -1,7 +1,6 @@
-package xCloud.service;
+package xCloud.service.serviceImpl;
 
 import cn.hutool.core.util.ObjectUtil;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import jakarta.annotation.Resource;
@@ -16,6 +15,7 @@ import xCloud.entity.merchants.Merchants;
 import xCloud.entity.merchants.MerchantsDTO;
 import xCloud.entity.merchants.MerchantsVO;
 import xCloud.mapper.MerchantsMapper;
+import xCloud.service.MerchantsService;
 
 import java.io.IOException;
 import java.util.List;
@@ -40,7 +40,7 @@ public class MerchantsServiceImpl extends ServiceImpl<MerchantsMapper, Merchants
      */
     @Override
 //    @Transactional
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
+//    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public ResultEntity<Merchants> add(Merchants dto) {
 
         if (merchantsMapper.insertMerchants(dto) > 0) {

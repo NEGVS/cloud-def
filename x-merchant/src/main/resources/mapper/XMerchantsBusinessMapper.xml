@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="xCloud.merchantsBusiness.mapper.XMerchantsBusinessMapper">
-    <resultMap id="result" type="xCloud.merchantsBusiness.entity.XMerchantsBusiness">
+<mapper namespace="xCloud.mapper.XMerchantsBusinessMapper">
+    <resultMap id="result" type="xCloud.entity.XMerchantsBusiness">
         <result property="business_id" column="business_id"/>
         <result property="merchant_id" column="merchant_id"/>
         <result property="startDate" column="startDate"/>
@@ -22,7 +22,7 @@
     </sql>
 
     <!--1.新增-->
-    <insert id="insertXMerchantsBusiness" parameterType="xCloud.merchantsBusiness.entity.XMerchantsBusiness"
+    <insert id="insertXMerchantsBusiness" parameterType="xCloud.entity.XMerchantsBusiness"
             useGeneratedKeys="true" keyProperty="business_id">
         INSERT INTO
         x_merchants_business (<include refid="Base_Column_List"/>)
@@ -31,7 +31,7 @@
     </insert>
 
     <!--1.1 批量新增-->
-    <insert id="insertXMerchantsBusinessList" parameterType="xCloud.merchantsBusiness.entity.XMerchantsBusiness"
+    <insert id="insertXMerchantsBusinessList" parameterType="xCloud.entity.XMerchantsBusiness"
             useGeneratedKeys="true" keyProperty="business_id">
         INSERT INTO
         x_merchants_business (<include refid="Base_Column_List"/>)
@@ -42,7 +42,7 @@
     </insert>
 
     <!--2.删除-->
-    <delete id="deleteXMerchantsBusiness" parameterType="xCloud.merchantsBusiness.entity.XMerchantsBusiness">
+    <delete id="deleteXMerchantsBusiness" parameterType="xCloud.entity.XMerchantsBusiness">
         UPDATE
             x_merchants_business
         SET deleted    = 2,
@@ -52,7 +52,7 @@
     </delete>
 
     <!--3.修改-->
-    <update id="updateXMerchantsBusiness" parameterType="xCloud.merchantsBusiness.entity.XMerchantsBusiness">
+    <update id="updateXMerchantsBusiness" parameterType="xCloud.entity.XMerchantsBusiness">
         UPDATE
         x_merchants_business
         <set>
@@ -75,7 +75,7 @@
     </update>
 
     <!--4.查询-->
-    <select id="selectXMerchantsBusiness" parameterType="xCloud.merchantsBusiness.entity.XMerchantsBusiness"
+    <select id="selectXMerchantsBusiness" parameterType="xCloud.entity.XMerchantsBusiness"
             resultMap="result">
         SELECT
         a.business_id,

@@ -1,4 +1,4 @@
-package xCloud.merchantsBusiness.entity;
+package xCloud.entity;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
@@ -7,9 +7,8 @@ import xCloud.entity.PagerModel;
 import java.util.Date;
 
 @Data
-@Schema(name = "XMerchantsBusinessDTO", description = "用于页面搜索条件")
-public class XMerchantsBusinessDTO extends PagerModel {
-
+@Schema(name = "XMerchantsBusinessVO", description = "商保方案明细-参数集合对象")
+public class XMerchantsBusinessVO extends PagerModel {
     @Schema(name = "business_id", description = "id")
     private Integer business_id;
 
@@ -24,5 +23,6 @@ public class XMerchantsBusinessDTO extends PagerModel {
 
     @Schema(name = "dayOfWeek", description = "周几")
     private Integer dayOfWeek;
+
 
 }

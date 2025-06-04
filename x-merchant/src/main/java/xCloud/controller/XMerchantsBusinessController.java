@@ -1,4 +1,4 @@
-package xCloud.merchantsBusiness.controller;
+package xCloud.controller;
 
 import cn.hutool.json.JSONUtil;
 import io.swagger.v3.oas.annotations.Operation;
@@ -18,9 +18,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import xCloud.entity.ResultEntity;
-import xCloud.merchantsBusiness.entity.XMerchantsBusiness;
-import xCloud.merchantsBusiness.entity.XMerchantsBusinessDTO;
-import xCloud.merchantsBusiness.service.XMerchantsBusinessService;
+import xCloud.entity.XMerchantsBusiness;
+import xCloud.entity.XMerchantsBusinessDTO;
+import xCloud.service.XMerchantsBusinessService;
 
 
 /**

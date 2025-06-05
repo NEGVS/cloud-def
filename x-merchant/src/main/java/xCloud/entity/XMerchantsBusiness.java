@@ -21,11 +21,12 @@ import java.util.Date;
 @Schema(name = "xMerchantsBusiness", description = "xMerchantsBusiness")
 @Data
 public class XMerchantsBusiness implements Serializable {
+
     @Serial
     @TableField(exist = false)
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -8490146392417683035L;
 
-    @TableId(type = IdType.AUTO)
+
     @Schema(name = "business_id", description = "id")
     @TableField("business_id")
     private Integer business_id;

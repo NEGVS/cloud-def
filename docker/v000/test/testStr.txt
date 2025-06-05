@@ -311,3 +311,22 @@ public class AccountInfoSerialRecord {
 <atom_tr_count>1</atom_tr_count>
 <reserved></reserved>
 </head></ap>
+
+
+
+ @Override
+    @Transactional
+    public ResultEntity add(XMerchantsBusinessDTO dto) {
+        XMerchantsBusiness xMerchantsBusiness = new XMerchantsBusiness();
+        BeanUtils.copyProperties(dto, xMerchantsBusiness);
+        int count = xMerchantsBusinessMapper.insertXMerchantsBusiness(xMerchantsBusiness);
+        Merchants merchants = new Merchants();
+        try {
+            merchants.setMerchant_id((int) IdWorker.getId());
+//            merchants.setStatus(1);
+             merchantsService.add(merchants);
+        } catch (Exception e) {
+            log.info("测试，2失败时不影响1成功插入--新增失败" + e);
+            throw new RuntimeException("新增失败");
+        }
+    }，

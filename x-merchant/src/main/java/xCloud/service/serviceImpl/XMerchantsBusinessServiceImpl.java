@@ -63,24 +63,21 @@ public class XMerchantsBusinessServiceImpl extends ServiceImpl<XMerchantsBusines
         int count = xMerchantsBusinessMapper.insertXMerchantsBusiness(xMerchantsBusiness);
 
         log.info("111-新增成功");
-//        insert merchants
+        //insert merchants
         Merchants merchants = new Merchants();
         try {
             merchants.setMerchant_id((int) IdWorker.getId());
             merchants.setCreated_time(new Date());
             merchants.setDescription("dto.getAddress()");
             merchants.setName("dto");
-//            merchants.setStatus(1);
+            merchants.setStatus(1);
             merchants.setPackaging_rating(new BigDecimal(10));
             merchants.setQuantity_rating(new BigDecimal(10));
             merchants.setTaste_rating(new BigDecimal(10));
             ResultEntity<Merchants> add = merchantsService.add(merchants);
-            if (add.getCode() == 200) {
-                log.info("222新增成功");
-            }
+
         } catch (Exception e) {
-            log.info("测试，2失败时不影响1成功插入--新增失败" + e);
-//            return ResultEntity.error("新增失败");
+            log.info("测试-新增失败" + e);
         }
 
         if (count > 0) {

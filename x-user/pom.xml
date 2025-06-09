@@ -25,6 +25,11 @@
             <artifactId>x-config</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
+        <!--Spring AMQP依赖-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-amqp</artifactId>
+        </dependency>
 
         <!-- 10.langchain4j
       LangChain4j 是专为 Java 生态设计的开源框架，兼容 Spring Boot。它简化了大型语言模型（LLM）在 Java 应用中的集成，提供了统一的 API、自动配置和与 Spring 生态的无缝衔接 -->

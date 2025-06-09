@@ -59,7 +59,7 @@ public class JaxTest {
                 PayAgencyDetail payAgencyDetail = new PayAgencyDetail();
                 if (i > 0) {
                     payAgencyDetail.setBusummary(String.valueOf(i));
-                }else {
+                } else {
                     payAgencyDetail.setBusummary("");
                 }
                 rcds.add(payAgencyDetail);

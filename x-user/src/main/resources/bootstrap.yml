@@ -1,5 +1,5 @@
 spring:
-# 0-配置nacos
+  # 0-配置nacos
   config:
     import:
       #      - optional:nacos:${spring.application.name}
@@ -12,6 +12,49 @@ spring:
         group: ANDY_GROUP
       discovery:
         server-addr: 127.0.0.1:8848
+  #rabbitmq:-------------------------------------------------------------
+  rabbitmq:
+    listener:
+      simple:
+        acknowledge-mode: manual # 手动确认消息
+        concurrency: 2 # 并发消费数量
+        max-concurrency: 10 # 最大并发消费数量
+        retry:
+          enabled: true #  开启消息重试
+          max-attempts: 5 # 最大重试次数
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+    virtual-host: /andy
+    publisher-returns: true
+#    constants
+rabbitmq:
+#  主队列-------------------------------------------------------------
+  queue: andyQueue # 队列名称
+  exchange: andyExchange # 交换机名称
+  routing-key: andyRoutingKey  # 路由键
+#死信队列-------------------------------------------------------------
+  dlx:
+    exchange: a_dlx_exchange
+    routing-key: a_dlx_routing_key
+    queue: a_dlx_queue
+  #延迟队列-------------------------------------------------------------
+  delay:
+    exchange: a_delay_exchange # 延迟队列交换机名称
+    routing-key: a_delay_routing_key #延迟队列路由键
+    queue: a_delay_queue #延迟队列
+    ttl: 60000 # 延迟时间 毫秒
+#    my.delay.queue：延迟队列，消息在此等待 TTL 过期。
+#my.target.queue：目标队列，过期消息被路由到此队列处理。
+#ttl：消息存活时间（单位：毫秒），过期后消息进入死信队列。
+#-------------------------------------------------------------
+#    template:
+#      exchange: my_exchange
+#      routing-key: my_routing_key
+#      exchange-type: direct
+#      default-receive-queue: my_queue
+
 #    3-
 #  langchain4j.open-ai.chat-model.api-key=${OPENAI_API_KEY}
 #  langchain4j.open-ai.chat-model.model-name=gpt-4o

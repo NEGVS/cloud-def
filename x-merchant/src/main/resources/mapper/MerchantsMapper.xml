@@ -3,7 +3,6 @@
 <mapper namespace="xCloud.mapper.MerchantsMapper">
 <resultMap id="result" type="xCloud.entity.merchants.Merchants" >
  		    <result property="merchant_id" column="merchant_id"/>
- 		    <result property="user_id" column="user_id"/>
  		    <result property="name" column="name"/>
  		    <result property="logo" column="logo"/>
  		    <result property="description" column="description"/>
@@ -21,11 +20,11 @@
 	</resultMap>
 
 	 <sql id="Base_Column_List">
-		user_id, name, logo, description, image, address, status, sort, packaging_rating, quantity_rating, taste_rating, phone, email, created_time, updated_time
+		name, logo, description, image, address, status, sort, packaging_rating, quantity_rating, taste_rating, phone, email, created_time, updated_time
 	 </sql>
 
 	<sql id="Base_Column_List_For_Join">
-		a.user_id, a.name, a.logo, a.description, a.image, a.address, a.status, a.sort, a.packaging_rating, a.quantity_rating, a.taste_rating, a.phone, a.email, a.created_time, a.updated_time
+		 a.name, a.logo, a.description, a.image, a.address, a.status, a.sort, a.packaging_rating, a.quantity_rating, a.taste_rating, a.phone, a.email, a.created_time, a.updated_time
 	</sql>
 
 	<!--1.新增-->
@@ -33,7 +32,7 @@
 		INSERT INTO
 			x_merchants (<include refid="Base_Column_List"/>)
 		VALUES
-			(#{user_id}, #{name}, #{logo}, #{description}, #{image}, #{address}, #{status}, #{sort}, #{packaging_rating}, #{quantity_rating}, #{taste_rating}, #{phone}, #{email}, #{created_time}, #{updated_time})
+			( #{name}, #{logo}, #{description}, #{image}, #{address}, #{status}, #{sort}, #{packaging_rating}, #{quantity_rating}, #{taste_rating}, #{phone}, #{email}, #{created_time}, #{updated_time})
 	</insert>
 
 	<!--2.删除-->
@@ -51,9 +50,6 @@
 		UPDATE
 			x_merchants
  		<set>
-			<if test="user_id != null">
-                user_id = #{user_id},
-            </if>
 			<if test="name != null">
                 name = #{name},
             </if>
@@ -112,9 +108,6 @@
 			a.deleted = 1
 		<if test="entity.merchant_id != null">
 			AND a.merchant_id = #{entity.merchant_id}
-		</if>
-		<if test="entity.user_id != null and entity.user_id != ''">
-			AND a.user_id = #{entity.user_id}
 		</if>
 		<if test="entity.name != null and entity.name != ''">
 			AND a.name = #{entity.name}

@@ -5,7 +5,6 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.crypto.digest.DigestUtil;
 import cn.hutool.db.sql.Order;
 import cn.hutool.json.JSONUtil;
-import cn.hutool.jwt.Claims;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
@@ -599,6 +598,16 @@ public class CodeX {
     public static int generalRandomInt() {
         Random random = new Random();
         return random.nextInt(10000) + 1;
+    }
+
+    /**
+     * 生成 20 位请求序号。
+     *
+     * @return 20 位请求序号
+     */
+    public static String generateReqNo() {
+        String uuid = UUID.randomUUID().toString().replace("-", "");
+        return uuid.length() > 20 ? uuid.substring(0, 20) : uuid;
     }
 
     //   加密为base64

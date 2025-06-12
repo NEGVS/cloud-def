@@ -152,8 +152,9 @@ public class GenerateCodeMethods {
         /**
          * 1------insert---输出：VALUES (#{accountId}, #{corpId}, #{cityId}, #{nameZH},...  );
          */
+        String xxxxxxvo = "xxxxxxvo";
         bufferedWriter_xml.write("\t<!--1.新增-->" + enter);
-        bufferedWriter_xml.write("\t<insert id=\"insert" + generateCode.new_name_upper + "\" parameterType=\"" + generateCode.new_name_small + "\" useGeneratedKeys=\"true\" keyProperty=\"" + primary_key + "\">");
+        bufferedWriter_xml.write("\t<insert id=\"insert" + generateCode.new_name_upper + "\" parameterType=\"" + xxxxxxvo + "\" useGeneratedKeys=\"true\" keyProperty=\"" + primary_key + "\">");
         bufferedWriter_xml.write("\n\t\tINSERT INTO \n\t\t\t" + dataBase + " (<include refid=\"" + "Base_Column_List\"/>) \n");
         bufferedWriter_xml.write("\t\tVALUES \n\t\t\t(");
         int count7 = 0;
@@ -183,11 +184,12 @@ public class GenerateCodeMethods {
          * 1.1----批量--insert---输出：VALUES (#{accountId}, #{corpId}, #{cityId}, #{nameZH},...  );
          */
         bufferedWriter_xml.write("\t<!--1.1 批量新增-->" + enter);
-        bufferedWriter_xml.write("\t<insert id=\"insert" + generateCode.new_name_upper + "List" + "\" parameterType=\"" + generateCode.new_name_small + "\" useGeneratedKeys=\"true\" keyProperty=\"" + primary_key + "\">");
+        bufferedWriter_xml.write("\t<insert id=\"insert" + generateCode.new_name_upper + "List" + "\" parameterType=\"" + "java.util.List" + "\" useGeneratedKeys=\"true\" >");
         bufferedWriter_xml.write("\n\t\tINSERT INTO \n\t\t\t" + dataBase + " (<include refid=\"" + "Base_Column_List\"/>) \n");
         bufferedWriter_xml.write("\t\tVALUES \n\t\t\t");
         bufferedWriter_xml.write("<foreach collection=\"list\" item=\"x\" index=\"index\" separator=\",\">");
         int count_insert_2 = 0;
+        bufferedWriter_xml.write("(");
         for (String fff : list_first) {
             count_insert_2++;
             if (fff.equals(primary_key)) {
@@ -216,7 +218,7 @@ public class GenerateCodeMethods {
          * 2----delete---------
          */
         bufferedWriter_xml.write("\t<!--2.删除-->");
-        bufferedWriter_xml.write("\n\t<delete id=\"delete" + generateCode.new_name_upper + "\" parameterType=\"" + generateCode.new_name_small + "\">" + enter);
+        bufferedWriter_xml.write("\n\t<delete id=\"delete" + generateCode.new_name_upper + "\" parameterType=\"" + xxxxxxvo + "\">" + enter);
         bufferedWriter_xml.write("\t\tUPDATE \n\t\t\t" + dataBase + " \n\t\tSET \n\t\t\t deleted = 2, modifyBy = #{modifyBy}, modifyDate = Now()\n\t\tWHERE\n\t\t\t" + primary_key + " = #{" + primary_key + "}" + enter);
         bufferedWriter_xml.write("\t</delete>\n" + enter);
 
@@ -228,7 +230,7 @@ public class GenerateCodeMethods {
 
         //bufferedWriter_xml.write( " [8].------SQL---输出： SET cityId          = #{cityId}------------------");
         bufferedWriter_xml.write("\t<!--3.修改-->" + enter);
-        bufferedWriter_xml.write("\t<update id=\"update" + generateCode.new_name_upper + "\" parameterType=\"" + generateCode.new_name_small + "\">  " + enter + tab + tab);
+        bufferedWriter_xml.write("\t<update id=\"update" + generateCode.new_name_upper + "\" parameterType=\"" + xxxxxxvo + "\">  " + enter + tab + tab);
         bufferedWriter_xml.write("UPDATE\n\t\t\t" + dataBase + "\n \t\t<set>\n");
         for (String fff : list_first) {
             if (fff.contains(primary_key)) {
@@ -252,7 +254,7 @@ public class GenerateCodeMethods {
          * 4.select all
          */
         bufferedWriter_xml.write("\n\t<!--4.查询-->" + enter);
-        bufferedWriter_xml.write("\t<select id=\"select" + generateCode.new_name_upper + "\" parameterType=\"" + generateCode.new_name_small + "\" resultMap=\"result\">\n" + "\t\tSELECT \n\t\t\ta." + primary_key + ", <include refid=\"" + "Base_Column_List_For_Join\"/> \n" + "\t\tFROM \n\t\t\t" + dataBase + " a\n\t\tWHERE \n\t\t\ta.deleted = 1");
+        bufferedWriter_xml.write("\t<select id=\"select" + generateCode.new_name_upper + "\" parameterType=\"" + xxxxxxvo + "\" resultMap=\"result\">\n" + "\t\tSELECT \n\t\t\ta." + primary_key + ", <include refid=\"" + "Base_Column_List_For_Join\"/> \n" + "\t\tFROM \n\t\t\t" + dataBase + " a\n\t\tWHERE \n\t\t\ta.deleted = 1");
         bufferedWriter_xml.write(enter);
 
 
@@ -428,20 +430,30 @@ public class GenerateCodeMethods {
         CodeX.writeFile(path_DTO, stringBuilder1.toString(), true);
     }
 
-    /**
-     * 4-generate_controller
-     *
-     * @param new_name new_name
-     * @throws IOException new_name
-     */
-    public static void generate_controller(final String new_name) throws IOException {
-    }
+
 
     public static String getControllerContent(final String new_name) throws IOException {
         StringBuilder stringBuilder = new StringBuilder();
         GenerateCode generateCode = new GenerateCode();
 
-        stringBuilder.append("import lombok.extern.slf4j.Slf4j;\n/**\n" +
+        stringBuilder.append("import cn.hutool.json.JSONUtil;\n" +
+                "import io.swagger.v3.oas.annotations.Operation;\n" +
+                "import io.swagger.v3.oas.annotations.Parameter;\n" +
+                "import io.swagger.v3.oas.annotations.media.Content;\n" +
+                "import io.swagger.v3.oas.annotations.media.Schema;\n" +
+                "import io.swagger.v3.oas.annotations.responses.ApiResponse;\n" +
+                "import io.swagger.v3.oas.annotations.tags.Tag;\n" +
+                "import jakarta.annotation.Resource;\nimport com.baomidou.mybatisplus.extension.plugins.pagination.Page;\n" +
+                "import jakarta.servlet.http.HttpServletResponse;\n" +
+                "import lombok.extern.slf4j.Slf4j;\n" +
+                "import org.springframework.web.bind.annotation.GetMapping;\n" +
+                "import org.springframework.web.bind.annotation.PostMapping;\n" +
+                "import org.springframework.web.bind.annotation.RequestBody;\n" +
+                "import org.springframework.web.bind.annotation.RequestMapping;\n" +
+                "import org.springframework.web.bind.annotation.RequestParam;\n" +
+                "import org.springframework.web.bind.annotation.RestController;\n" +
+                "import org.springframework.web.multipart.MultipartFile;\n" +
+                "import xCloud.entity.ResultEntity;\n/**\n" +
                 " * @Description Example接口\n" +
                 " * @Author Andy Fan\n" +
                 " * @Date " + CodeX.getNowTime() + "\n" +
@@ -465,7 +477,7 @@ public class GenerateCodeMethods {
                 "    @Operation(summary = \"新增\")\n" +
                 "    @ApiResponse(responseCode = \"200\", description = \"新增成功\", content = @Content(schema = @Schema(implementation = Example.class)))\n" +
                 "    @PostMapping(\"/add\")\n" +
-                "    public Map<String, Object> add(@RequestBody ExampleDTO dto) {\n" +
+                "    public ResultEntity<Example> add(@RequestBody ExampleDTO dto) {\n" +
                 "        log.info(\"新增数据参数：{}\", JSONUtil.toJsonStr(dto));\n" +
                 "        return exampleService.add(dto);\n" +
                 "    }\n" +
@@ -479,7 +491,7 @@ public class GenerateCodeMethods {
                 "    @Operation(summary = \"删除\", description = \"删除\")\n" +
                 "    @ApiResponse(responseCode = \"200\", description = \"删除成功\", content = @Content(schema = @Schema(implementation = Example.class)))\n" +
                 "    @PostMapping(\"/delete\")\n" +
-                "    public Map<String, Object> delete(@RequestBody ExampleDTO dto) {\n" +
+                "    public ResultEntity<Example> delete(@RequestBody ExampleDTO dto) {\n" +
                 "        log.info(\"更新数据参数：{}\", JSONUtil.toJsonStr(dto));\n" +
                 "        return exampleService.delete(dto);\n" +
                 "    }\n" +
@@ -493,7 +505,7 @@ public class GenerateCodeMethods {
                 "    @Operation(summary = \"更新接口\", description = \"更新数据\")\n" +
                 "    @ApiResponse(responseCode = \"200\", description = \"更新成功\", content = @Content(schema = @Schema(implementation = Example.class)))\n" +
                 "    @PostMapping(\"/update\")\n" +
-                "    public Map<String, Object> update(@RequestBody ExampleDTO dto) {\n" +
+                "    public ResultEntity<Example> update(@RequestBody ExampleDTO dto) {\n" +
                 "        log.info(\"更新数据参数：{}\", JSONUtil.toJsonStr(dto));\n" +
                 "        return exampleService.update(dto);\n" +
                 "    }\n" +
@@ -507,28 +519,9 @@ public class GenerateCodeMethods {
                 "    @Operation(summary = \"获取列表\")\n" +
                 "    @ApiResponse(responseCode = \"200\", description = \"获取成功\", content = @Content(schema = @Schema(implementation = Example.class)))\n" +
                 "    @PostMapping(value = \"/list\")\n" +
-                "    public Map<String, Object> list(@RequestBody ExampleDTO dto) {\n" +
+                "    public ResultEntity<Page<Example>> list(@RequestBody ExampleDTO dto) {\n" +
                 "        log.info(\"列表查询参数：{}\", JSONUtil.toJsonStr(dto));\n" +
-                "        Map<String, Object> resultMap = exampleService.list(dto);\n" +
-                "        Object data = null;\n" +
-                "        long total = 0;\n" +
-                "        Object idNumberList = new ArrayList<>();\n" +
-                "        for (Map.Entry<String, Object> entry : resultMap.entrySet()) {\n" +
-                "            if (Objects.equals(entry.getKey(), \"records\")) {\n" +
-                "                data = entry.getValue();\n" +
-                "            }\n" +
-                "            if (Objects.equals(entry.getKey(), \"count\")) {\n" +
-                "                total = (long) entry.getValue();\n" +
-                "            }\n" +
-                "            if (Objects.equals(entry.getKey(), \"idNumberList\")) {\n" +
-                "                idNumberList = entry.getValue();\n" +
-                "            }\n" +
-                "        }\n" +
-                "        Map<String, Object> map = new HashMap<>();\n" +
-                "        map.put(\"list\", data);\n" +
-                "        map.put(\"notFoundIdNumberList\", idNumberList);\n" +
-                "        map.put(\"page\", total);\n" +
-                "        return new resInfo().responseEntityOK(map, null);\n" +
+                "        return exampleService.list(dto);\n" +
                 "    }\n" +
                 "\n" +
                 "\n" +
@@ -542,9 +535,9 @@ public class GenerateCodeMethods {
                 "    @Operation(summary = \"列表-点击详情\", description = \"详情数据\")\n" +
                 "    @ApiResponse(responseCode = \"200\", description = \"详情\", content = @Content(schema = @Schema(implementation = Example.class)))\n" +
                 "    @PostMapping(\"/detail\")\n" +
-                "    public Map<String, Object> detail(@RequestBody ExampleDTO dto) throws Exception {\n" +
+                "    public ResultEntity<ExampleVO> detail(@RequestBody ExampleDTO dto) throws Exception {\n" +
                 "        log.info(\"查询详情参数：{}\", JSONUtil.toJsonStr(dto));\n" +
-                "        return new resInfo().responseEntityOK(exampleService.detail(dto), null);\n" +
+                "        return exampleService.detail(dto);\n" +
                 "    }\n" +
                 "\n" +
                 "    /**\n" +
@@ -558,7 +551,7 @@ public class GenerateCodeMethods {
                 "    @ApiResponse(responseCode = \"200\", description = \"导入成功\")\n" +
                 "    @PostMapping(\"importFile\")\n" +
                 "    public void importFile(@RequestParam(\"uploadFile\") MultipartFile multipartFile, HttpServletResponse response) throws Exception {\n" +
-                "        exampleService.importFile(multipartFile, UserContext.getUser().getYsUserId(), response);\n" +
+                "        exampleService.importFile(multipartFile, \"userId\", response);\n" +
                 "    }\n" +
                 "\n" +
                 "    /**\n" +
@@ -592,7 +585,7 @@ public class GenerateCodeMethods {
                 " * @description 针对表【" + generateCode.tableName + "】的数据库操作Service\n" +
                 " * @createDate " + CodeX.getNowTime() +
                 " */\n" +
-                "public interface " + generateCode.new_name_upper + "Service extends IService< " + generateCode.vo_name + " >\n" +
+                "public interface " + generateCode.new_name_upper + "Service extends IService< " + generateCode.new_name_upper + " >\n" +
                 "{");
         sb_service.append("/**\n" +
                 "     * 1-新增\n" +
@@ -600,7 +593,7 @@ public class GenerateCodeMethods {
                 "     * @param dto dto\n" +
                 "     * @return 成功条数\n" +
                 "     */\n" +
-                "    Map<String, Object> add(ExampleDTO dto);\n" +
+                "    ResultEntity<Example> add(ExampleDTO dto);\n" +
                 "\n" +
                 "    /**\n" +
                 "     * 2-删除\n" +
@@ -608,7 +601,7 @@ public class GenerateCodeMethods {
                 "     * @param dto dto\n" +
                 "     * @return 成功条数\n" +
                 "     */\n" +
-                "    Map<String, Object> delete(ExampleDTO dto);\n" +
+                "    ResultEntity<Example> delete(ExampleDTO dto);\n" +
                 "\n" +
                 "    /**\n" +
                 "     * 3-更新\n" +
@@ -616,7 +609,7 @@ public class GenerateCodeMethods {
                 "     * @param dto dto\n" +
                 "     * @return 成功条数\n" +
                 "     */\n" +
-                "    Map<String, Object> update(ExampleDTO dto);\n" +
+                "    ResultEntity<Example> update(ExampleDTO dto);\n" +
                 "\n" +
                 "    /**\n" +
                 "     * 4-查询-列表\n" +
@@ -624,7 +617,7 @@ public class GenerateCodeMethods {
                 "     * @param dto 列表搜索\n" +
                 "     * @return 列表\n" +
                 "     */\n" +
-                "    Map<String, Object> list(ExampleDTO dto);\n" +
+                "    ResultEntity<Page<Example>> list(ExampleDTO dto);\n" +
                 "\n" +
                 "    /**\n" +
                 "     * 4.1-查询-详情\n" +
@@ -632,7 +625,7 @@ public class GenerateCodeMethods {
                 "     * @param dto \n" +
                 "     * @return 基本信息\n" +
                 "     */\n" +
-                "    Map<String, Object>  detail(ExampleDTO dto);\n" +
+                "    ResultEntity<ExampleVO>  detail(ExampleDTO dto);\n" +
                 "\n" +
                 "\n" +
                 "    /**\n" +
@@ -659,18 +652,18 @@ public class GenerateCodeMethods {
         sb_service.append("\n}");
         return sb_service.toString().replace("Example", generateCode.new_name_upper).replace("example", generateCode.new_name_small);
     }
-//        sb_controller.toString().replace("Example", generateCode.new_name_upper).replace("example", generateCode.new_name_small)
 
     public static String getServiceImplContent(final String new_name, String primary_key) throws IOException {
         GenerateCode generateCode = new GenerateCode();
         StringBuilder sb_service_impl = new StringBuilder();
-        sb_service_impl.append("/**\n" +
+        sb_service_impl.append("" +
+                "import jakarta.annotation.Resource;/**\n" +
                 " * @author andy_mac\n" +
                 " * @description 针对表【" + generateCode.tableName + "】的数据库操作Service实现\n" +
                 " * @createDate " + CodeX.getNowTime() +
                 " */\n" +
                 "@Service\n" +
-                "public class " + generateCode.new_name_upper + "ServiceImpl extends ServiceImpl< " + generateCode.new_name_upper + "Mapper, " + generateCode.vo_name + " > implements " + generateCode.new_name_upper + "Service\n" +
+                "public class " + generateCode.new_name_upper + "ServiceImpl extends ServiceImpl< " + generateCode.new_name_upper + "Mapper, " + generateCode.new_name_upper + " > implements " + generateCode.new_name_upper + "Service\n" +
                 "{\n");
 
         sb_service_impl.append("\n@Resource\n\tprivate ExampleMapper exampleMapper;\n");
@@ -678,21 +671,21 @@ public class GenerateCodeMethods {
                 "     * 1-新增\n" +
                 "     *\n" +
                 "     * @param dto dto\n" +
-                "     * @return Map\n" +
+                "     * @return  ResultEntity\n" +
                 "     */\n" +
                 "    @Override\n" +
-                "    public Map<String, Object> add(ExampleDTO dto) {\n" +
+                "    public ResultEntity<Example> add(ExampleDTO dto) {\n" +
                 "        if (ObjectUtil.isEmpty(dto)) {\n" +
-                "            return new resInfo().responseFail(\"新增失败，参数为空\");\n" +
+                "            return ResultEntity.error(\"新增失败，参数为空\");\n" +
                 "        }\n" +
                 "        //dto-->entity\n" +
                 "        Example example = new Example();\n" +
                 "        BeanUtils.copyProperties(dto, example);\n" +
                 "        int count = exampleMapper.insertExample(example);\n" +
                 "        if (count > 0) {\n" +
-                "            return new resInfo().responseEntityOK(null, count, \"新增成功\");\n" +
+                "            return ResultEntity.success(example);\n" +
                 "        } else {\n" +
-                "            return new resInfo().responseFail(\"新增失败\");\n" +
+                "            return ResultEntity.error(\"新增失败\");\n" +
                 "        }\n" +
                 "    }\n" +
                 "\n" +
@@ -700,21 +693,21 @@ public class GenerateCodeMethods {
                 "     * 2-删除\n" +
                 "     *\n" +
                 "     * @param dto dto\n" +
-                "     * @return Map\n" +
+                "     * @return  ResultEntity\n" +
                 "     */\n" +
                 "    @Override\n" +
-                "    public Map<String, Object> delete(ExampleDTO dto) {\n" +
+                "    public ResultEntity<Example> delete(ExampleDTO dto) {\n" +
                 "        if (ObjectUtil.isEmpty(dto) && ObjectUtil.isEmpty(dto.getDetailId())) {\n" +
-                "            return new resInfo().responseFail(\"删除失败，参数为空\");\n" +
+                "            return ResultEntity.error(\"删除失败，参数为空\");\n" +
                 "        }\n" +
                 "        //dto-->entity\n" +
                 "        Example example = new Example();\n" +
                 "        BeanUtils.copyProperties(dto, example);\n" +
                 "        int count = exampleMapper.deleteExample(example);\n" +
                 "        if (count > 0) {\n" +
-                "            return new resInfo().responseEntityOK(null, count, \"删除成功\");\n" +
+                "            return ResultEntity.success(example);\n" +
                 "        } else {\n" +
-                "            return new resInfo().responseFail(\"删除失败\");\n" +
+                "            return ResultEntity.error(\"删除失败\");\n" +
                 "        }\n" +
                 "    }\n" +
                 "\n" +
@@ -722,21 +715,21 @@ public class GenerateCodeMethods {
                 "     * 3-更新\n" +
                 "     *\n" +
                 "     * @param dto dto\n" +
-                "     * @return Map\n" +
+                "     * @return  ResultEntity\n" +
                 "     */\n" +
                 "    @Override\n" +
-                "    public Map<String, Object> update(ExampleDTO dto) {\n" +
+                "    public ResultEntity<Example> update(ExampleDTO dto) {\n" +
                 "        if (ObjectUtil.isEmpty(dto) && ObjectUtil.isEmpty(dto.getDetailId())) {\n" +
-                "            return new resInfo().responseFail(\"更新失败，参数为空\");\n" +
+                "            return ResultEntity.error(\"更新失败，参数为空\");\n" +
                 "        }\n" +
                 "        //dto-->entity\n" +
                 "        Example example = new Example();\n" +
                 "        BeanUtils.copyProperties(dto, example);\n" +
                 "        int count = exampleMapper.updateExample(example);\n" +
                 "        if (count > 0) {\n" +
-                "            return new resInfo().responseEntityOK(null, count, \"更新成功\");\n" +
+                "            return ResultEntity.success(example);\n" +
                 "        } else {\n" +
-                "            return new resInfo().responseFail(\"更新失败\");\n" +
+                "            return ResultEntity.error(\"更新失败\");\n" +
                 "        }\n" +
                 "    }\n" +
                 "\n" +
@@ -744,12 +737,12 @@ public class GenerateCodeMethods {
                 "     * 4-查询-列表/搜索\n" +
                 "     *\n" +
                 "     * @param dto 列表搜索\n" +
-                "     * @return Map\n" +
+                "     * @return  ResultEntity\n" +
                 "     */\n" +
                 "    @Override\n" +
-                "    public Map<String, Object> list(ExampleDTO dto) {\n" +
+                "    public ResultEntity<Page<Example>> list(ExampleDTO dto) {\n" +
                 "        if (ObjectUtil.isEmpty(dto)) {\n" +
-                "            return new resInfo().responseFail(\"查询失败，参数为空\");\n" +
+                "            return ResultEntity.error(\"查询失败，参数为空\");\n" +
                 "        }\n" +
                 "        Page<Example> page = new Page<>(dto.getCurrent(), dto.getSize());\n" +
                 "        //dto-->entity\n" +
@@ -764,9 +757,9 @@ public class GenerateCodeMethods {
                 "                BeanUtils.copyProperties(exampleTemp, exampleVO);\n" +
                 "                return exampleVO;\n" +
                 "            }).toList();\n" +
-                "            return new resInfo().responseEntityOK(exampleVOS, exampleVOS.size(), \"查询成功\");\n" +
+                "            return ResultEntity.success(examples);\n" +
                 "        } else {\n" +
-                "            return new resInfo().responseEntityOK(null, 0, \"查询成功\");\n" +
+                "            return ResultEntity.success(page);\n" +
                 "        }\n" +
                 "    }\n" +
                 "\n" +
@@ -774,12 +767,12 @@ public class GenerateCodeMethods {
                 "     * 4.1-查询-详情\n" +
                 "     *\n" +
                 "     * @param dto dto\n" +
-                "     * @return Map\n" +
+                "     * @return  ResultEntity\n" +
                 "     */\n" +
                 "    @Override\n" +
-                "    public Map<String, Object> detail(ExampleDTO dto) {\n" +
+                "    public ResultEntity<ExampleVO> detail(ExampleDTO dto) {\n" +
                 "        if (ObjectUtil.isEmpty(dto) && ObjectUtil.isEmpty(dto.getDetailId())) {\n" +
-                "            return new resInfo().responseFail(\"查询失败，参数为空\");\n" +
+                "            return ResultEntity.error(\"查询失败，参数为空\");\n" +
                 "        }\n" +
                 "        //dto-->entity\n" +
                 "        Example example = new Example();\n" +
@@ -790,9 +783,9 @@ public class GenerateCodeMethods {
                 "            Example exampleTemp = examples.get(0);\n" +
                 "            ExampleVO exampleVO = new ExampleVO();\n" +
                 "            BeanUtils.copyProperties(exampleTemp, exampleVO);\n" +
-                "            return new resInfo().responseEntityOK(exampleVO, \"查询成功\");\n" +
+                "            return ResultEntity.success(exampleVO);\n" +
                 "        } else {\n" +
-                "            return new resInfo().responseFail(\"查询失败\");\n" +
+                "            return ResultEntity.error(\"查询失败\");\n" +
                 "        }\n" +
                 "    }\n" +
                 "\n" +
@@ -830,7 +823,7 @@ public class GenerateCodeMethods {
                 "    @Override\n" +
                 "    public void exportFile(ExampleDTO dto, HttpServletResponse response) throws Exception {\n" +
                 "\n" +
-                "    }\n" +
+                "\n" +
                 "    }");
         sb_service_impl.append("\n}");
 //
@@ -903,5 +896,109 @@ public class GenerateCodeMethods {
 
         StringBuilder stringBuilder = new StringBuilder();
         return stringBuilder.toString().replace("Example", generateCode.new_name_upper).replace("example", generateCode.new_name_small);
+    }
+
+    /**
+     * 4-generate_Test
+     *
+     * @throws IOException new_name
+     */
+    public static void generate_Test(final String path, LinkedHashMap<String, String> columnName_comment_map) throws IOException {
+        GenerateCode generateCode = new GenerateCode();
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("\n" +
+                "    /**\n" +
+                "     * 单元测试方法\n" +
+                "     */\n" +
+                "    @Test\n" +
+                "    void Test001() {\n" +
+                "        List<SettleAdjustmentDetail> list = new ArrayList<>();\n" +
+                "        Random random = new Random();\n" +
+                "        int praimaryKey = 0;\n" +
+
+
+                "        for (int i = 0; i < 5; i++) {\n" +
+                "            SettleAdjustmentDetail settleAdjustmentDetail = new SettleAdjustmentDetail();\n");
+
+        for (Map.Entry<String, String> stringStringEntry : columnName_comment_map.entrySet()) {
+            // 获取字段名
+            String fieldName = stringStringEntry.getKey();
+            // 将字段名首字母大写，用于生成 setter 方法名
+            String setterName = "set" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
+            // 生成 setter 方法调用代码
+            stringBuilder.append(String.format(generateCode.new_name_upper + ".%s(%s);\n", setterName, "1"));
+        }
+        stringBuilder.append(
+
+                "            int insertCount = settleAdjustmentDetailMapper.insertSettleAdjustmentDetail(settleAdjustmentDetail);\n" +
+                        "            praimaryKey = settleAdjustmentDetail.getAdjustmentDetailId();\n" +
+                        "\n" +
+                        "            System.out.println(\"praimaryKey\");\n" +
+                        "            System.out.println(praimaryKey);\n" +
+                        "            if (insertCount == 1) {\n" +
+                        "                System.out.println(\"1-单个插入数据测试成功\");\n" +
+                        "            }\n" +
+                        "\n" +
+                        "            if (i == 1) {\n" +
+                        "\n" +
+                        "                /**\n" +
+                        "                 * 搜索测试\n" +
+                        "                 */\n" +
+                        "                List<SettleAdjustmentDetail> settleAdjustmentDetailList = settleAdjustmentDetailMapper.selectSettleAdjustmentDetail(settleAdjustmentDetail);\n" +
+                        "                if (ObjectUtil.isNotNull(settleAdjustmentDetailList)) {\n" +
+                        "                    System.out.println(\"3-搜索测试成功\");\n" +
+                        "                    System.out.println(JSONUtil.toJsonStr(settleAdjustmentDetailList));\n" +
+                        "                }\n" +
+                        "\n" +
+                        "                settleAdjustmentDetail.setDescription(\"修改数据\");\n" +
+                        "                int i_update = settleAdjustmentDetailMapper.updateSettleAdjustmentDetail(settleAdjustmentDetail);\n" +
+                        "                if (i_update == 1) {\n" +
+                        "                    System.out.println(\"3-修改数据成功\");\n" +
+                        "                }\n" +
+                        "\n" +
+                        "                List<SettleAdjustmentDetail> settleAdjustmentDetailList222 = settleAdjustmentDetailMapper.selectSettleAdjustmentDetail(settleAdjustmentDetail);\n" +
+                        "                if (ObjectUtil.isNotNull(settleAdjustmentDetailList222)) {\n" +
+                        "                    System.out.println(\"4-修改后--搜索测试成功\");\n" +
+                        "                    System.out.println(JSONUtil.toJsonStr(settleAdjustmentDetailList222));\n" +
+                        "                }\n" +
+                        "\n" +
+                        "                int i2 = settleAdjustmentDetailMapper.deleteSettleAdjustmentDetail(settleAdjustmentDetail);\n" +
+                        "                if (i2 == 1) {\n" +
+                        "                    System.out.println(\"2-删除数据 测试成功\");\n" +
+                        "                }\n" +
+                        "            }\n" +
+                        "            settleAdjustmentDetail.setDescription(\"批量插入数据测试\");\n" +
+                        "            list.add(settleAdjustmentDetail);\n" +
+                        "        }\n" +
+                        "        System.out.println(\"-----------批量插入数据测试----------\");\n" +
+                        "        Integer i = settleAdjustmentDetailMapper.insertSettleAdjustmentDetailList(list);\n" +
+                        "        if (i > 0) {\n" +
+                        "            System.out.println(i);\n" +
+                        "            System.out.println(\"1.1-批量插入数据测试成功\");\n" +
+                        "        }\n" +
+                        "\n" +
+                        "        List<SettleAdjustmentDetail> settleAdjustmentDetailList = settleAdjustmentDetailMapper.selectSettleAdjustmentDetail(new SettleAdjustmentDetail());\n" +
+                        "        if (ObjectUtil.isNotNull(settleAdjustmentDetailList)) {\n" +
+                        "            System.out.println(\"4-查询多个所有测试成功\");\n" +
+                        "            System.out.println(\"共有数据：\" + settleAdjustmentDetailList.size() + \" rows\");\n" +
+                        "        }\n" +
+                        "\n" +
+                        "        System.out.println(\"-----------测试 分页查询----------\");\n" +
+                        "        Page<SettleAdjustmentDetail> settleAdjustmentDetailPage = settleAdjustmentDetailMapper.selectSettleAdjustmentDetail(new Page<SettleAdjustmentDetail>(1, 10), new SettleAdjustmentDetail());\n" +
+                        "        if (ObjectUtil.isNotNull(settleAdjustmentDetailPage)) {\n" +
+                        "            System.out.println(\"4-分页查询成功\");\n" +
+                        "            System.out.println(settleAdjustmentDetailPage.getTotal());\n" +
+                        "            System.out.println(settleAdjustmentDetailPage.getPages());\n" +
+                        "            System.out.println(settleAdjustmentDetailPage.getRecords());\n" +
+                        "            System.out.println(JSONUtil.toJsonStr(settleAdjustmentDetailPage));\n" +
+                        "        }\n" +
+                        "        System.out.println(\"\\n-------------恭喜你 测试 全部正常 well done\");\n" +
+                        "\n" +
+                        "    }");
+
+        String replaceContent = stringBuilder.toString().replace("settleAdjustmentDetail", generateCode.new_name_small).replace("SettleAdjustmentDetail", generateCode.new_name_upper);
+
+        CodeX.writeFile(path, replaceContent, true);
+
     }
 }

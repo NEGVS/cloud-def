@@ -1,4 +1,4 @@
-package xCloud.service;
+package xCloud.service.selfInjection;
 
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Component;

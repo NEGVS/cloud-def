@@ -22,7 +22,7 @@ import xCloud.entity.ResultEntity;
 import xCloud.entity.merchants.Merchants;
 import xCloud.entity.merchants.MerchantsDTO;
 import xCloud.entity.merchants.MerchantsVO;
-import xCloud.service.MerchantsService;
+import xCloud.service.selfInjection.MerchantsService;
 
 import java.util.List;
 import java.util.Map;

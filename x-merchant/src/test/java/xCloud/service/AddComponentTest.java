@@ -3,10 +3,9 @@ package xCloud.service;
 import jakarta.annotation.Resource;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import javax.sound.midi.Soundbank;
-
-import static org.junit.jupiter.api.Assertions.*;
+import xCloud.service.selfInjection.AddComponent;
+import xCloud.service.selfInjection.AddOneAndDouble;
+import xCloud.service.selfInjection.SelfInjection;
 
 @SpringBootTest
 class AddComponentTest {

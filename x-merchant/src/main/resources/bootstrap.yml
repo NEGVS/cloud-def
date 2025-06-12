@@ -12,8 +12,21 @@
 #        group: ANDY_GROUP
 #      discovery:
 #        server-addr: 127.0.0.1:8848
+langchain4j:
+  open-ai:
+    chat-model:
+      api-key: ${GEMINI_API_KEY}
+#      api-key: "demo"
+      model-name: "gpt-4o-mini"
+logging:
+  level:
+    org:
+      springframework:
+        transaction=DEBUG:
 server:
   port: 8089
+
+
 spring:
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource

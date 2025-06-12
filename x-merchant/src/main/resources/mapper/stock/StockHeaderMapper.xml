@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="xCloud.mapper.StockHeaderMapper">
+    <resultMap id="result" type="xCloud.entity.StockHeaderVO">
+        <result property="id" column="id"/>
+        <result property="can_sort" column="can_sort"/>
+        <result property="key_name" column="key_name"/>
+        <result property="name" column="name"/>
+        <result property="created_time" column="created_time"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        can_sort
+        , key_name, name, created_time
+    </sql>
+
+    <sql id="Base_Column_List_For_Join">
+        a
+        .
+        can_sort
+        , a.key_name, a.name, a.created_time
+    </sql>
+
+    <!--1.新增-->
+    <insert id="insertStockHeader" parameterType="xCloud.entity.StockHeaderVO" useGeneratedKeys="true"
+            keyProperty="id">
+        INSERT INTO
+        stock_header (<include refid="Base_Column_List"/>)
+        VALUES
+        ( #{can_sort}, #{key_name}, #{name}, #{created_time})
+    </insert>
+
+    <!--1.1 批量新增-->
+    <insert id="insertStockHeaderList" parameterType="java.util.List"
+            useGeneratedKeys="true" >
+        INSERT INTO
+        stock_header (<include refid="Base_Column_List"/>)
+        VALUES
+        <foreach collection="list" item="x" index="index" separator=",">
+            ( #{x.can_sort}, #{x.key_name},
+            #{x.name}, #{x.created_time})
+        </foreach>
+    </insert>
+
+    <!--2.删除-->
+    <delete id="deleteStockHeader" parameterType="xCloud.entity.StockHeaderVO">
+        UPDATE
+            stock_header
+        SET deleted    = 2,
+            modifyBy   = #{modifyBy},
+            modifyDate = Now()
+        WHERE id = #{id}
+    </delete>
+
+    <!--3.修改-->
+    <update id="updateStockHeader" parameterType="xCloud.entity.StockHeaderVO">
+        UPDATE
+        stock_header
+        <set>
+            <if test="can_sort != null">
+                can_sort = #{can_sort},
+            </if>
+            <if test="key_name != null">
+                key_name = #{key_name},
+            </if>
+            <if test="name != null">
+                name = #{name},
+            </if>
+            <if test="created_time != null">
+                created_time = #{created_time},
+            </if>
+
+        </set>
+        WHERE
+        id = #{id}
+    </update>
+
+    <!--4.查询-->
+    <select id="selectStockHeader" parameterType="xCloud.entity.StockHeaderVO" resultMap="result">
+        SELECT
+        a.id,
+        <include refid="Base_Column_List_For_Join"/>
+        FROM
+        stock_header a
+        WHERE
+        a.deleted = 1
+        <if test="entity.id != null">
+            AND a.id = #{entity.id}
+        </if>
+
+        <if test="entity.can_sort != null">
+            AND a.can_sort = #{entity.can_sort}
+        </if>
+        <if test="entity.key_name != null and entity.key_name != ''">
+            AND a.key_name = #{entity.key_name}
+        </if>
+        <if test="entity.name != null and entity.name != ''">
+            AND a.name = #{entity.name}
+        </if>
+        <if test="entity.created_time != null">
+            AND a.created_time = #{entity.created_time}
+        </if>
+
+    </select>
+
+</mapper>

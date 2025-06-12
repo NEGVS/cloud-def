@@ -28,6 +28,14 @@ public class PagerModel implements Serializable {
     @Schema(name = "hasPrevious", description = "当前页是否有上一页")
     private boolean hasPrevious;
 
+    @Hidden
+    @Schema(name = "startDate", description = "startDate")
+    private String startDate;
+
+    @Hidden
+    @Schema(name = "endDate", description = "endDate")
+    private String endDate;
+
     public PagerModel() {
     }
 }

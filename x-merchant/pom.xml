@@ -24,6 +24,25 @@
         </dependency>
 
 
+        <dependency>
+            <groupId>xCloud</groupId>
+            <artifactId>x-common</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-java</artifactId>
+            <version>4.33.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>32.1.2-jre</version> <!-- 与 Selenium 4.25.0 兼容 -->
+        </dependency>
+
+
+
         <!-- 10.langchain4j
         LangChain4j 是专为 Java 生态设计的开源框架，兼容 Spring Boot。它简化了大型语言模型（LLM）在 Java 应用中的集成，提供了统一的 API、自动配置和与 Spring 生态的无缝衔接 -->
         <dependency>

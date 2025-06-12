@@ -897,7 +897,7 @@ public class CodeX {
 
 
         //andy_ruoYi
-        final String URL = "jdbc:mysql://1.92.111.247:3306/andy_ruoYi?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8";
+        final String URL = "jdbc:mysql://115.190.21.58:3306/andy_database?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8";
         final String USER = "root";
         final String PASSWORD = "hy123456";
 
@@ -1596,11 +1596,14 @@ public class CodeX {
     //time* ----------------------------------------------------------------------------
 
     /**
-     * 获取月份，返回格式‘yyyy/MM’---
-     *
-     * @param n，0:本月，1前月，-1后月
-     * @return 返回格式‘yyyy/MM’
+     * 获取now()的 yyyyMMdd
      */
+    public static String getDateOfyyyyMMdd() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+        String currentDate = ZonedDateTime.now().format(formatter);
+        return currentDate;
+    }
+
     public static String getMonthly2(int n) {
         //获取当前日期
         LocalDate currentDate = LocalDate.now();
@@ -1648,15 +1651,13 @@ public class CodeX {
     }
 
     /**
-     * 获取当前时间的年月日
+     * 获取当前时间的年月日 yyyy-MM-dd
      */
-    public static String getCurrentDate() {
+    public static String getDate_yyyy_MM_dd() {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-
         //获取当前时间的前一天
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DATE, -1);
-
         Date date = new Date();
         return sdf.format(date);
     }

@@ -7,15 +7,13 @@ import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import xCloud.entity.ResultEntity;
 import xCloud.entity.merchants.Merchants;
 import xCloud.entity.merchants.MerchantsDTO;
 import xCloud.entity.merchants.MerchantsVO;
 import xCloud.mapper.MerchantsMapper;
-import xCloud.service.MerchantsService;
+import xCloud.service.selfInjection.MerchantsService;
 
 import java.io.IOException;
 import java.util.List;

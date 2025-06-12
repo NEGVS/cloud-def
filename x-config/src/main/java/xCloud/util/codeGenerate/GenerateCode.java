@@ -21,19 +21,8 @@ public class GenerateCode {
      * 数据库tableName名字:hro_recruitment_job_transfer，
      * 则命名new_name为：JobTransfer
      */
-    final String tableName = "x_products";
-    final String new_name = "products";//需要更改，否则为默认命名
-
-//    Controller
-//            ProgrammeController
-//    hro_application_programme
-//            CBSolutionController
-//    hro_mgt_commercial_benefit_solution_detail
-//            CBController
-//    select * from hro_cb_header;
-//    select * from hro_cb_batch;
-//    select * from hro_cb_detail;
-//    CBStatementController
+    final String tableName = "stock_data";
+    final String new_name = "stockData";//需要更改，否则为默认命名
 
     //-----------------------------
     final String vo_name = new_name;
@@ -71,13 +60,11 @@ public class GenerateCode {
         final String path_write_xml = project_root_dir + "mapper/" + CodeX.firstToUpper(generateCode.new_name) + "Mapper.xml";
         final String path_write_java = project_root_dir + "entity/" + CodeX.firstToUpper(generateCode.new_name) + ".java";
         final String path_write_java1 = project_root_dir + "entity/" + CodeX.firstToSmall(generateCode.new_name);
-//        final String path_write_java_VO = project_root_dir + "vo/" + CodeX.firstToUpper(generateCode.new_name) + "VO.java";
-//        final String path_write_java_DTO = project_root_dir + "dto/" + CodeX.firstToUpper(generateCode.new_name) + "DTO.java";
+        final String path_write_test = project_root_dir + "test/" + CodeX.firstToSmall(generateCode.new_name) + "Test.sql";
+
         CodeX.checkDirIsExist(path_write_java);
         CodeX.checkDirIsExist(path_write_xml);
         CodeX.checkDirIsExist(path_write_java1);
-//        CodeX.checkDirIsExist(path_write_java_VO);
-//        CodeX.checkDirIsExist(path_write_java_DTO);
 
         /**
          * 1-生成vo.java and mapper.xml， comment_flag：备注是否开启，默认开启,true开启、false关闭
@@ -97,9 +84,13 @@ public class GenerateCode {
             }
         }
         generateCodeMethods.generate_mapper_service(generateCode.new_name, primary_key);
+        /**
+         * 3-生成测试
+         */
+        generateCodeMethods.generate_Test(path_write_test, columnName_comment_map);
 
         System.out.println("恭喜你代码生成完毕");
-        System.out.println("文件所在位置：./andyCodeGeneration");
+        System.out.println("文件所在位置：" + project_root_dir);
         System.out.println("共用时:" + (System.currentTimeMillis() - l) / 1000.0 + " 秒");
     }
 

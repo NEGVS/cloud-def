@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="xCloud.mapper.StockMapper">
+    <resultMap id="result" type="xCloud.entity.StockVO">
+        <result property="id" column="id"/>
+        <result property="block_name" column="block_name"/>
+        <result property="code" column="code"/>
+        <result property="exchange" column="exchange"/>
+        <result property="finance_type" column="finance_type"/>
+        <result property="heat" column="heat"/>
+        <result property="last_px" column="last_px"/>
+        <result property="market" column="market"/>
+        <result property="name" column="name"/>
+        <result property="logo_type" column="logo_type"/>
+        <result property="logo_url" column="logo_url"/>
+        <result property="px_change_rate" column="px_change_rate"/>
+        <result property="rank_diff" column="rank_diff"/>
+        <result property="created_time" column="created_time"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        block_name
+        , code, exchange, finance_type, heat, last_px, market, name, logo_type, logo_url, px_change_rate, rank_diff, created_time
+    </sql>
+
+    <sql id="Base_Column_List_For_Join">
+        a
+        .
+        block_name
+        , a.code, a.exchange, a.finance_type, a.heat, a.last_px, a.market, a.name, a.logo_type, a.logo_url, a.px_change_rate, a.rank_diff, a.created_time
+    </sql>
+
+    <!--1.新增-->
+    <insert id="insertStock" parameterType="xCloud.entity.StockVO" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO
+        stock (<include refid="Base_Column_List"/>)
+        VALUES
+        (#{block_name}, #{code}, #{exchange}, #{finance_type}, #{heat}, #{last_px}, #{market}, #{name}, #{logo_type},
+        #{logo_url}, #{px_change_rate}, #{rank_diff}, #{created_time})
+    </insert>
+
+    <!--1.1 批量新增-->
+    <insert id="insertStockList" parameterType="java.util.List" useGeneratedKeys="true" >
+        INSERT INTO
+        stock (<include refid="Base_Column_List"/>)
+        VALUES
+        <foreach collection="list" item="x" index="index" separator=",">
+            (#{x.block_name}, #{x.code}, #{x.exchange}, #{x.finance_type}, #{x.heat}, #{x.last_px}, #{x.market},
+            #{x.name}, #{x.logo_type}, #{x.logo_url}, #{x.px_change_rate}, #{x.rank_diff}, #{x.created_time})
+        </foreach>
+    </insert>
+
+    <!--2.删除-->
+    <delete id="deleteStock" parameterType="xCloud.entity.StockVO">
+        UPDATE
+            stock
+        SET deleted    = 2,
+            modifyBy   = #{modifyBy},
+            modifyDate = Now()
+        WHERE id = #{id}
+    </delete>
+
+    <!--3.修改-->
+    <update id="updateStock" parameterType="xCloud.entity.StockVO">
+        UPDATE
+        stock
+        <set>
+            <if test="block_name != null">
+                block_name = #{block_name},
+            </if>
+            <if test="code != null">
+                code = #{code},
+            </if>
+            <if test="exchange != null">
+                exchange = #{exchange},
+            </if>
+            <if test="finance_type != null">
+                finance_type = #{finance_type},
+            </if>
+            <if test="heat != null">
+                heat = #{heat},
+            </if>
+            <if test="last_px != null">
+                last_px = #{last_px},
+            </if>
+            <if test="market != null">
+                market = #{market},
+            </if>
+            <if test="name != null">
+                name = #{name},
+            </if>
+            <if test="logo_type != null">
+                logo_type = #{logo_type},
+            </if>
+            <if test="logo_url != null">
+                logo_url = #{logo_url},
+            </if>
+            <if test="px_change_rate != null">
+                px_change_rate = #{px_change_rate},
+            </if>
+            <if test="rank_diff != null">
+                rank_diff = #{rank_diff},
+            </if>
+            <if test="created_time != null">
+                created_time = #{created_time},
+            </if>
+
+        </set>
+        WHERE
+        id = #{id}
+    </update>
+
+    <!--4.查询-->
+    <select id="selectStock" parameterType="xCloud.entity.StockVO" resultMap="result">
+        SELECT
+        a.id,
+        <include refid="Base_Column_List_For_Join"/>
+        FROM
+        stock a
+        WHERE
+        1 = 1
+        <if test="entity.id != null">
+            AND a.id = #{entity.id}
+        </if>
+        <if test="entity.block_name != null and entity.block_name != ''">
+            AND a.block_name = #{entity.block_name}
+        </if>
+        <if test="entity.code != null and entity.code != ''">
+            AND a.code = #{entity.code}
+        </if>
+        <if test="entity.exchange != null and entity.exchange != ''">
+            AND a.exchange = #{entity.exchange}
+        </if>
+        <if test="entity.finance_type != null and entity.finance_type != ''">
+            AND a.finance_type = #{entity.finance_type}
+        </if>
+        <if test="entity.heat != null and entity.heat != ''">
+            AND a.heat = #{entity.heat}
+        </if>
+        <if test="entity.last_px != null and entity.last_px != ''">
+            AND a.last_px = #{entity.last_px}
+        </if>
+        <if test="entity.market != null and entity.market != ''">
+            AND a.market = #{entity.market}
+        </if>
+        <if test="entity.name != null and entity.name != ''">
+            AND a.name = #{entity.name}
+        </if>
+        <if test="entity.logo_type != null and entity.logo_type != ''">
+            AND a.logo_type = #{entity.logo_type}
+        </if>
+        <if test="entity.logo_url != null and entity.logo_url != ''">
+            AND a.logo_url = #{entity.logo_url}
+        </if>
+        <if test="entity.px_change_rate != null and entity.px_change_rate != ''">
+            AND a.px_change_rate = #{entity.px_change_rate}
+        </if>
+        <if test="entity.rank_diff != null and entity.rank_diff != ''">
+            AND a.rank_diff = #{entity.rank_diff}
+        </if>
+        <if test="entity.created_time != null">
+            AND a.created_time = #{entity.created_time}
+        </if>
+        <if test="entity.startDate != null and entity.startDate != ''">
+            AND a.created_time &gt;= #{entity.startDate}
+        </if>
+        <if test="entity.endDate != null and entity.endDate != ''">
+            AND a.created_time &lt;= #{entity.endDate}
+        </if>
+
+    </select>
+
+</mapper>

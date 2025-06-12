@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="xCloud.mapper.StockDataMapper">
+    <resultMap id="result" type="xCloud.entity.StockDataVO">
+        <result property="id" column="id"/>
+        <result property="result_code" column="result_code"/>
+        <result property="result_num" column="result_num"/>
+        <result property="query_id" column="query_id"/>
+        <result property="created_time" column="created_time"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        result_code
+        , result_num,query_id, created_time
+    </sql>
+
+    <sql id="Base_Column_List_For_Join">
+        a
+        .
+        result_code
+        , a.result_num, a.query_id, a.created_time
+    </sql>
+
+    <!--1.新增-->
+    <insert id="insertStockData" parameterType="xCloud.entity.StockDataVO" useGeneratedKeys="true"
+            keyProperty="id">
+        INSERT INTO
+        stock_data (<include refid="Base_Column_List"/>)
+        VALUES
+        (#{result_code}, #{result_num}, #{query_id},  #{created_time})
+    </insert>
+
+    <!--1.1 批量新增-->
+    <insert id="insertStockDataList" parameterType="java.util.List" useGeneratedKeys="true">
+        INSERT INTO
+        stock_data (<include refid="Base_Column_List"/>)
+        VALUES
+        <foreach collection="list" item="x" index="index" separator=",">
+            (#{x.result_code}, #{x.result_num},
+            #{x.query_id},  #{x.created_time})
+        </foreach>
+    </insert>
+
+    <!--2.删除-->
+    <delete id="deleteStockData" parameterType="xCloud.entity.StockDataVO">
+        UPDATE
+            stock_data
+        SET deleted    = 2,
+            modifyBy   = #{modifyBy},
+            modifyDate = Now()
+        WHERE id = #{id}
+    </delete>
+
+    <!--3.修改-->
+    <update id="updateStockData" parameterType="xCloud.entity.StockDataVO">
+        UPDATE
+        stock_data
+        <set>
+            <if test="result_code != null">
+                result_code = #{result_code},
+            </if>
+            <if test="result_num != null">
+                result_num = #{result_num},
+            </if>
+            <if test="query_id != null">
+                query_id = #{query_id},
+            </if>
+            <if test="created_time != null">
+                created_time = #{created_time},
+            </if>
+
+        </set>
+        WHERE
+        id = #{id}
+    </update>
+
+    <!--4.查询-->
+    <select id="selectStockData" parameterType="xCloud.entity.StockDataVO" resultMap="result">
+        SELECT
+        a.id,
+        <include refid="Base_Column_List_For_Join"/>
+        FROM
+        stock_data a
+        WHERE
+        a.deleted = 1
+        <if test="entity.id != null">
+            AND a.id = #{entity.id}
+        </if>
+        <if test="entity.result_code != null">
+            AND a.result_code = #{entity.result_code}
+        </if>
+        <if test="entity.result_num != null">
+            AND a.result_num = #{entity.result_num}
+        </if>
+        <if test="entity.query_id != null and entity.query_id != ''">
+            AND a.query_id = #{entity.query_id}
+        </if>
+        <if test="entity.created_time != null">
+            AND a.created_time = #{entity.created_time}
+        </if>
+
+    </select>
+
+</mapper>

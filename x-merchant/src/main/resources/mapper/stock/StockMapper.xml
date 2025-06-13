@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="xCloud.mapper.StockMapper">
-    <resultMap id="result" type="xCloud.entity.StockVO">
+    <resultMap id="result" type="xCloud.entity.Stock">
         <result property="id" column="id"/>
         <result property="block_name" column="block_name"/>
         <result property="code" column="code"/>
@@ -111,7 +111,7 @@
     </update>
 
     <!--4.查询-->
-    <select id="selectStock" parameterType="xCloud.entity.StockVO" resultMap="result">
+    <select id="selectStock" parameterType="xCloud.entity.Stock" resultMap="result">
         SELECT
         a.id,
         <include refid="Base_Column_List_For_Join"/>

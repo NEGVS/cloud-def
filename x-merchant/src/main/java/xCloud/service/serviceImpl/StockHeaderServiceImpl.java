@@ -28,6 +28,15 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 /**
  * @author andy_mac
@@ -72,7 +81,6 @@ public class StockHeaderServiceImpl extends ServiceImpl<StockHeaderMapper, Stock
             stock.setBlock_name(xStock.getBlockName());
             stock.setCode(xStock.getCode());
             stock.setExchange(xStock.getExchange());
-            stock.setFinance_type(xStock.getFinanceType());
             stock.setHeat(xStock.getHeat());
             stock.setLast_px(xStock.getLastPx());
             stock.setMarket(xStock.getMarket());
@@ -84,10 +92,18 @@ public class StockHeaderServiceImpl extends ServiceImpl<StockHeaderMapper, Stock
             stock.setCreated_time(new Date());
             stockList.add(stock);
         }
+
+        log.info("\n---------------------saveStockData start");
+        Map<String, Long> collect = stockList.parallelStream().filter(st -> st.getBlock_name() != null).collect(Collectors.groupingBy(Stock::getBlock_name, Collectors.counting()));
+        stockList.parallelStream().forEach(st -> {
+            st.setFinance_type(String.valueOf(collect.get(st.getBlock_name())));
+        });
+
         stockMapper.insertStockList(stockList);
         stockDataMapper.insertStockData(stockData);
         stockHeaderMapper.insertStockHeaderList(stockHeaderList);
-        log.info("--------------------saveStockData over");
+        log.info("\n--------------------saveStockData over");
+
     }
 
 

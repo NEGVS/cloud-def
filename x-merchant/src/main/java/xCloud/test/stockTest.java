@@ -2,8 +2,11 @@
 //
 //import cn.hutool.core.util.ObjectUtil;
 //import cn.hutool.json.JSONUtil;
+//import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+//import xCloud.entity.Stock;
 //
 //import java.util.ArrayList;
+//import java.util.List;
 //import java.util.Random; /**
 // * 单元测试方法
 // */

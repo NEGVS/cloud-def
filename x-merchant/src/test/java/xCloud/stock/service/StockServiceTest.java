@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import xCloud.entity.Stock;
+import xCloud.entity.StockVO;
 import xCloud.mapper.StockMapper;
 import xCloud.service.guava.StockDataParser;
 import xCloud.entity.StockData;
@@ -17,9 +18,12 @@ import xCloud.mapper.StockHeaderMapper;
 import xCloud.tools.HttpUtil;
 import xCloud.util.CodeX;
 
+import javax.sound.midi.Soundbank;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 
 @SpringBootTest
@@ -32,6 +36,43 @@ class StockServiceTest {
     @Resource
     StockHeaderMapper stockHeaderMapper;
 
+
+    @Test
+    void test2() {
+
+        Stock stock111 = new Stock();
+        stock111.setStartDate("2025-06-10");
+        stock111.setEndDate("2025-06-11");
+
+
+        Stock stock222 = new Stock();
+        stock222.setStartDate("2025-06-11");
+        stock222.setEndDate("2025-06-12");
+
+        List<Stock> stockList111 = new ArrayList<>();
+        stockList111.add(stock111);
+        stockList111.add(stock222);
+        for (Stock stock444 : stockList111) {
+            List<Stock> stockList = stockMapper.selectStock(stock444);
+            Map<String, Long> collect = stockList.parallelStream().filter(st -> st.getBlock_name() != null).collect(Collectors.groupingBy(Stock::getBlock_name, Collectors.counting()));
+            stockList.parallelStream().forEach(st -> {
+                st.setFinance_type(String.valueOf(collect.get(st.getBlock_name())));
+            });
+
+            List<Stock> stockUpdate = new ArrayList<>();
+            for (Stock stock : stockList) {Stock stock2=new Stock();
+                stock2.setId(stock.getId());
+                stock2.setFinance_type(stock.getFinance_type());
+                stockUpdate.add(stock2);
+            }
+            for (Stock stock : stockUpdate) {
+                stockMapper.updateStock(stock);
+            }
+            System.out.println("stockList-----");
+        }
+
+        System.out.println("stockList-----over");
+    }
 
     @Test
     void test() {

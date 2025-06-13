@@ -50,6 +50,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -1604,6 +1605,20 @@ public class CodeX {
         return currentDate;
     }
 
+    /**
+     *  获取指定日期的 yyyyMMdd
+     * @param date Date
+     * @return yyyyMMdd
+     */
+    public static String getDateOfyyyyMMdd(Date date) {
+        // 将java.util.Date转换为java.time.LocalDate
+        LocalDate localDate = date.toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDate();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+        return localDate.format(formatter);
+    }
+
     public static String getMonthly2(int n) {
         //获取当前日期
         LocalDate currentDate = LocalDate.now();
@@ -1659,6 +1674,20 @@ public class CodeX {
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DATE, -1);
         Date date = new Date();
+        return sdf.format(date);
+    }
+
+    /**
+     * 获取指定时间的年月日 yyyy-MM-dd
+     *
+     * @param date Date
+     * @return yyyy-MM-dd
+     */
+    public static String getDate_yyyy_MM_dd(Date date) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        //获取当前时间的前一天
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DATE, -1);
         return sdf.format(date);
     }
 

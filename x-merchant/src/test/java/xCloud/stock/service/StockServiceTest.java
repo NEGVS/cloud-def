@@ -8,9 +8,8 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import xCloud.entity.Stock;
-import xCloud.entity.StockVO;
 import xCloud.mapper.StockMapper;
-import xCloud.service.guava.StockDataParser;
+import xCloud.service.stock.StockDataParser;
 import xCloud.entity.StockData;
 import xCloud.mapper.StockDataMapper;
 import xCloud.entity.StockHeader;
@@ -18,7 +17,6 @@ import xCloud.mapper.StockHeaderMapper;
 import xCloud.tools.HttpUtil;
 import xCloud.util.CodeX;
 
-import javax.sound.midi.Soundbank;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;

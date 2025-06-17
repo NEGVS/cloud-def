@@ -1,4 +1,4 @@
-package xCloud.service.guava;
+package xCloud.service.stock;
 
 
 import cn.hutool.core.date.DateUtil;
@@ -28,9 +28,9 @@ public class StockPriceFetcher {
                 "&group=quotation_fiveday_ab&market_type=ab" +
                 "&new_Format=1&finClientType=pc&code=" + stockCode;
         try {
-            // 1. 获取API数据
+            // 1.获取API数据
             String jsonData = fetchApiData(apiUrl);
-            // 2. 解析JSON
+            // 2.解析JSON
             parseJsonData(jsonData, stockCode);
         } catch (Exception e) {
             System.err.println("数据处理失败: " + e.getMessage());
@@ -57,17 +57,7 @@ public class StockPriceFetcher {
     private static List<StockDataHeader> parseJsonData(String json, String stockCode) throws Exception {
         ObjectMapper mapper = new ObjectMapper();
         JsonNode rootNode = mapper.readTree(json);
-        List<String> headerList = new ArrayList<>();
-        List<String> keyList = new ArrayList<>();
         JsonNode newMarketData = rootNode.path("Result").path("newMarketData");
-        JsonNode headers = newMarketData.path("headers");
-        for (JsonNode header : headers) {
-            headerList.add(header.asText());
-        }
-        JsonNode keys = newMarketData.path("keys");
-        for (JsonNode key : keys) {
-            keyList.add(key.asText());
-        }
         JsonNode marketData = newMarketData.path("marketData");
         Map<String, List<StockDataHeader>> dateMap = new TreeMap<>();
         // 最终的数据
@@ -95,28 +85,19 @@ public class StockPriceFetcher {
             System.out.println(entry.getKey());
             System.out.println(entry.getValue());
         }
-        System.out.println(CodeX.getDate_yyyy_MM_dd());
-        System.out.println(CodeX.getDate_yyyy_MM_dd(DateUtil.yesterday()));
-
         //今日最新数据
         List<StockDataHeader> stockDataHeaderList = dateMap.get(CodeX.getDate_yyyy_MM_dd());
         StockDataHeader stockDataHeader = stockDataHeaderList.get(stockDataHeaderList.size() - 1);
         BigDecimal bigDecimal = new BigDecimal(stockDataHeader.getPrice());
         System.out.println("今日价格：" + bigDecimal);
         //昨日最新数据
-
         List<StockDataHeader> stockDataHeaderList2 = dateMap.get(CodeX.getDate_yyyy_MM_dd(DateUtil.yesterday()));
         StockDataHeader stockDataHeader2 = stockDataHeaderList2.get(stockDataHeaderList2.size() - 1);
         BigDecimal bigDecimal2 = new BigDecimal(stockDataHeader2.getPrice());
         System.out.println("昨日价格：" + bigDecimal2);
-
-        BigDecimal difference = bigDecimal.subtract(bigDecimal2);
         BigDecimal rate = bigDecimal.subtract(bigDecimal2).divide(bigDecimal2, 10, RoundingMode.HALF_UP)
                 .multiply(new BigDecimal("100"))
                 .setScale(2, RoundingMode.HALF_UP);
-
-//        BigDecimal rate = ((bigDecimal.subtract(bigDecimal2)).divide(bigDecimal2).setScale(2, RoundingMode.HALF_UP)).setScale(2, RoundingMode.HALF_UP).multiply(new BigDecimal("100")).setScale(2, RoundingMode.HALF_UP);
-
         System.out.println("Rate：" + rate);
         return null;
     }

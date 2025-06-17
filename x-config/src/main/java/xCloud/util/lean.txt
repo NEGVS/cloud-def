@@ -1,0 +1,17 @@
+7. II 1 (POL 2) Let $a_{i}, b_{i}$ be coprime positive integers for $i=1, 2, \ldots, k,$ . and $m$ the
+least common multiple of $b_{1}, \ldots, b_{k}$ . Prove that the greatest common divisor of
+$a_{1} \frac{m} {b_{1}}, \dots, a_{k} \frac{m} {b_{k}}$ equals the greatest common divisor of
+$a_{1}, \ldots, a_{k}$ .\n
+
+
+9. II3 (CUB 3) Let $x, y, z$ be real numbers each of whose absolute value is different from $1 /
+\sqrt{3}$ such that $x+y+z=x y z$ . Prove that\n$$\n\frac{3 x-x^{3}} {1-3 x^{2}}+\frac{3 yy^{3}} {1-3 y^{2}}+\frac{3 z-z^{3}} {1-3 z^{2}}=\frac{3 x-x^{3}} {1-3 x^{2}} \cdot\frac{3 yy^{3}} {1-3 y^{2}} \cdot\frac{3 z-z^{3}} {1-3 z^{2}}.\n$$\n
+
+
+
+14.(YUG\uff09Let $x_{0}=5$ and $x_{n+1}=x_{n}+\frac{1} {x_{n}} ~ ( n=0, 1, 2, \ldots)$ . Prove
+that $4 5 < x_{1 0 0 0} <$ 45.1.\n
+
+
+1-请解答这个题目，英文回答
+2-请⽤lean语⾔来⽣成证明过程，英文回答

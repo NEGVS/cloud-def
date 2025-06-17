@@ -16,7 +16,7 @@ import xCloud.entity.ResultEntity;
 import xCloud.entity.Stock;
 import xCloud.mapper.StockMapper;
 import xCloud.service.StockHeaderService;
-import xCloud.service.guava.StockDataParser;
+import xCloud.service.stock.StockDataParser;
 import xCloud.entity.StockData;
 import xCloud.mapper.StockDataMapper;
 import xCloud.entity.StockHeader;
@@ -29,13 +29,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ForkJoinPool;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 /**
@@ -73,6 +66,7 @@ public class StockHeaderServiceImpl extends ServiceImpl<StockHeaderMapper, Stock
             stockHeader.setKey_name(header.getKey());
             stockHeader.setCan_sort(header.getCanSort());
             stockHeader.setName(header.getName());
+            stockHeader.setCreated_time(new Date());
             stockHeaderList.add(stockHeader);
         }
         List<Stock> stockList = new ArrayList<>();

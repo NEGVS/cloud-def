@@ -1,4 +1,4 @@
-package xCloud.service.guava;
+package xCloud.service.stock;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

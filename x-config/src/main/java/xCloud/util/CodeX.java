@@ -17,6 +17,7 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
+import javax.print.attribute.standard.MediaSize;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
@@ -32,6 +33,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.RoundingMode;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.channels.FileChannel;
@@ -70,8 +72,19 @@ import java.util.Set;
 import java.util.Stack;
 import java.util.TreeSet;
 import java.util.UUID;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.PriorityBlockingQueue;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
@@ -263,6 +276,11 @@ public class CodeX {
 
     /**
      * BigDecimal测试
+     * RoundingMode.UP (直接进位)
+     * RoundingMode.HALF_UP (四舍五入)
+     * 舍入模式	规则	3.141 → 2位小数	3.145 → 2位小数	3.149 → 2位小数
+     * HALF_UP	四舍五入	3.14	3.15	3.15
+     * UP	非零即进	3.15	3.15	3.15
      */
     public static void BigDecimalTest() {
 
@@ -274,7 +292,11 @@ public class CodeX {
         String str2 = "2.0";
         String str3 = "-2.0";
         //      加减乘除
-        BigDecimal multiply = bigDecimal2.multiply(bigDecimal3);
+        BigDecimal multiply = bigDecimal2.add(bigDecimal3);
+        BigDecimal multiply1 = bigDecimal2.subtract(bigDecimal3);
+        BigDecimal multiply2 = bigDecimal2.multiply(bigDecimal3);
+        //注意除法时必须得写精度，否则会报错
+        BigDecimal multiply3 = bigDecimal2.divide(bigDecimal3, 2, RoundingMode.HALF_UP);
 
         System.out.println(multiply);
 
@@ -1606,7 +1628,8 @@ public class CodeX {
     }
 
     /**
-     *  获取指定日期的 yyyyMMdd
+     * 获取指定日期的 yyyyMMdd
+     *
      * @param date Date
      * @return yyyyMMdd
      */
@@ -1906,8 +1929,10 @@ public class CodeX {
     //queryWrapper.esists（“SQL语句”）——查询符合SQL语句的值
     //queryWrapper.notEsists（“SQL语句”）——查询不符合SQL语句的值
     //   plus --------------------------------------------
-    //
-    //   map* --------------------------------------------
+
+    /**
+     * map* --------------------------------map------------
+     */
     public static void mapTest() {
         Map<String, Integer> map = new HashMap<>();
 //        map.put("one", 1);
@@ -1923,10 +1948,10 @@ public class CodeX {
             users.add(user);
         }
         System.out.println(JSON.toJSONString(users));
-/**
- * 3-List<VO> 转为Map<id,name>, 如果key重复，则覆盖
- * return Map<String, string>
- */
+        /**
+         * 3-List<VO> 转为Map<id,name>, 如果key重复，则覆盖
+         * return Map<String, string>
+         */
         //perfect
         Map<String, String> collect1 = users.stream().collect(Collectors.toMap(User::getId, User::getUser_name, (oldValue, newValue) -> newValue));
         //会报错，重复key
@@ -1936,19 +1961,19 @@ public class CodeX {
         System.out.println(JSON.toJSONString(collect1));
 
         //
-/**
- * 2-List<VO> 转为Map，key 为Id，value 为User, 如果key重复，则覆盖。
- * return Map<String, User>
- */
+        /**
+         * 2-List<VO> 转为Map，key 为Id，value 为User, 如果key重复，则覆盖。
+         * return Map<String, User>
+         */
         Map<String, User> userMap = users.stream().collect(Collectors.toMap(User::getId, Function.identity(), (oldValue, newValue) -> newValue));
         //会报错的
         //Map<String, User> userMap2 = users.stream().distinct().collect(Collectors.toMap(User::getId, Function.identity()));
 
         //Function.identity() 作为 key 和 value 的映射函数，返回输入本身。当需要将 Stream 元素直接作为 key 或 value 时，避免显式写 x -> x。
 
-/**
- * 1-提取List<VO> 中的id，返回idList，并去重。
- */
+        /**
+         * 1-提取List<VO> 中的id，返回idList，并去重。
+         */
         //返回Set<id>
         Set<String> idList = users.stream().map(User::getId).collect(Collectors.toSet());
         //返回List<id>，需要加.distinct()
@@ -1976,9 +2001,9 @@ public class CodeX {
             Map.Entry<String, Integer> entry = iterator.next();
             System.out.println("Key: " + entry.getKey() + ", Value: " + entry.getValue());
         }
-/**
- *  方式1: 使用Map.Entry---10. 【推荐】使用 entrySet 遍历 Map 类集合 KV，而不是 keySet 方式进行遍历。
- */
+        /**
+         *  方式1: 使用Map.Entry---10. 【推荐】使用 entrySet 遍历 Map 类集合 KV，而不是 keySet 方式进行遍历。
+         */
         for (Map.Entry<String, Integer> entry : map.entrySet()) {
             System.out.println("Key: " + entry.getKey() + ", Value: " + entry.getValue());
         }
@@ -2187,15 +2212,187 @@ public class CodeX {
 //        threadC.start();
 //    }
 
-    //   thread*---------------------------------------
-    public static void threadTest() {
-        // 创建一个线程
-        Thread thread = new Thread(() -> {
-            System.out.println("Hello, World!");
-        });
 
+    /**
+     * threadPool*-------------------threadPool--------------------
+     */
+    public static void threadPoolFixedTest() {
+        ExecutorService executorService = Executors.newFixedThreadPool(5);
+        try {
+//            1.use Thread ,通过线程池提交
+            Runnable thread1 = () -> {
+                System.out.println("1-Hello, World! new Thread: " + Thread.currentThread().getName());
+            };
+            Future<?> submit1 = executorService.submit(thread1);
+            //2.use callable
+            Callable<String> callable = () -> {
+                System.out.println("2-Hello, World! new Callable: " + Thread.currentThread().getName());
+                return "2-Hello, World! new Callable: " + Thread.currentThread().getName();
+            };
+            Future<String> submit2 = executorService.submit(callable);
+//            3.use runnable
+            Runnable runnable = () -> {
+                System.out.println("3-Hello, World! new Runnable: " + Thread.currentThread().getName());
+            };
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            //关闭线程池
+            executorService.shutdown();
+            try {
+                if (!executorService.awaitTermination(5, TimeUnit.SECONDS)) {
+                    // 超时未关闭，则强制关闭
+                    executorService.shutdownNow();
+                }
+            } catch (InterruptedException e) {
+                executorService.shutdownNow();
+                Thread.currentThread().interrupt();//恢复中断状态
+            }
+        }
+    }
+
+    public static void threadPoolTest() throws Exception {
+        int corePoolSize = 2;
+        int maximumPoolSize = 4;
+        long keepAliveTime = 10;// 非核心线程空闲存活时间（秒）
+        BlockingQueue<Runnable> workQueue = new PriorityBlockingQueue<>(10);//优先级队列
+        ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(
+                corePoolSize,
+                maximumPoolSize,
+                keepAliveTime,
+                TimeUnit.SECONDS,
+                workQueue,
+                new ThreadFactory() {//自定义线程名称
+                    private final AtomicInteger threadNumber = new AtomicInteger(1);
+
+                    @Override
+                    public Thread newThread(Runnable r) {
+                        return new Thread(r, "PriorityTask-" + threadNumber.getAndIncrement());
+                    }
+                },
+//                new ThreadPoolExecutor.AbortPolicy()
+                new ThreadPoolExecutor.CallerRunsPolicy()//拒绝策略，主线程执行
+        );
+
+
+        try {
+            //1-thread ,优先级3
+            Runnable threadTask = () -> {
+                try {
+                    System.out.println("PriorityTask: " + Thread.currentThread().getName());
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                    Thread.currentThread().interrupt();
+                }
+            };
+            threadPoolExecutor.execute(new PriorityTask(threadTask, 3));
+//            2-Callable,优先级5
+            Callable<String> callable = () -> {
+                try {
+                    System.out.println("PriorityTask: " + Thread.currentThread().getName());
+                    Thread.sleep(1000);
+                    return "callable result ,name: " + Thread.currentThread().getName();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                    Thread.currentThread().interrupt();
+                    return null;
+                }
+            };
+            Future<String> submit = threadPoolExecutor.submit(callable);
+
+//            3-runnable,优先级1
+            Runnable runnable = () -> {
+                try {
+                    System.out.println("PriorityTask: " + Thread.currentThread().getName());
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                    Thread.currentThread().interrupt();
+                }
+            };
+            threadPoolExecutor.execute(new PriorityTask(runnable, 1));
+
+
+            //get result
+            try {
+                String s = submit.get(2, TimeUnit.SECONDS);//2s超时
+                System.out.println("callable result: " + s);
+            } catch (TimeoutException e) {
+                System.out.println("TimeoutException");
+            }
+        } finally {
+            threadPoolExecutor.shutdown();
+            try {
+                if (!threadPoolExecutor.awaitTermination(5, TimeUnit.SECONDS)) {
+                    threadPoolExecutor.shutdownNow();
+                }
+            } catch (InterruptedException e) {
+                threadPoolExecutor.shutdownNow();
+                Thread.currentThread().interrupt();
+            }
+        }
+    }
+
+    /**
+     * PriorityTask
+     */
+
+    static class PriorityTask implements Runnable, Comparable<PriorityTask> {
+        private final int priority;
+        private final Runnable task;
+        private final int sequence;//用于相同优先级任务的顺序
+        private static final AtomicInteger sequenceGenerator = new AtomicInteger();
+
+        public PriorityTask(Runnable task, int priority) {
+            this.priority = priority;
+            this.task = task;
+            this.sequence = sequenceGenerator.getAndIncrement();
+        }
+
+        @Override
+        public int compareTo(PriorityTask task) {
+            //优先级高者先执行，优先级相同的按照序列号执行
+            int compare = Integer.compare(task.priority, this.priority);
+            return compare != 0 ? compare : Integer.compare(this.sequence, task.sequence);
+        }
+
+        @Override
+        public void run() {
+            task.run();
+        }
+    }
+
+    /**
+     * thread*-------------------thread--------------------
+     */
+    public static void threadTest() throws Exception {
+        //1-获取当前设备核心线程数
+        int coreCount = Runtime.getRuntime().availableProcessors();
+        System.out.println("当前设备核心线程数：" + coreCount);
+        long l = Runtime.getRuntime().maxMemory();
+        System.out.println("当前设备最大内存：" + l / 1024);
+        long l1 = Runtime.getRuntime().freeMemory();
+        System.out.println("当前设备空闲内存：" + l1 / 1024);
+
+        //1-创建一个线程
+        Thread thread = new Thread(() -> {
+            System.out.println("1-Hello, World! new Thread: " + Thread.currentThread().getName());
+        });
         // 启动线程
         thread.start();
+//2-
+        Callable<String> callable = () -> {
+            System.out.println("2-Callable started: " + Thread.currentThread().getName());
+            return "2-Hello, World! callable thread";
+        };
+        callable.call();
+//        3-
+        Runnable runnable = () -> {
+            System.out.println("3- Runnable started: " + Thread.currentThread().getName());
+        };
+        runnable.run();
     }
 
     private static final int print_count = 10;
@@ -2261,6 +2458,44 @@ public class CodeX {
 
             }
         }
+    }
+
+    /**
+     * 使用synchronized
+     */
+    public synchronized void incrementSync() {
+        state++;
+    }
+
+    public void incrementLock() {
+        lock.lock();
+        try {
+            state++;
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    public String lockTest() throws InterruptedException {
+
+        Runnable runnable = () -> {
+            System.out.println("线程：" + Thread.currentThread().getName() + " 正在执行任务");
+            for (int i = 0; i < 100; i++) {
+                incrementLock();
+            }
+        };
+        Thread[] threads = new Thread[10];
+        for (int i = 0; i < threads.length; i++) {
+            threads[i] = new Thread(runnable, "newThreadName_" + i);
+        }
+        for (Thread thread : threads) {
+            thread.start();
+        }
+        for (Thread thread : threads) {
+            thread.join();
+        }
+        System.out.println("最终结果：" + state);
+        return "lockTest";
     }
 
     //   Algorithm*---------------------------------------

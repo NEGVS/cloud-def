@@ -1,0 +1,7 @@
+{
+  "nl_statement":"7. II 1 (POL 2) Let $a_{i}, b_{i}$ be coprime positive integers for $i=1, 2, \\ldots, k,$ . and $m$ the\nleast common multiple of $b_{1}, \\ldots, b_{k}$ . Prove that the greatest common divisor of\n$a_{1} \\frac{m} {b_{1}}, \\dots, a_{k} \\frac{m} {b_{k}}$ equals the greatest common divisor of\n$a_{1}, \\ldots, a_{k}$ .\\n",
+  "nl_proof":"",
+  "statement":"",
+  "lean_version":"",
+  "source":""
+}

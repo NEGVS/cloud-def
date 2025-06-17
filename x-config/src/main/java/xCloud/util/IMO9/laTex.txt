@@ -1,0 +1,103 @@
+\documentclass{article}
+\usepackage{amsmath, amssymb}
+
+% Comprehensive preamble for compatibility with PDFLaTeX
+\begin{document}
+
+\section*{Proof of IMO 1990 Shortlist Problem C3}
+
+Let \(x, y, z\) be real numbers such that \(|x|, |y|, |z| \neq \frac{1}{\sqrt{3}}\) and \(x + y + z = xyz\). We aim to prove that:
+\[
+\frac{3x - x^3}{1 - 3x^2} + \frac{3y - y^3}{1 - 3y^2} + \frac{3z - z^3}{1 - 3z^2} = \frac{3x - x^3}{1 - 3x^2} \cdot \frac{3y - y^3}{1 - 3y^2} \cdot \frac{3z - z^3}{1 - 3z^2}.
+\]
+
+% Step 1: Define the function
+\subsection*{Step 1: Define the Function}
+Define the function:
+\[
+f(t) = \frac{3t - t^3}{1 - 3t^2}.
+\]
+The goal is to show:
+\[
+f(x) + f(y) + f(z) = f(x) \cdot f(y) \cdot f(z).
+\]
+Since \(|t| \neq \frac{1}{\sqrt{3}}\), the denominator \(1 - 3t^2 \neq 0\), as \(3t^2 = 1\) implies \(t^2 = \frac{1}{3}\).
+
+% Step 2: Trigonometric substitution
+\subsection*{Step 2: Trigonometric Substitution}
+Given \(x + y + z = xyz\), let:
+\[
+x = \tan A, \quad y = \tan B, \quad z = \tan C,
+\]
+where \(A, B, C \neq \pm \frac{\pi}{6} + k\pi\) (since \(|\tan \theta| = \frac{1}{\sqrt{3}}\) when \(\theta = \pm \frac{\pi}{6} + k\pi\)). The condition becomes:
+\[
+\tan A + \tan B + \tan C = \tan A \tan B \tan C.
+\]
+Let \(s = \tan A + \tan B + \tan C = \tan A \tan B \tan C\). Using the tangent addition formula for three angles:
+\[
+\tan(A + B + C) = \frac{\tan A + \tan B + \tan C - \tan A \tan B \tan C}{1 - (\tan A \tan B + \tan B \tan C + \tan C \tan A)}.
+\]
+Substituting \(s\), the numerator becomes \(s - s = 0\), so:
+\[
+\tan(A + B + C) = 0 \implies A + B + C = n\pi \quad \text{for some integer } n.
+\]
+
+% Step 3: Evaluate f(t)
+\subsection*{Step 3: Evaluate \(f(t)\)}
+Compute \(f(t)\):
+\[
+3t - t^3 = t (3 - t^2), \quad 1 - 3t^2 = -(3t^2 - 1) = -3 \left(t^2 - \frac{1}{3}\right).
+\]
+Thus:
+\[
+f(t) = \frac{t (3 - t^2)}{-3 \left(t^2 - \frac{1}{3}\right)} = -\frac{t (3 - t^2)}{3 \left(t^2 - \frac{1}{3}\right)}.
+\]
+For \(t = \tan \theta\), use the triple-angle formula for tangent:
+\[
+\tan 3\theta = \frac{3 \tan \theta - \tan^3 \theta}{1 - 3 \tan^2 \theta}.
+\]
+Comparing with \(f(t)\), we have:
+\[
+f(\tan \theta) = \tan 3\theta.
+\]
+Thus:
+\[
+f(x) = f(\tan A) = \tan 3A, \quad f(y) = \tan 3B, \quad f(z) = \tan 3C.
+\]
+
+% Step 4: Verify the equality
+\subsection*{Step 4: Verify the Equality}
+The left-hand side is:
+\[
+f(x) + f(y) + f(z) = \tan 3A + \tan 3B + \tan 3C.
+\]
+Since \(A + B + C = n\pi\), we have:
+\[
+3A + 3B + 3C = 3n\pi \implies \tan(3A + 3B + 3C) = \tan(3n\pi) = 0.
+\]
+Apply the tangent addition formula for \(3A + 3B + 3C\):
+\[
+\tan(3A + 3B + 3C) = \frac{\tan 3A + \tan 3B + \tan 3C - \tan 3A \tan 3B \tan 3C}{1 - (\tan 3A \tan 3B + \tan 3B \tan 3C + \tan 3C \tan 3A)} = 0.
+\]
+This implies the numerator is zero:
+\[
+\tan 3A + \tan 3B + \tan 3C = \tan 3A \tan 3B \tan 3C.
+\]
+Thus:
+\[
+f(x) + f(y) + f(z) = f(x) \cdot f(y) \cdot f(z).
+\]
+
+% Step 5: Address the condition
+\subsection*{Step 5: Condition Verification}
+The condition \(|x|, |y|, |z| \neq \frac{1}{\sqrt{3}}\) ensures \(1 - 3x^2 \neq 0\), making \(f(x)\) well-defined. The trigonometric substitution assumes \(3A, 3B, 3C \neq \frac{\pi}{2} + m\pi\), which is consistent with the problem’s constraints.
+
+% Conclusion
+\subsection*{Conclusion}
+Therefore:
+\[
+\frac{3x - x^3}{1 - 3x^2} + \frac{3y - y^3}{1 - 3y^2} + \frac{3z - z^3}{1 - 3z^2} = \frac{3x - x^3}{1 - 3x^2} \cdot \frac{3y - y^3}{1 - 3y^2} \cdot \frac{3z - z^3}{1 - 3z^2}.
+\]
+This completes the proof.
+
+\end{document}

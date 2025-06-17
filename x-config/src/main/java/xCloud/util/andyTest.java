@@ -16,6 +16,23 @@ import java.util.Set;
 public class andyTest {
 
     public static void main(String[] args) {
+
+
+        try {
+            CodeX codeX6616 = new CodeX();
+            System.out.println(codeX6616.lockTest());
+            codeX6616.threadTest();
+            codeX6616.threadPoolTest();
+
+        } catch (InterruptedException e) {
+            System.out.println(e.getMessage());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        if (true) {
+            return;
+        }
+
 ///Users/andy_mac/Documents/CodeSpace/andyProject0/demi_vue _boot/ruoyi-admin/src/main/java/com/ruoyi/web/controller/hc
         lengthOfLongestSubstring("abcddadsx");
 

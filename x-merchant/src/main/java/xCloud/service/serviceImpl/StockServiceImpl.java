@@ -20,7 +20,7 @@ import xCloud.entity.StockVO;
 import xCloud.mapper.StockMapper;
 import xCloud.service.StockHeaderService;
 import xCloud.service.StockService;
-import xCloud.service.guava.StockDataParser;
+import xCloud.service.stock.StockDataParser;
 import xCloud.tools.HttpUtil;
 import xCloud.util.CodeX;
 
@@ -58,11 +58,11 @@ public class StockServiceImpl extends ServiceImpl<StockMapper, Stock> implements
             stock.setStartDate(CodeX.getDate_yyyy_MM_dd());
             List<Stock> stocks = stockMapper.selectStock(stock);
 
-            if (count.get() == 0) {
-                count.getAndIncrement();
-            } else {
-                return;
-            }
+//            if (count.get() == 0) {
+//                count.getAndIncrement();
+//            } else {
+//                return;
+//            }
             if (stocks != null && !stocks.isEmpty()) {
                 log.info("今日数据已经更新，无需重复更新");
                 return;

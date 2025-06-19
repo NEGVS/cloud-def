@@ -17,7 +17,7 @@ import org.springframework.web.client.RestTemplate;
                 description = "API documentation for my Spring Cloud Order application"
         )
 )
-@EnableDiscoveryClient
+//@EnableDiscoveryClient
 //@MapperScan("xCloud.mapper")
 @SpringBootApplication
 //开启Fegin

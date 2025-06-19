@@ -10,25 +10,31 @@
     </parent>
 
     <artifactId>x-merchant</artifactId>
+    <name>x-merchant</name>
+    <description>x-merchant</description>
+    <packaging>jar</packaging>
+    <version>0.0.1-SNAPSHOT</version>
 
-    <properties>
-        <maven.compiler.source>21</maven.compiler.source>
-        <maven.compiler.target>21</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
+
     <dependencies>
+
         <dependency>
             <groupId>xCloud</groupId>
             <artifactId>x-config</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
-
-
+<!--        <dependency>-->
+<!--            <groupId>org.apache.httpcomponents</groupId>-->
+<!--            <artifactId>httpclient</artifactId>-->
+<!--            <version>4.5.14</version>-->
+<!--        </dependency>-->
         <dependency>
-            <groupId>xCloud</groupId>
-            <artifactId>x-common</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <groupId>org.apache.httpcomponents.client5</groupId>
+            <artifactId>httpclient5</artifactId>
+            <version>5.2.1</version> <!-- 这是最新稳定版，或者根据需要换成其它版本 -->
         </dependency>
+
+
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-java</artifactId>
@@ -40,7 +46,6 @@
             <artifactId>guava</artifactId>
             <version>32.1.2-jre</version> <!-- 与 Selenium 4.25.0 兼容 -->
         </dependency>
-
 
 
         <!-- 10.langchain4j
@@ -68,18 +73,14 @@
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>druid-spring-boot-starter</artifactId>
-             <version>1.2.8</version>
+            <version>1.2.8</version>
         </dependency>
     </dependencies>
     <build>
         <plugins>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>19</source>
-                    <target>19</target>
-                </configuration>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
         </plugins>
     </build>

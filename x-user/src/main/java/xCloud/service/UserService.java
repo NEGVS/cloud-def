@@ -1,8 +1,8 @@
 package xCloud.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import xCloud.entity.user.User;
-import xCloud.entity.user.UserDTO;
+import xCloud.entity.User;
+import xCloud.entity.UserDTO;
 
 import java.util.Map;
 

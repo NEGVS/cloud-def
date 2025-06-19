@@ -1,17 +1,17 @@
 package xCloud.tools;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.utils.URIBuilder;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.util.EntityUtils;
+import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.client5.http.entity.UrlEncodedFormEntity;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.NameValuePair;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
+import org.apache.hc.core5.http.io.entity.StringEntity;
+import org.apache.hc.core5.http.message.BasicNameValuePair;
+import org.apache.hc.core5.net.URIBuilder;
 
 import java.io.IOException;
 import java.net.URI;
@@ -51,9 +51,9 @@ public class HttpUtil {
             // 执行请求
             response = httpclient.execute(httpGet);
             // 判断返回状态是否为200
-            if (response.getStatusLine().getStatusCode() == 200) {
-                resultString = EntityUtils.toString(response.getEntity(), "UTF-8");
-            }
+//            if (response.getStatusLine().getStatusCode() == 200) {
+//                resultString = EntityUtils.toString(response.getEntity(), "UTF-8");
+//            }
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -97,9 +97,9 @@ public class HttpUtil {
             // 执行请求
             response = httpclient.execute(httpGet);
             // 判断返回状态是否为200
-            if (response.getStatusLine().getStatusCode() == 200) {
-                resultString = EntityUtils.toString(response.getEntity(), "UTF-8");
-            }
+//            if (response.getStatusLine().getStatusCode() == 200) {
+//                resultString = EntityUtils.toString(response.getEntity(), "UTF-8");
+//            }
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -227,7 +227,7 @@ public class HttpUtil {
             httpPost.setEntity(entity);
             // 执行http请求
             response = httpClient.execute(httpPost);
-            resultString = EntityUtils.toString(response.getEntity(), SpendConstans.UTF8_ENCODE);
+            resultString = EntityUtils.toString(response.getEntity(), "utf-8");
         } catch (Exception e) {
             e.printStackTrace();
         } finally {

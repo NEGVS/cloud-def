@@ -1,4 +1,4 @@
-package xCloud.util.codeGenerate;
+package xCloud.tools.codeGenerate;
 
 
 import xCloud.util.CodeX;

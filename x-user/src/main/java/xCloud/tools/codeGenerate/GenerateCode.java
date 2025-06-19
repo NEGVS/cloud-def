@@ -1,4 +1,4 @@
-package xCloud.util.codeGenerate;
+package xCloud.tools.codeGenerate;
 
 import lombok.Data;
 import xCloud.util.CodeX;

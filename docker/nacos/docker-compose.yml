@@ -1,0 +1,26 @@
+version: "3"
+services:
+  nacos:
+    image: nacos/nacos-server:latest
+    container_name: nacos-standalone
+    environment:
+      - PREFER_HOST_MODE=hostname
+      - MODE=standalone
+      - SPRING_DATASOURCE_PLATFORM=mysql
+      - MYSQL_SERVICE_HOST=101.35.226.226
+      - MYSQL_SERVICE_PORT=3306
+      - MYSQL_SERVICE_DB_NAME=andy_nacos
+      - MYSQL_SERVICE_USER=root
+      - MYSQL_SERVICE_PASSWORD=A5%Bd$#a7.Q
+      - JVM_XMS=512m
+      - JVM_XMX=512m
+      - JVM_XMN=256m
+    ports:
+      - "8848:8848"
+      - "9848:9848"
+      - "9849:9849"
+#    未配置 volumes 是因为默认情况下，Nacos 的日志和配置需求可以通过 Docker 命令和环境变量满足，简化了部署流程。如果您需要持久化日志或自定义配置，添加 volumes 是合理的
+#    volumes:
+#      - ./nacos/logs:/home/nacos/logs
+#      - ./nacos/conf:/home/nacos/conf
+    restart: always

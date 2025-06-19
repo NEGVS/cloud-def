@@ -1,0 +1,39 @@
+version: "3"
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: nacos-mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=your_root_password
+      - MYSQL_DATABASE=nacos_config
+      - MYSQL_USER=nacos
+      - MYSQL_PASSWORD=nacos_password
+    volumes:
+      - mysql-data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    restart: always
+  nacos:
+    image: nacos/nacos-server:latest
+    container_name: nacos-standalone
+    environment:
+      - PREFER_HOST_MODE=hostname
+      - MODE=standalone
+      - SPRING_DATASOURCE_PLATFORM=mysql
+      - MYSQL_SERVICE_HOST=mysql
+      - MYSQL_SERVICE_PORT=3306
+      - MYSQL_SERVICE_DB_NAME=nacos_config
+      - MYSQL_SERVICE_USER=nacos
+      - MYSQL_SERVICE_PASSWORD=nacos_password
+      - JVM_XMS=512m
+      - JVM_XMX=512m
+      - JVM_XMN=256m
+    ports:
+      - "8848:8848"
+      - "9848:9848"
+      - "9849:9849"
+    depends_on:
+      - mysql
+    restart: always
+volumes:
+  mysql-data:

@@ -1,4 +1,4 @@
-package xCloud.entity.user;
+package xCloud.entity;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;

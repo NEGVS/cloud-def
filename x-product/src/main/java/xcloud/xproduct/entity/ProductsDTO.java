@@ -1,4 +1,4 @@
-package xCloud.entity.products;
+package xcloud.xproduct.entity;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
@@ -10,8 +10,8 @@ import java.util.Date;
 
 @Data
 @EqualsAndHashCode(callSuper=false)
-@Schema(name = "ProductsDTO", description = "商保方案明细-参数集合对象")
-public class ProductsVO extends PagerModel {
+@Schema(name = "ProductsDTO", description = "用于页面搜索条件")
+public class ProductsDTO extends PagerModel {
     @Schema(name = "product_id", description = "商品ID")
     private Integer product_id;
 
@@ -59,6 +59,5 @@ public class ProductsVO extends PagerModel {
 
     @Schema(name = "updated_time", description = "更新时间")
     private Date updated_time;
-
 
 }

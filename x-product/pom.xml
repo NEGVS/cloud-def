@@ -16,33 +16,27 @@
 
     <dependencies>
 
-        <!--项目公共依赖-->
-        <dependency>
-            <groupId>xCloud</groupId>
-            <artifactId>x-config</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
 
-        <!-- 10.langchain4j
-         LangChain4j 是专为 Java 生态设计的开源框架，兼容 Spring Boot。它简化了大型语言模型（LLM）在 Java 应用中的集成，提供了统一的 API、自动配置和与 Spring 生态的无缝衔接 -->
-        <dependency>
-            <groupId>dev.langchain4j</groupId>
-            <artifactId>langchain4j-open-ai-spring-boot-starter</artifactId>
-            <version>1.0.0-beta3</version>
-        </dependency>
-        <!--10.2 Spring Boot starter for declarative AI Services
-        LangChain4j provides a Spring Boot starter for auto-configuring AI Services, RAG, Tools etc.
-        Assuming you have already imported one of the integrations starters (see above), import langchain4j-spring-boot-starter:
-        You can now define AI Service interface and annotate it with @AiService:
-        声明式AI服务的Spring Boot启动器
-        LangChain4j提供了一个Spring Boot启动器，用于自动配置AI服务、RAG、工具等。
-        假设您已经导入了一个集成启动器（见上文），请导入langchain4j spring boot starter：
-        -->
-        <dependency>
-            <groupId>dev.langchain4j</groupId>
-            <artifactId>langchain4j-spring-boot-starter</artifactId>
-            <version>1.0.0-beta3</version>
-        </dependency>
+<!--        &lt;!&ndash; 10.langchain4j-->
+<!--         LangChain4j 是专为 Java 生态设计的开源框架，兼容 Spring Boot。它简化了大型语言模型（LLM）在 Java 应用中的集成，提供了统一的 API、自动配置和与 Spring 生态的无缝衔接 &ndash;&gt;-->
+<!--        <dependency>-->
+<!--            <groupId>dev.langchain4j</groupId>-->
+<!--            <artifactId>langchain4j-open-ai-spring-boot-starter</artifactId>-->
+<!--            <version>1.0.0-beta3</version>-->
+<!--        </dependency>-->
+<!--        &lt;!&ndash;10.2 Spring Boot starter for declarative AI Services-->
+<!--        LangChain4j provides a Spring Boot starter for auto-configuring AI Services, RAG, Tools etc.-->
+<!--        Assuming you have already imported one of the integrations starters (see above), import langchain4j-spring-boot-starter:-->
+<!--        You can now define AI Service interface and annotate it with @AiService:-->
+<!--        声明式AI服务的Spring Boot启动器-->
+<!--        LangChain4j提供了一个Spring Boot启动器，用于自动配置AI服务、RAG、工具等。-->
+<!--        假设您已经导入了一个集成启动器（见上文），请导入langchain4j spring boot starter：-->
+<!--        &ndash;&gt;-->
+<!--        <dependency>-->
+<!--            <groupId>dev.langchain4j</groupId>-->
+<!--            <artifactId>langchain4j-spring-boot-starter</artifactId>-->
+<!--            <version>1.0.0-beta3</version>-->
+<!--        </dependency>-->
 
         <!-- Redis -->
         <dependency>

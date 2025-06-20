@@ -1,7 +1,8 @@
 package xCloud.tools.codeGenerate;
 
 
-import xCloud.util.CodeX;
+
+import xCloud.tools.CodeX;
 
 import java.io.BufferedWriter;
 import java.io.FileOutputStream;

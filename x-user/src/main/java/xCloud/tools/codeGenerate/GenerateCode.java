@@ -1,7 +1,7 @@
 package xCloud.tools.codeGenerate;
 
 import lombok.Data;
-import xCloud.util.CodeX;
+import xCloud.tools.CodeX;
 
 import java.io.IOException;
 import java.sql.SQLException;

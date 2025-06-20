@@ -11,11 +11,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import xCloud.entity.Merchants;
+import xCloud.entity.MerchantsDTO;
+import xCloud.entity.MerchantsVO;
 import xCloud.entity.ResultEntity;
-import xCloud.entity.merchants.Merchants;
-import xCloud.entity.merchants.MerchantsDTO;
-import xCloud.entity.merchants.MerchantsVO;
-import xCloud.service.selfInjection.MerchantsService;
+import xCloud.service.MerchantsService;
 
 import java.util.List;
 import java.util.Map;

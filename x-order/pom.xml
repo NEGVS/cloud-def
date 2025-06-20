@@ -18,12 +18,6 @@
 
     <dependencies>
 
-        <!--        引入公共配置类-->
-        <dependency>
-            <groupId>xCloud</groupId>
-            <artifactId>x-config</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
 
         <!-- gRPC -->
         <!-- https://mvnrepository.com/artifact/io.github.lognet/grpc-spring-boot-starter -->

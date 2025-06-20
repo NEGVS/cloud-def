@@ -88,12 +88,12 @@ logging:
 #  Be aware that when using the demo key, all requests to the OpenAI API need to go through our proxy, which injects the real key before forwarding your request to the OpenAI API.
 #  We do not collect or use your data in any way. The demo key has a quota, is restricted to the gpt-4o-mini model,
 #  and should only be used for demonstration purposes.
-langchain4j:
-  open-ai:
-    chat-model:
-      api-key: ${OPENAI_API_KEY}
-      model-name: "gpt-4o-mini"
-      log-requests: true
+#langchain4j:
+#  open-ai:
+#    chat-model:
+#      api-key: ${OPENAI_API_KEY}
+#      model-name: "gpt-4o-mini"
+#      log-requests: true
     #If you need an instance of a StreamingChatLanguageModel, use the streaming-chat-model instead of the chat-model properties:
 #    streaming-chat-model:
 #      api-key: ${OPENAI_API_KEY}

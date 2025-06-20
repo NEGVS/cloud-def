@@ -6,8 +6,8 @@ import lombok.Data;
 import xCloud.entity.Stock;
 import xCloud.entity.StockData;
 import xCloud.entity.StockHeader;
+import xCloud.service.serviceImpl.CodeX;
 import xCloud.tools.HttpUtil;
-import xCloud.util.CodeX;
 
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -87,7 +87,6 @@ public class StockDataParser {
 //            if (true) {
 //                return;
 //            }
-            //9:30开盘后几分钟内逐渐（9:31，9:33）升高的（5%以上9%以下）立马买掉，随时都会突然极速下来（3%左右），此时你肯定不甘心卖掉，
             String url = "https://finance.pae.baidu.com/vapi/v1/hotrank?tn=wisexmlnew&dsp=iphone&product=stock&style=tablelist&market=all&type=hour&day=20250609&hour=17&pn=0&rn=&finClientType=pc";
             String urlAllDay = "https://finance.pae.baidu.com/vapi/v1/hotrank?tn=wisexmlnew&dsp=iphone&product=stock&style=tablelist&market=all&type=day&day=" + CodeX.getDateOfyyyyMMdd() + "&hour=17&pn=0&rn=&finClientType=pc";
 

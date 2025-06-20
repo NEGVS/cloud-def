@@ -1,4 +1,4 @@
-package xCloud.tools;
+package xCloud.util;
 
 import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.apache.hc.client5.http.classic.methods.HttpPost;

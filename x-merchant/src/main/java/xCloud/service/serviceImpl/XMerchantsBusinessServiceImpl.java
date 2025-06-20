@@ -17,7 +17,7 @@ import xCloud.entity.XMerchantsBusiness;
 import xCloud.entity.XMerchantsBusinessDTO;
 import xCloud.entity.XMerchantsBusinessVO;
 import xCloud.mapper.XMerchantsBusinessMapper;
-import xCloud.service.selfInjection.MerchantsService;
+import xCloud.service.MerchantsService;
 import xCloud.service.XMerchantsBusinessService;
 
 import java.io.IOException;

@@ -1,13 +1,13 @@
-package xCloud.service.selfInjection;
+package xCloud.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.web.multipart.MultipartFile;
+import xCloud.entity.Merchants;
+import xCloud.entity.MerchantsDTO;
+import xCloud.entity.MerchantsVO;
 import xCloud.entity.ResultEntity;
-import xCloud.entity.merchants.Merchants;
-import xCloud.entity.merchants.MerchantsDTO;
-import xCloud.entity.merchants.MerchantsVO;
 
 import java.io.IOException;
 import java.util.List;

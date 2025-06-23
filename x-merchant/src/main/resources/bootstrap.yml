@@ -12,20 +12,28 @@
 #        group: ANDY_GROUP
 #      discovery:
 #        server-addr: 127.0.0.1:8848
-langchain4j:
-  open-ai:
-    chat-model:
-      api-key: ${GEMINI_API_KEY}
-#      api-key: "demo"
-      model-name: "gpt-4o-mini"
+server:
+  port: 8089
+#langchain4j:
+#  open-ai:
+#    chat-model:
+#      api-key: ${GEMINI_API_KEY}
+##      api-key: "demo"
+#      model-name: "gpt-4o-mini"
 logging:
   level:
     org:
       springframework:
         transaction=DEBUG:
-server:
-  port: 8089
 
+
+
+mybatis-plus:
+  #  classpath:就是resources文件夹
+  mapper-locations: classpath*:mapper/**/*.xml
+  type-aliases-package: xCloud.entity
+#  configuration:
+#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl # 调试 SQL
 
 spring:
   datasource:

@@ -10,6 +10,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import xCloud.entity.User;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;

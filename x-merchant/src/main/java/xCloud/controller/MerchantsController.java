@@ -2,8 +2,15 @@ package xCloud.controller;
 
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,13 +33,13 @@ import java.util.Map;
  * @Date 2025-04-09 09:38:50
  * @ClassName MerchantsController
  */
+@Slf4j
 @RestController
 @RequestMapping("/merchants")
-@Slf4j
 @Tag(name = "Merchants接口", description = "Merchants接口")
 public class MerchantsController {
 
-    @Resource
+    @Autowired
     private MerchantsService merchantsService;
 
     /**

@@ -14,7 +14,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -29,9 +28,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
+import xCloud.domain.Products;
+import xCloud.domain.ResultEntity;
 import xCloud.domain.XOrders;
-import xCloud.entity.ResultEntity;
-import xCloud.entity.XProducts;
 import xCloud.feign.PaymentFeignClient;
 import xCloud.service.ProductService;
 import xCloud.service.XOrdersService;
@@ -53,10 +52,10 @@ import java.util.Map;
 @Tag(name = "订单服务", description = "订单服务")
 public class XOrderController {
 
-    @Resource
+    @Autowired
     private XOrdersService orderService;
 
-    @Resource
+    @Autowired
     private ProductService productService;
 
     //DiscoveryClient是专门负责服务注册和发现的，可以通过它获取到注册到注册中心的所有服务
@@ -108,7 +107,6 @@ public class XOrderController {
     @PostMapping("/list")
     public ResultEntity<List<XOrders>> list(@RequestBody XOrders order) {
         if (ObjectUtil.isNotNull(order)) {
-            log.info("\n查询商品信息");
             //            Page<XOrders> page = new Page<>(order.getCurrent(), order.getSize());
             QueryWrapper<XOrders> wrapper = new QueryWrapper<>();
             //        wrapper.eq("age", age); // 条件：年龄等于指定值
@@ -172,7 +170,7 @@ public class XOrderController {
         log.info("\n>>客户下单，调用商品微服务查询商品信息---");
 
         log.info("\n>>----通过fegin调用商品微服务---");
-        XProducts product = productService.findById(pid);
+        Products product = productService.findById(pid);
 
         log.info("\n查询到{}的商品信息内容是{}", pid, JSON.toJSONString(product));
 

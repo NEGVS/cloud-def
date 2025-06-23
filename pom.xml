@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.4.6</version>
+        <version>3.2.9</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>xCloud</groupId>
@@ -29,9 +29,9 @@
     </scm>
     <properties>
         <java.version>17</java.version>
-        <spring.boot.version>3.4.6</spring.boot.version>
-        <spring-cloud.version>2024.0.0</spring-cloud.version>
-        <spring.cloud.alibaba.version>2023.0.1.2</spring.cloud.alibaba.version>
+        <spring.boot.version>3.2.9</spring.boot.version>
+        <spring-cloud.version>2023.0.3</spring-cloud.version>
+        <spring.cloud.alibaba.version>2023.0.1.0</spring.cloud.alibaba.version>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <druid.version>1.2.20</druid.version>
@@ -80,19 +80,24 @@
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-            <version>2.6.0</version> <!-- 或使用最新版本，如 2.6.0 -->
+            <version>2.2.0</version> <!-- 或使用最新版本，如 2.2.0 -->
         </dependency>
         <!--Swagger UI优化，使用knife4j，- Swagger/SpringDoc OpenAPI 是“内容”的生产者（生成 API 文档）。 Knife4j 是“内容”的消费者和展示者（美化和增强 API 文档的 UI）。-->
         <!-- https://mvnrepository.com/artifact/com.github.xiaoymin/knife4j-openapi3-jakarta-spring-boot-starter -->
         <dependency>
             <groupId>com.github.xiaoymin</groupId>
             <artifactId>knife4j-openapi3-jakarta-spring-boot-starter</artifactId>
-            <version>4.5.0</version>
+            <version>4.1.0</version>
         </dependency>
         <!-- 1-依赖的JSON库 -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.annotation</groupId>
+            <artifactId>jakarta.annotation-api</artifactId>
+<!--            <version>2.1.1</version>-->
         </dependency>
 
         <!--3-指定使用bootstrap.yml配置文件,Spring Boot 2.4 开始默认禁用 bootstrap.yml，需手动启用。
@@ -102,26 +107,27 @@
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-bootstrap</artifactId>
+<!--            <version>${spring-cloud.version}</version>-->
         </dependency>
 
         <!-- ✅ Nacos 服务发现 -->
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+            <version>${spring.cloud.alibaba.version}</version>
         </dependency>
 
         <!-- ✅ Nacos 配置中心（如需要） -->
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
+            <version>${spring.cloud.alibaba.version}</version>
         </dependency>
+
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.34</version>
         </dependency>
-
-
 
         <dependency>
             <groupId>com.alibaba</groupId>
@@ -132,8 +138,9 @@
         <dependency>
             <groupId>com.mysql</groupId>
             <artifactId>mysql-connector-j</artifactId>
-            <version>8.0.33</version>
+            <version>8.3.0</version>
         </dependency>
+
         <!-- ✅ Druid 数据库连接池 -->
         <dependency>
             <groupId>com.alibaba</groupId>
@@ -156,24 +163,26 @@
         <dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-spring-boot3-starter</artifactId>
-            <version>3.5.11</version>
+            <version>3.5.5</version>
         </dependency>
         <!-- 分页插件依赖
-        - MyBatis-Plus 3.5.11：
+        - MyBatis-Plus 3.5.5：
   - 支持 Spring Boot 3.x，理论上与 3.4.3 兼容。
   - 从 3.5.9 开始，分页插件 PaginationInnerInterceptor 被拆分到 mybatis-plus-jsqlparser 模块。
   -->
-        <dependency>
-            <groupId>com.baomidou</groupId>
-            <artifactId>mybatis-plus-jsqlparser</artifactId>
-            <version>3.5.11</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>com.baomidou</groupId>-->
+<!--            <artifactId>mybatis-plus-jsqlparser</artifactId>-->
+<!--            <version>3.5.9</version>-->
+<!--        </dependency>-->
+
         <dependency>
             <groupId>jakarta.servlet</groupId>
             <artifactId>jakarta.servlet-api</artifactId>
             <version>6.0.0</version>
             <scope>provided</scope>
         </dependency>
+
         <dependency>
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-all</artifactId>
@@ -183,13 +192,16 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
+            <version>${spring.boot.version}</version>
             <scope>test</scope>
         </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
             <version>${spring.boot.version}</version>
         </dependency>
+
     </dependencies>
 
 
@@ -225,7 +237,6 @@
         <module>x-product</module>
         <module>x-order</module>
         <module>x-productB</module>
-        <module>x-gateway</module>
         <module>x-user</module>
         <module>x-merchant</module>
         <module>x-payment</module>
@@ -237,28 +248,25 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.13.0</version>
                 <configuration>
-                    <annotationProcessorPaths>
-                        <path>
-                            <groupId>org.projectlombok</groupId>
-                            <artifactId>lombok</artifactId>
-                            <version>1.18.34</version>
-                        </path>
-                    </annotationProcessorPaths>
+                    <source>17</source>
+                    <target>17</target>
+
                 </configuration>
             </plugin>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <excludes>
-                        <exclude>
-                            <groupId>org.projectlombok</groupId>
-                            <artifactId>lombok</artifactId>
-                            <version>1.18.34</version>
-                        </exclude>
-                    </excludes>
-                </configuration>
+                <version>3.2.9</version>
+
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

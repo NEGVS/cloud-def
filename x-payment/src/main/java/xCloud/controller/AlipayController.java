@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import xCloud.service.AlipayService;
 
 /**
  * @Description 支付控制器--提供支付接口
@@ -17,8 +16,6 @@ import xCloud.service.AlipayService;
 @Tag(name = "AlipayController", description = "AlipayController")
 @RestController
 public class AlipayController {
-    @Autowired
-    private AlipayService alipayService;
 
     @Operation(summary = "pay", description = "pay")
     @GetMapping("/alipay/pay")
@@ -26,6 +23,6 @@ public class AlipayController {
             @RequestParam("orderId") String orderId,
             @RequestParam("amount") String amount,
             @RequestParam("subject") String subject) throws Exception {
-        return alipayService.createPayment(orderId, amount, subject);
+        return null;
     }
 }

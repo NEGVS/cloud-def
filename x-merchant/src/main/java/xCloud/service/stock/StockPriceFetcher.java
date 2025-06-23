@@ -4,13 +4,12 @@ package xCloud.service.stock;
 import cn.hutool.core.date.DateUtil;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
-import xCloud.util.CodeX;
+import org.springframework.http.HttpEntity;
+import xCloud.service.serviceImpl.CodeX;
 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
@@ -42,16 +41,17 @@ public class StockPriceFetcher {
     private static String fetchApiData(String apiUrl) throws Exception {
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
             HttpGet request = new HttpGet(apiUrl);
-            request.addHeader("User-Agent", "Mozilla/5.0");
-            try (CloseableHttpResponse response = httpClient.execute(request)) {
-                HttpEntity entity = response.getEntity();
-                if (entity != null && response.getStatusLine().getStatusCode() == 200) {
-                    return EntityUtils.toString(entity);
-                } else {
-                    throw new RuntimeException("API请求失败: HTTP " + response.getStatusLine().getStatusCode());
-                }
-            }
+//            request.addHeader("User-Agent", "Mozilla/5.0");
+//            try (CloseableHttpResponse response = httpClient.execute(request)) {
+//                HttpEntity entity = response.getEntity();
+//                if (entity != null && response.getStatusLine().getStatusCode() == 200) {
+//                    return EntityUtils.toString(entity);
+//                } else {
+//                    throw new RuntimeException("API请求失败: HTTP " + response.getStatusLine().getStatusCode());
+//                }
+//            }
         }
+        return null;
     }
 
     private static List<StockDataHeader> parseJsonData(String json, String stockCode) throws Exception {

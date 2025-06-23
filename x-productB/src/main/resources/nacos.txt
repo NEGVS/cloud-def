@@ -1,0 +1,17 @@
+spring:
+  config:
+    import:
+#      - optional:nacos:${spring.application.name}                    # ???2???????
+      - optional:nacos:shop-productB.yml
+  application:
+    name: shop-product
+  cloud:
+    nacos:
+      config:
+        namespace:
+        server-addr: 127.0.0.1:8848
+        group: ANDY_GROUP
+      discovery:
+        server-addr: 127.0.0.1:8848
+
+

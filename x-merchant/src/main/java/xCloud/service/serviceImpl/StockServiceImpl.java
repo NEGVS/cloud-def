@@ -21,8 +21,7 @@ import xCloud.mapper.StockMapper;
 import xCloud.service.StockHeaderService;
 import xCloud.service.StockService;
 import xCloud.service.stock.StockDataParser;
-import xCloud.tools.HttpUtil;
-import xCloud.util.CodeX;
+import xCloud.util.HttpUtil;
 
 import java.io.IOException;
 import java.util.List;
@@ -36,7 +35,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Slf4j
 @Service
 public class StockServiceImpl extends ServiceImpl<StockMapper, Stock> implements StockService {
-
     @Resource
     StockHeaderService stockHeaderService;
     @Resource

@@ -7,7 +7,7 @@ import xCloud.entity.Stock;
 import xCloud.entity.StockData;
 import xCloud.entity.StockHeader;
 import xCloud.service.serviceImpl.CodeX;
-import xCloud.tools.HttpUtil;
+import xCloud.util.HttpUtil;
 
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;

@@ -27,6 +27,7 @@ public class XProductController {
 
     public XProductsB find(@PathVariable("id") String id) {
 
+
         XProductsB productById = xProductsService.getProductById(Long.valueOf(id));
 
         return productById;

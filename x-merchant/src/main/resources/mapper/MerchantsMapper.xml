@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="xCloud.mapper.MerchantsMapper">
-<resultMap id="result" type="xCloud.entity.merchants.Merchants" >
+<resultMap id="result" type="xCloud.entity.Merchants" >
  		    <result property="merchant_id" column="merchant_id"/>
  		    <result property="name" column="name"/>
  		    <result property="logo" column="logo"/>
@@ -28,7 +28,7 @@
 	</sql>
 
 	<!--1.新增-->
-	<insert id="insertMerchants" parameterType="xCloud.entity.merchants.Merchants" useGeneratedKeys="true" keyProperty="merchant_id">
+	<insert id="insertMerchants" parameterType="xCloud.entity.Merchants" useGeneratedKeys="true" keyProperty="merchant_id">
 		INSERT INTO
 			x_merchants (<include refid="Base_Column_List"/>)
 		VALUES
@@ -36,7 +36,7 @@
 	</insert>
 
 	<!--2.删除-->
-	<delete id="deleteMerchants" parameterType="xCloud.entity.merchants.Merchants">
+	<delete id="deleteMerchants" parameterType="xCloud.entity.Merchants">
 		UPDATE 
 			x_merchants 
 		SET 
@@ -46,7 +46,7 @@
 	</delete>
 
 	<!--3.修改-->
-	<update id="updateMerchants" parameterType="xCloud.entity.merchants.Merchants">
+	<update id="updateMerchants" parameterType="xCloud.entity.Merchants">
 		UPDATE
 			x_merchants
  		<set>
@@ -99,7 +99,7 @@
   	</update>  	
 
 	<!--4.查询-->
-	<select id="selectMerchants" parameterType="xCloud.entity.merchants.Merchants" resultMap="result">
+	<select id="selectMerchants" parameterType="xCloud.entity.Merchants" resultMap="result">
 		SELECT 
 			a.merchant_id, <include refid="Base_Column_List_For_Join"/> 
 		FROM 

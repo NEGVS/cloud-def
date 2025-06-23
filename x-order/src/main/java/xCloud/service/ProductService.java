@@ -3,7 +3,7 @@ package xCloud.service;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import xCloud.entity.XProducts;
+import xCloud.domain.Products;
 
 /**
  * 使用Fegin实现微服务调用
@@ -17,5 +17,5 @@ public interface ProductService {
     //@FeignClient+@GetMapping 就是一个完整的请求路径 http://service-product/find/{pid}
 
     @GetMapping("/product/find/{pid}")
-    XProducts findById(@PathVariable("pid") String pid);
+    Products findById(@PathVariable("pid") String pid);
 }

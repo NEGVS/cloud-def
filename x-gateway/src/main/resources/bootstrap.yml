@@ -1,15 +1,15 @@
-spring:
-  config:
-    import:
-      #      - optional:nacos:${spring.application.name}                    # ???2???????
-      - optional:nacos:x-gateway.yml
-  application:
-    name: x-gateway
-  cloud:
-    nacos:
-      config:
-        namespace:
-        server-addr: 127.0.0.1:8848
-        group: ANDY_GROUP
-      discovery:
-        server-addr: 127.0.0.1:8848
+#spring:
+#  config:
+#    import:
+#      #      - optional:nacos:${spring.application.name}                    # ???2???????
+#      - optional:nacos:x-gateway.yml
+#  application:
+#    name: x-gateway
+#  cloud:
+#    nacos:
+#      config:
+#        namespace:
+#        server-addr: 127.0.0.1:8848
+#        group: ANDY_GROUP
+#      discovery:
+#        server-addr: 127.0.0.1:8848

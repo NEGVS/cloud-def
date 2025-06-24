@@ -25,9 +25,8 @@ public class Products implements Serializable {
 	@TableField(exist = false)
 	private static final long serialVersionUID = 1L;
 
-	@TableId(type = IdType.AUTO)
+	@TableId(value = "product_id", type = IdType.AUTO)
 	@Schema(name = "product_id",description = "商品ID")
-	@TableField("product_id")
 	private Integer product_id;
 
 	@Schema(name = "name",description = "商品名称")

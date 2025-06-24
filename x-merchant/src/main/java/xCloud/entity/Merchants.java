@@ -1,6 +1,8 @@
 package xCloud.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -24,9 +26,8 @@ public class Merchants implements Serializable {
 	private static final long serialVersionUID = 1L;
 //1-增加密码
 //	2-删除userid
-//	@TableId(type = IdType.AUTO)
+	@TableId(value = "merchant_id", type = IdType.AUTO)
 	@Schema(name = "merchant_id",description = "商家ID")
-	@TableField("merchant_id")
 	private Integer merchant_id;
 
 	@Schema(name = "name",description = "商家名称")

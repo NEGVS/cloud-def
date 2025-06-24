@@ -7,10 +7,13 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -42,15 +45,30 @@ public class StockController {
 
     /**
      * 1-test
-     *
+     */
+    @Operation(summary = "ping")
+    @PostMapping("/ping")
+    public ResultEntity<Stock> pinggg() {
+        log.info("\n-----------ping");
+        Stock stock = new Stock();
+        stock.setName("Andy");
+        stock.setCode("Andy");
+        stock.setMarket("Andy");
+        stock.setHeat("Andy");
+        log.info("\n-----------pong");
+        return ResultEntity.success(stock, "pong");
+    }
+
+    /**
+     * 1-test
      */
     @Operation(summary = "test")
-    @ApiResponse(responseCode = "200", description = "新增成功", content = @Content(schema = @Schema(implementation = Stock.class)))
-    @PostMapping("/test")
-    public ResultEntity<Stock> test() {
-        log.info("新增数据参数：{}");
-        stockService.test();
-        return ResultEntity.success(null,"老子执行完了");
+    @ApiResponse(responseCode = "200", description = "执行成功", content = @Content(schema = @Schema(implementation = Stock.class)))
+    @PostMapping("/flush")
+    public ResultEntity<Stock> test(@RequestParam String dateStr) {
+        log.info("新增数据参数：{}" + dateStr);
+        stockService.test(dateStr);
+        return ResultEntity.success(null, "老子执行完了");
     }
 
     /**

@@ -24,9 +24,8 @@ public class StockHeader implements Serializable {
 	@TableField(exist = false)
 	private static final long serialVersionUID = 1L;
 
-	@TableId(type = IdType.AUTO)
+	@TableId(value = "id", type = IdType.AUTO)
 	@Schema(name = "id",description = "自增主键，唯一标识每条记录")
-	@TableField("id")
 	private Integer id;
 
 

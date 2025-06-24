@@ -26,9 +26,8 @@ public class Stock extends PagerModel implements Serializable {
     private static final long serialVersionUID = -8643680747004267055L;
 
 
-    @TableId(type = IdType.AUTO)
+    @TableId(value = "id", type = IdType.AUTO)
     @Schema(name = "id", description = "自增主键，唯一标识每条记录")
-    @TableField("id")
     private Integer id;
 
     @Schema(name = "block_name", description = "股票所属板块名称")

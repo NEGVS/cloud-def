@@ -1687,6 +1687,26 @@ public class CodeX {
     }
 
     /**
+     * 获取指定日期的+(-)N天后的 yyyy-MM-dd
+     *
+     * @param dateStr yyyy-MM-dd
+     * @param n       天数， 负数表示减天，正数表示加天
+     * @return yyyy-MM-dd
+     */
+    public static String getDate_yyyy_MM_dd(String dateStr, int n) {
+        // 定义日期格式
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+        // 解析输入日期字符串
+        LocalDate date = LocalDate.parse(dateStr, formatter);
+
+        // 加或减 n 天
+        LocalDate resultDate = date.plusDays(n);
+
+        // 格式化返回结果
+        return resultDate.format(formatter);
+    }
+    /**
      * 获取当前时间的年月日 yyyy-MM-dd
      */
     public static String getDate_yyyy_MM_dd() {

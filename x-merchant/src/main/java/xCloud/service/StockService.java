@@ -3,7 +3,6 @@ package xCloud.service;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.multipart.MultipartFile;
 import xCloud.entity.ResultEntity;
 import xCloud.entity.Stock;
@@ -26,7 +25,12 @@ public interface StockService extends IService<Stock> {
      */
     ResultEntity<Stock> add(StockDTO dto);
 
-    public void test();
+    /**
+     * 更新stock
+     *
+     * @param dateStr dateStr
+     */
+    public void test(String dateStr);
 
     /**
      * 2-删除

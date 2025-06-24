@@ -49,7 +49,7 @@ public class StockHeaderServiceImpl extends ServiceImpl<StockHeaderMapper, Stock
 
     @Override
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, timeout = 10)
-    public void saveStockData(StockDataParser.XStockData xStockData) throws InterruptedException {
+    public void saveStockData(StockDataParser.XStockData xStockData,String dateStr) throws InterruptedException {
 
         //1-
         StockData stockData = new StockData();
@@ -79,7 +79,7 @@ public class StockHeaderServiceImpl extends ServiceImpl<StockHeaderMapper, Stock
             stock.setLast_px(xStock.getLastPx());
             stock.setMarket(xStock.getMarket());
             stock.setName(xStock.getName());
-            stock.setLogo_type(xStock.getLogo().getType());
+            stock.setLogo_type(dateStr);
             stock.setLogo_url(xStock.getLogo().getLogo());
             stock.setPx_change_rate(xStock.getPxChangeRate());
             stock.setRank_diff(xStock.getRankDiff());

@@ -19,7 +19,7 @@ import java.io.IOException;
  */
 public interface StockHeaderService extends IService<StockHeader> {
 
-    public void saveStockData(StockDataParser.XStockData xStockData) throws InterruptedException;
+    public void saveStockData(StockDataParser.XStockData xStockData,String dateStr) throws InterruptedException;
 
     /**
      * 1-新增

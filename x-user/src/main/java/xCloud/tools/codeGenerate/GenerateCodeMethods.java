@@ -1,7 +1,7 @@
 package xCloud.tools.codeGenerate;
 
 
-
+import com.baomidou.mybatisplus.annotation.IdType;
 import xCloud.tools.CodeX;
 
 import java.io.BufferedWriter;
@@ -358,7 +358,7 @@ public class GenerateCodeMethods {
             index223++;
             list_vo.add(columnName_comment.getKey());
             if (index223 == 1) {
-                bufferedWriter.write("\n\t@TableId(type = IdType.AUTO)" + enter);
+                bufferedWriter.write("\n\t@TableId(value=\"" + columnName_comment.getKey() + "\"+type = IdType.AUTO)" + enter);
             }
             String descriptionValue = "";
             String columnType = "";
@@ -374,7 +374,12 @@ public class GenerateCodeMethods {
             }
             String ssss1 = "\t@Schema(name = \"" + columnName_comment.getKey() + "\",description = \"" + descriptionValue + "\")\n";
             bufferedWriter.write(ssss1);
-            bufferedWriter.write("\t@TableField(\"" + columnName_comment.getKey() + "\")" + enter);
+//            ⚠️ MyBatis-Plus 提示你：因为这个字段是主键（用了 @TableId），所以 @TableField 注解不会起作用。-- 为什么？
+            //在 MyBatis-Plus 中：
+            //@TableId 专门用来标记主键字段
+            //@TableField 用来配置普通字段的属性（如数据库字段名、是否自动填充、是否存在等）
+            //当一个字段被标记为 @TableId，它的元信息（如字段名、自动增长策略等）由 @TableId 控制，不会再读取 @TableField 的信息
+//            bufferedWriter.write("\t@TableField(\"" + columnName_comment.getKey() + "\")" + enter);
             String ssss2 = "\tprivate " + columnType + " " + columnName_comment.getKey() + ";" + enter + enter;
             bufferedWriter.write(ssss2);
             stringBuilder.append(ssss1);
@@ -430,7 +435,6 @@ public class GenerateCodeMethods {
         stringBuilder1.append("}");
         CodeX.writeFile(path_DTO, stringBuilder1.toString(), true);
     }
-
 
 
     public static String getControllerContent(final String new_name) throws IOException {

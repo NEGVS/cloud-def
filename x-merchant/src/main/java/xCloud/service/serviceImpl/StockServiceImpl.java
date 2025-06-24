@@ -1,5 +1,6 @@
 package xCloud.service.serviceImpl;
 
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -24,7 +25,9 @@ import xCloud.service.stock.StockDataParser;
 import xCloud.util.HttpUtil;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -46,42 +49,66 @@ public class StockServiceImpl extends ServiceImpl<StockMapper, Stock> implements
 
     AtomicInteger count = new AtomicInteger(0);
 
-    //    @Scheduled(cron = "0 0 17 * * MON-FRI")
-    @Scheduled(fixedRate = 1000 * 30)
+    /**
+     * 手动执行
+     */
     @Override
-    public void test() {
+    public void test(String dateStr) {
         log.info("start get Stock data....");
         try {
             Stock stock = new Stock();
-            stock.setStartDate(CodeX.getDate_yyyy_MM_dd());
+            if (dateStr == null || dateStr.length() != 10 || !dateStr.contains("-")) {
+                stock.setStartDate(CodeX.getDate_yyyy_MM_dd());
+                stock.setEndDate(String.valueOf(DateUtil.tomorrow()).split(" ")[0]);
+            } else {
+                stock.setStartDate(dateStr);
+                stock.setEndDate(CodeX.getDate_yyyy_MM_dd(dateStr, 1));
+            }
             List<Stock> stocks = stockMapper.selectStock(stock);
 
-//            if (count.get() == 0) {
-//                count.getAndIncrement();
-//            } else {
-//                return;
-//            }
             if (stocks != null && !stocks.isEmpty()) {
                 log.info("今日数据已经更新，无需重复更新");
                 return;
             }
             String url = "https://finance.pae.baidu.com/vapi/v1/hotrank?tn=wisexmlnew&dsp=iphone&product=stock&style=tablelist&market=all&type=hour&day=20250609&hour=17&pn=0&rn=&finClientType=pc";
-            String urlAllDay = "https://finance.pae.baidu.com/vapi/v1/hotrank?tn=wisexmlnew&dsp=iphone&product=stock&style=tablelist&market=all&type=day&day=" + CodeX.getDateOfyyyyMMdd() + "&hour=17&pn=0&rn=&finClientType=pc";
+            String urlAllDay = "https://finance.pae.baidu.com/vapi/v1/hotrank?tn=wisexmlnew&dsp=iphone&product=stock&style=tablelist&market=all&type=day&day=" + stock.getStartDate() + "&hour=17&pn=0&rn=&finClientType=pc";
             String jsonString = HttpUtil.doPost(urlAllDay);
             ObjectMapper mapper = new ObjectMapper();
             StockDataParser.XStockData xStockData = mapper.readValue(jsonString, StockDataParser.XStockData.class);
-            System.out.println(xStockData.getQueryID());
-            System.out.println(xStockData.getResultCode());
-            System.out.println(xStockData.getResultNum());
+//            xStockData
 
-            System.out.println(xStockData.getResult().getList().getHeaders());
-            List<StockDataParser.XStock> body = xStockData.getResult().getList().getBody();
-            stockHeaderService.saveStockData(xStockData);
+            stockHeaderService.saveStockData(xStockData, stock.getStartDate());
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
+    /**
+     * 每个工作日的17:00执行一次
+     */
+    @Scheduled(cron = "0 2 17 * * MON-FRI")
+    public void test2() {
+        log.info("start get Stock data....");
+        try {
+            Stock stock = new Stock();
+            stock.setStartDate(CodeX.getDate_yyyy_MM_dd());
+            stock.setEndDate(String.valueOf(DateUtil.tomorrow()).split(" ")[0]);
+            List<Stock> stocks = stockMapper.selectStock(stock);
+            if (stocks != null && !stocks.isEmpty()) {
+                log.info("今日数据已经更新，无需重复更新");
+                return;
+            }
+            Thread.sleep((long) (Math.random() * 100 * DateUtil.dayOfYear(new Date()) / 2));
+            String url = "https://finance.pae.baidu.com/vapi/v1/hotrank?tn=wisexmlnew&dsp=iphone&product=stock&style=tablelist&market=all&type=hour&day=20250609&hour=17&pn=0&rn=&finClientType=pc";
+            String urlAllDay = "https://finance.pae.baidu.com/vapi/v1/hotrank?tn=wisexmlnew&dsp=iphone&product=stock&style=tablelist&market=all&type=day&day=" + stock.getStartDate() + "&hour=17&pn=0&rn=&finClientType=pc";
+            String jsonString = HttpUtil.doPost(urlAllDay);
+            ObjectMapper mapper = new ObjectMapper();
+            StockDataParser.XStockData xStockData = mapper.readValue(jsonString, StockDataParser.XStockData.class);
+            stockHeaderService.saveStockData(xStockData, stock.getStartDate());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     /**
      * 1-新增

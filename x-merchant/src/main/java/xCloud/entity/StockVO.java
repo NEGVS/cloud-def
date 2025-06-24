@@ -2,10 +2,12 @@ package xCloud.entity;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.util.Date;
 
 @Data
+@EqualsAndHashCode
 @Schema(name = "StockVO", description = "商保方案明细-参数集合对象")
 public class StockVO extends PagerModel {
 

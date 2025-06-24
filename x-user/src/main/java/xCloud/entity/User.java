@@ -25,9 +25,8 @@ public class User implements Serializable {
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
 
-    @TableId(type = IdType.AUTO)
+    @TableId(value = "user_id", type = IdType.AUTO)
     @Schema(name = "user_id", description = "用户ID")
-//    @TableField("user_id")
     private Integer user_id;
 
     @Schema(name = "dept_id", description = "部门ID")

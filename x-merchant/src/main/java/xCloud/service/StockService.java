@@ -32,6 +32,8 @@ public interface StockService extends IService<Stock> {
      */
     public void test(String dateStr);
 
+    public void test2();
+
     /**
      * 2-删除
      *

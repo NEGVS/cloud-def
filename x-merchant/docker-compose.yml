@@ -1,0 +1,78 @@
+version: '3.8'
+services:
+  x-merchant:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8087:8087"
+    environment:
+#      - SPRING_PROFILES_ACTIVE=prod
+      - JAVA_OPTS=-Xmx512m -Xms512m
+    depends_on:
+#      - mysql
+      - nacos
+    networks:
+      - app-network
+    restart: unless-stopped
+##说明：
+  ##- x-merchant 服务：
+  ##  - 构建镜像使用当前目录的 Dockerfile。
+  ##  - 映射宿主端口 8087 到容器端口 8087。
+  ##  - 设置环境变量：
+  ##    - SPRING_PROFILES_ACTIVE=prod：激活生产环境配置（可选）。
+  ##    - JAVA_OPTS：设置 JVM 参数，分配 512MB 内存。
+  ##  - 依赖 MySQL 和 Nacos，确保它们先启动。
+  ##  - 使用 app-network 网络，容器间通过服务名（如 mysql, nacos）通信。
+  ##  - restart: unless-stopped：容器异常退出时自动重启。
+#  mysql:
+#    image: mysql:8.0
+#    environment:
+#      - MYSQL_ROOT_PASSWORD=root123
+#      - MYSQL_DATABASE=x_merchant_db
+#    ports:
+#      - "3306:3306"
+#    volumes:
+#      - mysql-data:/var/lib/mysql
+#    networks:
+#      - app-network
+#    restart: unless-stopped
+
+  nacos:
+    image: nacos/nacos-server:v2.3.2
+    environment:
+      - MODE=standalone
+      - NACOS_AUTH_ENABLE=true
+    ports:
+      - "8848:8848"
+      - "9848:9848"
+    volumes:
+      - nacos-data:/home/nacos/data
+    networks:
+      - app-network
+    restart: unless-stopped
+
+volumes:
+#  mysql-data:
+  nacos-data:
+
+networks:
+  app-network:
+    driver: bridge
+#    在项目根目录创建 docker-compose.yml，定义应用及依赖服务（MySQL、Nacos）。
+
+#- mysql 服务：
+#  - 使用 mysql:8.0 镜像，兼容 mysql-connector-j:8.4.0。
+#  - 设置根密码为 root123，创建数据库 x_merchant_db。
+#  - 映射端口 3306，便于本地访问。
+#  - 数据持久化到 mysql-data 卷。
+#
+#- nacos 服务：
+#  - 使用 nacos/nacos-server:v2.3.2，兼容 Spring Cloud Alibaba 2023.0.1.2。
+#  - 运行在单机模式（MODE=standalone），启用认证。
+#  - 暴露端口 8848（控制台）和 9848（gRPC）。
+#  - 数据持久化到 nacos-data 卷。
+#
+#- 网络和卷：
+#  - 定义 app-network 桥接网络，确保服务间通信。
+#  - 创建 mysql-data 和 nacos-data 卷，持久化数据。

@@ -1,0 +1,54 @@
+server:
+  port: 8088
+#spring:
+# 0-配置nacos
+#  config:
+#    import:
+#      #      - optional:nacos:${spring.application.name}
+#      - optional:nacos:x-merchant.yml
+#  cloud:
+#    nacos:
+#      config:
+#        namespace:
+#        server-addr: 127.0.0.1:8848
+#        group: ANDY_GROUP
+#      discovery:
+#        server-addr: 127.0.0.1:8848
+
+#langchain4j:
+#  open-ai:
+#    chat-model:
+#      api-key: ${GEMINI_API_KEY}
+##      api-key: "demo"
+#      model-name: "gpt-4o-mini"
+logging:
+  level:
+    org:
+      springframework:
+        transaction=DEBUG:
+
+
+
+mybatis-plus:
+  #  classpath:就是resources文件夹
+  mapper-locations: classpath*:mapper/**/*.xml
+  type-aliases-package: xCloud.entity
+#  configuration:
+#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl # 调试 SQL
+
+spring:
+  application:
+    name: x-merchant
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    driverClassName: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://115.190.21.58:3306/andy_database?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+    username: root
+    password: hy123456
+#swagger
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+

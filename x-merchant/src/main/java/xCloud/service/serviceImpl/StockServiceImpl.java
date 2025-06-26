@@ -83,12 +83,20 @@ public class StockServiceImpl extends ServiceImpl<StockMapper, Stock> implements
         }
     }
 
+    AtomicInteger count2 = new AtomicInteger(0);
+
+    @Scheduled(fixedRate = 1000 * 5)
+    public void test3() {
+        log.info("\n-----------...." + count2.getAndIncrement());
+    }
+
     /**
      * 每个工作日的17:00执行一次
      */
-    @Scheduled(cron = "0 2 17 * * MON-FRI")
+    @Scheduled(cron = "0 38 17 * * MON-FRI")
+    @Override
     public void test2() {
-        log.info("start get Stock data....");
+        log.info("\nstart get Stock data....");
         try {
             Stock stock = new Stock();
             stock.setStartDate(CodeX.getDate_yyyy_MM_dd());

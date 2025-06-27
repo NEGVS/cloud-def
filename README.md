@@ -18,6 +18,13 @@ port: 8091
 tomcat:
 max-threads: 10 #tomcat的最大并发值修改为10,默认是200
 
+# maven官方仓库
+https://mvnrepository.com/
+mybatis-plus仓库
+https://mvnrepository.com/artifact/com.baomidou/mybatis-plus-boot-starter
+
+
+# ABA
 elasticsearch 8.12.0
 
 Spring Boot 3.4.3 匹配的swagger是什么版本？

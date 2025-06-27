@@ -30,7 +30,7 @@ spring:
         login-username: andy
         login-password: andy
         # 关闭登录验证（不推荐生产环境使用）
-#        allow: 127.0.0.1  # 允许的 IP（空表示允许所有）
+        allow: 127.0.0.1  # 允许的 IP（空表示允许所有）
 #        deny: 192.168.1.100 # 拒绝的 IP
 #    sql:
 #      init:
@@ -51,8 +51,10 @@ logging:
   level:
     # nacos日志，查找Nacos连接或配置加载的错误信息
     com.alibaba.nacos: DEBUG
-#    org.springframework.cloud.alibaba.nacos: DEBUG
+    #    org.springframework.cloud.alibaba.nacos: DEBUG
     org.springframework.cloud: DEBUG
+    io.grpc: DEBUG
+    org.springframework.web: DEBUG
 
 #        spring:
 #  datasource:

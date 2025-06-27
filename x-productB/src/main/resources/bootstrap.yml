@@ -1,15 +1,24 @@
 spring:
   config:
     import:
-#      - optional:nacos:${spring.application.name}                    # ???2???????
-      - optional:nacos:shop-productB.yml
+      #      - optional:nacos:${spring.application.name}
+      - optional:nacos:x-productB.yml      #optional:前缀确保Nacos配置不可用时应用仍可启动
+  # 如果使用Spring Boot 2.4或更高版本，Spring Cloud需要显式通过spring.config.import导入Nacos配置，否则nacos配置不生效
   application:
-    name: shop-product
+    name: x-productB # 用于构造 Nacos 的 Data ID（如 ${spring.application.name}.yaml）。
   cloud:
     nacos:
+      # nacos 配置管理（spring.cloud.nacos.config）
       config:
-        namespace:
-        server-addr: 127.0.0.1:8848
-        group: ANDY_GROUP
+        namespace: andy_namespace # Nacos 命名空间，默认为 public
+        server-addr: 127.0.0.1:8848 # Nacos 服务器地址
+        group: ANDY_GROUP # 配置分组，默认为 DEFAULT_GROUP
+        file-extension: yml # 配置文件格式
+      #        如果Nacos需要认证
+      #        username: nacos
+      #        password: nacos
+      # Nacos 服务发现（Service Discovery），启用服务发现 需要在 Spring Boot 主类上添加 @EnableDiscoveryClient 注解：在“服务管理 > 服务列表”中，确认 your-app-name 已注册。
       discovery:
-        server-addr: 127.0.0.1:8848
+        server-addr: 127.0.0.1:8848 # Nacos 服务发现地址
+        namespace: andy_namespace # 与配置管理保持一致
+        group: ANDY_GROUP

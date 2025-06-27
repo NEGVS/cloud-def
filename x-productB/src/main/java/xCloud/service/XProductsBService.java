@@ -2,7 +2,7 @@ package xCloud.service;
 
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import xCloud.domain.XProductsB;
+import xCloud.entity.XProductsB;
 
 /**
 * @author andy_mac

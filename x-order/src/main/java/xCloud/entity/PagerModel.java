@@ -1,4 +1,4 @@
-package xCloud.domain;
+package xCloud.entity;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.v3.oas.annotations.Hidden;

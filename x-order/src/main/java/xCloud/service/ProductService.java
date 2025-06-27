@@ -3,7 +3,7 @@ package xCloud.service;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import xCloud.domain.Products;
+import xCloud.entity.Products;
 
 /**
  * 使用Fegin实现微服务调用

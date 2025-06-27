@@ -3,7 +3,7 @@ package xCloud.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.springframework.stereotype.Repository;
-import xCloud.domain.XProductsB;
+import xCloud.entity.XProductsB;
 
 /**
 * @author andy_mac

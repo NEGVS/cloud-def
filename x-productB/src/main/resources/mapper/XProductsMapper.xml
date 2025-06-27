@@ -4,7 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="xCloud.mapper.XProductsBMapper">
 
-    <resultMap id="BaseResultMap" type="xCloud.domain.XProductsB">
+    <resultMap id="BaseResultMap" type="xCloud.entity.XProductsB">
             <id property="product_id" column="product_id" jdbcType="BIGINT"/>
             <result property="name" column="name" jdbcType="VARCHAR"/>
             <result property="description" column="description" jdbcType="VARCHAR"/>

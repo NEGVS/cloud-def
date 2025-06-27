@@ -4,7 +4,7 @@ import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
-import xCloud.domain.XProductsB;
+import xCloud.entity.XProductsB;
 import xCloud.mapper.XProductsBMapper;
 import xCloud.service.XProductsBService;
 

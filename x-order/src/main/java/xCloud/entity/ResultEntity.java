@@ -1,4 +1,4 @@
-package xCloud.domain;
+package xCloud.entity;
 
 import lombok.Data;
 

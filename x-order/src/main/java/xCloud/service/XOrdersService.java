@@ -1,7 +1,7 @@
 package xCloud.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import xCloud.domain.XOrders;
+import xCloud.entity.XOrders;
 
 /**
  * @author andy_mac

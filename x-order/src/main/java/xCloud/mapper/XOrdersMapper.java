@@ -3,7 +3,7 @@ package xCloud.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
-import xCloud.domain.XOrders;
+import xCloud.entity.XOrders;
 
 /**
 * @author andy_mac

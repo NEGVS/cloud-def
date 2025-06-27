@@ -1,8 +1,9 @@
-package xCloud.domain;
+package xCloud.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -14,6 +15,7 @@ import java.util.Date;
  *
  * @TableName x_products
  */
+@Schema(description = "XProductsB")
 @TableName(value = "x_products")
 @Data
 public class XProductsB implements Serializable {
@@ -21,16 +23,19 @@ public class XProductsB implements Serializable {
      * 商品ID
      */
     @TableId
+    @Schema(description = "product_id")
     private Long product_id;
 
     /**
      * 商品名称
      */
+    @Schema(description = "name")
     private String name;
 
     /**
      * 商品描述
      */
+    @Schema(description = "description")
     private String description;
 
     /**

@@ -2,7 +2,7 @@ version: '3.8'
 services:
   x-merchant:
     build:
-      context: .
+      context: ./target
       dockerfile: Dockerfile
     ports:
       - "8087:8087"
@@ -38,23 +38,23 @@ services:
 #      - app-network
 #    restart: unless-stopped
 
-  nacos:
-    image: nacos/nacos-server:v2.3.2
-    environment:
-      - MODE=standalone
-      - NACOS_AUTH_ENABLE=true
-    ports:
-      - "8848:8848"
-      - "9848:9848"
-    volumes:
-      - nacos-data:/home/nacos/data
-    networks:
-      - app-network
-    restart: unless-stopped
+#  nacos:
+#    image: nacos/nacos-server:v2.3.2
+#    environment:
+#      - MODE=standalone
+#      - NACOS_AUTH_ENABLE=true
+#    ports:
+#      - "8848:8848"
+#      - "9848:9848"
+#    volumes:
+#      - nacos-data:/home/nacos/data
+#    networks:
+#      - app-network
+#    restart: unless-stopped
 
-volumes:
+#volumes:
 #  mysql-data:
-  nacos-data:
+#  nacos-data:
 
 networks:
   app-network:

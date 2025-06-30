@@ -66,7 +66,7 @@ public class StockController {
     @ApiResponse(responseCode = "200", description = "执行成功", content = @Content(schema = @Schema(implementation = Stock.class)))
     @PostMapping("/flush")
     public ResultEntity<Stock> test(@RequestParam String dateStr) {
-        log.info("新增数据参数：{}" + dateStr);
+        log.info("\n\n新增数据参数：{}" + dateStr);
         stockService.test(dateStr);
         return ResultEntity.success(null, "老子执行完了");
     }

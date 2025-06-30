@@ -49,7 +49,7 @@ public class StockHeaderServiceImpl extends ServiceImpl<StockHeaderMapper, Stock
 
     @Override
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, timeout = 10)
-    public void saveStockData(StockDataParser.XStockData xStockData,String dateStr) throws InterruptedException {
+    public void saveStockData(StockDataParser.XStockData xStockData, String dateStr) throws InterruptedException {
 
         //1-
         StockData stockData = new StockData();
@@ -93,10 +93,15 @@ public class StockHeaderServiceImpl extends ServiceImpl<StockHeaderMapper, Stock
             st.setFinance_type(String.valueOf(collect.get(st.getBlock_name())));
         });
 
-        stockMapper.insertStockList(stockList);
+        int i = stockMapper.insertStockList(stockList);
+        if (i > 0) {
+            log.info("\n--------------------saveStockData insertStockList over,success insert " + i + " 条数据");
+        } else {
+            log.info("\n-----------------error insert ");
+        }
+        log.info("\n--------------------saveStockData insertStockList over");
         stockDataMapper.insertStockData(stockData);
         stockHeaderMapper.insertStockHeaderList(stockHeaderList);
-        log.info("\n--------------------saveStockData over");
 
     }
 

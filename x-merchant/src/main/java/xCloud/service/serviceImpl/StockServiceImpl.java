@@ -2,6 +2,7 @@ package xCloud.service.serviceImpl;
 
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -54,7 +55,7 @@ public class StockServiceImpl extends ServiceImpl<StockMapper, Stock> implements
      */
     @Override
     public void test(String dateStr) {
-        log.info("start get Stock data....");
+        log.info("\nstart get Stock data....");
         try {
             Stock stock = new Stock();
             if (dateStr == null || dateStr.length() != 10 || !dateStr.contains("-")) {
@@ -64,10 +65,12 @@ public class StockServiceImpl extends ServiceImpl<StockMapper, Stock> implements
                 stock.setStartDate(dateStr);
                 stock.setEndDate(CodeX.getDate_yyyy_MM_dd(dateStr, 1));
             }
+            log.info("start get Stock data...." + stock.getStartDate() + "--" + stock.getEndDate());
             List<Stock> stocks = stockMapper.selectStock(stock);
 
+
             if (stocks != null && !stocks.isEmpty()) {
-                log.info("今日数据已经更新，无需重复更新");
+                log.info("\n\n今日数据已经更新，无需重复更新" + stocks.size() + "条数据\n\n" + JSONUtil.toJsonStr(stocks));
                 return;
             }
             String url = "https://finance.pae.baidu.com/vapi/v1/hotrank?tn=wisexmlnew&dsp=iphone&product=stock&style=tablelist&market=all&type=hour&day=20250609&hour=17&pn=0&rn=&finClientType=pc";

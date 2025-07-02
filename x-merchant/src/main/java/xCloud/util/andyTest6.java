@@ -3,6 +3,12 @@ package xCloud.util;
 import cn.hutool.core.date.DateUtil;
 import xCloud.service.serviceImpl.CodeX;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
 /**
@@ -13,24 +19,38 @@ import java.util.Date;
  */
 public class andyTest6 {
     public static void main(String[] args) {
+        try {
+            URL url = new URL("https://space.robotcy.cn:18082/mini_api/wxRoom/selectRoomUser");
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("POST");
+            connection.setRequestProperty("Content-Type", "application/json; utf-8");
+            connection.setRequestProperty("Accept", "application/json");
+            connection.setRequestProperty("token", "17435595079786232611");
+            connection.setDoOutput(true);
 
+            String jsonInputString = "{\"pageSize\": 250, \"pageNum\": 1, \"wxRoomId\": 7940, \"type\": 0, \"hytype\": \"\"}";
 
-        System.out.println(String.valueOf(DateUtil.tomorrow()).split(" ")[0]);
-        System.out.println(CodeX.getDate_yyyy_MM_dd());
-        String dateStr = "2025-06-23";
-        System.out.println(CodeX.getDate_yyyy_MM_dd(dateStr, -1129993));
+            try (OutputStream os = connection.getOutputStream()) {
+                byte[] input = jsonInputString.getBytes(StandardCharsets.UTF_8);
+                os.write(input, 0, input.length);
+            }
 
-        System.out.println();
-        int i = DateUtil.dayOfYear(new Date());
-        System.out.println(Math.random() * 100);
-        System.out.println(Math.random() * 100);
-        System.out.println(Math.random() * 100);
-        System.out.println(Math.random() * 100);
-        System.out.println(Math.random() * 100);
-        System.out.println((long) (Math.random() * 100 * DateUtil.dayOfYear(new Date()) / 2));
-        System.out.println((long) (Math.random() * 100 * DateUtil.dayOfYear(new Date()) / 2));
-        System.out.println((long) (Math.random() * 100 * DateUtil.dayOfYear(new Date()) / 2));
-        System.out.println((long) (Math.random() * 100 * DateUtil.dayOfYear(new Date()) / 2));
-//        写一个方法，入参数为（datestr，n），返回值为datestr+n天，n为正数，返回datestr+n天，n为负数，返回datestr-n天。
+            int responseCode = connection.getResponseCode();
+            System.out.println("Response Code: " + responseCode);
+
+            // Read the response if needed
+            try (BufferedReader br = new BufferedReader(
+                    new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8))) {
+                StringBuilder response = new StringBuilder();
+                String responseLine = null;
+                while ((responseLine = br.readLine()) != null) {
+                    response.append(responseLine.trim());
+                }
+                System.out.println("Response Body: " + response.toString());
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -12,11 +12,14 @@ spring:
   cloud:
     nacos:
       config:
-        namespace: andy_namespace
+        namespace: 18ec5d27-3a62-473b-a8c4-d5cfdb7b3a25
         server-addr: 127.0.0.1:8848
         group: ANDY_GROUP
+        file-extension: yml
       discovery:
         server-addr: 127.0.0.1:8848
+        namespace: 18ec5d27-3a62-473b-a8c4-d5cfdb7b3a25 # 与配置管理保持一致
+        group: ANDY_GROUP
 
 
 alipay:

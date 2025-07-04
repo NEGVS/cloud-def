@@ -1,41 +1,15 @@
 spring:
-  config:
-    import:
-#      - optional:nacos:${spring.application.name}                    # ???2???????
-      - optional:nacos:shop-order.yml
+  #  config:
+  #    import:
+  #      #      - optional:nacos:${spring.application.name}                    # ???2???????
+  #      - optional:nacos:shop-order.yml
   application:
     name: shop-order
-  cloud:
-
-    nacos:
-      config:
-        namespace:
-        server-addr: 127.0.0.1:8848
-        group: ANDY_GROUP
-      discovery:
-        server-addr: 127.0.0.1:8848
-#配置Ribbon的负载均衡策略
-#shop-order:
-#  ribbon:
-#    NFLoadBalancerRuleClassName: com.netflix.loadbalancer.RoundRobinRule
-
-
-#spring:
-#cloud:
-#sentinel:
-#transport:
-#port: 9999 #跟控制台交流的端口,随意指定一个未使用的端口即可
-#dashboard: localhost:8080 # 指定控制台服务的地址
-
-#配置文件中关闭sentinel的CommonFilter实例化
-#spring:
-#cloud:
-#sentinel:
-#filter:
-#enabled: false
-
-# grpc
-grpc:
-  server:
-    port: 9898
-
+#  cloud:
+#    nacos:
+#      config:
+#        namespace:
+#        server-addr: 127.0.0.1:8848
+#        group: ANDY_GROUP
+#      discovery:
+#        server-addr: 127.0.0.1:8848

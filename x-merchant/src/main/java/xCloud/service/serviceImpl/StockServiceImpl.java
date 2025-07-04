@@ -54,7 +54,7 @@ public class StockServiceImpl extends ServiceImpl<StockMapper, Stock> implements
      * 手动执行
      */
     @Override
-    public void test(String dateStr) {
+    public ResultEntity<Stock> test(String dateStr) {
         log.info("\nstart get Stock data....");
         try {
             Stock stock = new Stock();
@@ -68,27 +68,29 @@ public class StockServiceImpl extends ServiceImpl<StockMapper, Stock> implements
             log.info("start get Stock data...." + stock.getStartDate() + "--" + stock.getEndDate());
             List<Stock> stocks = stockMapper.selectStock(stock);
 
-
             if (stocks != null && !stocks.isEmpty()) {
                 log.info("\n\n今日数据已经更新，无需重复更新" + stocks.size() + "条数据\n\n" + JSONUtil.toJsonStr(stocks));
-                return;
+                return ResultEntity.success(null, "今日数据已经更新，无需重复更新");
             }
             String url = "https://finance.pae.baidu.com/vapi/v1/hotrank?tn=wisexmlnew&dsp=iphone&product=stock&style=tablelist&market=all&type=hour&day=20250609&hour=17&pn=0&rn=&finClientType=pc";
             String urlAllDay = "https://finance.pae.baidu.com/vapi/v1/hotrank?tn=wisexmlnew&dsp=iphone&product=stock&style=tablelist&market=all&type=day&day=" + stock.getStartDate() + "&hour=17&pn=0&rn=&finClientType=pc";
             String jsonString = HttpUtil.doPost(urlAllDay);
             ObjectMapper mapper = new ObjectMapper();
+            if (jsonString == null || jsonString.isEmpty()) {
+                return ResultEntity.error("数据获取失败,结果为空");
+            }
             StockDataParser.XStockData xStockData = mapper.readValue(jsonString, StockDataParser.XStockData.class);
-//            xStockData
-
             stockHeaderService.saveStockData(xStockData, stock.getStartDate());
+            return ResultEntity.success(null, "数据更新成功");
         } catch (Exception e) {
-            e.printStackTrace();
+            log.info("\n数据更新失败" + e.getMessage());
+            return ResultEntity.error(e.getMessage());
         }
     }
 
     AtomicInteger count2 = new AtomicInteger(0);
 
-    @Scheduled(fixedRate = 1000 * 5)
+    @Scheduled(fixedRate = 1000 * 60)
     public void test3() {
         log.info("\n-----------...." + count2.getAndIncrement());
     }

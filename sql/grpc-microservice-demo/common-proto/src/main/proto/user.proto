@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+option java_package = "com.example.commonproto";
+option java_multiple_files = true;
+
+message UserRequest {
+  string user_id = 1;
+}
+
+message UserResponse {
+  string user_id = 1;
+  string name = 2;
+}
+
+service UserService {
+  rpc GetUser (UserRequest) returns (UserResponse);
+}

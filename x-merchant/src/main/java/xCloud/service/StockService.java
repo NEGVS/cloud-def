@@ -30,7 +30,7 @@ public interface StockService extends IService<Stock> {
      *
      * @param dateStr dateStr
      */
-    public void test(String dateStr);
+    public ResultEntity<Stock> test(String dateStr);
 
     public void test2();
 

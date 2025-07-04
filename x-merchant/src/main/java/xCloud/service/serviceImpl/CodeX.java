@@ -108,6 +108,34 @@ import java.util.zip.GZIPOutputStream;
 @Component
 public class CodeX {
     /**
+     * 入参数：本金、涨or跌？（bool）、n天、涨跌幅，返回最终金额
+     * @param principal
+     * @param isRising 如果是涨（isRising=true
+     * @param days
+     * @param rate
+     * @return
+     * BigDecimal：使用 BigDecimal 替代 double，以避免浮点数精度问题，适合金融计算。
+     * 参数校验：检查本金和涨跌幅是否为非负且非空。
+     * 涨跌逻辑：如果是涨（isRising=true），每日倍数为 1 + rate；如果是跌（isRising=false），每日倍数为 1 - rate。
+     * 精度控制：每次乘法后使用 setScale(8, RoundingMode.HALF_UP) 保留 8 位小数，四舍五入。
+     * 循环计算：通过循环实现 n 天的复利计算。
+     */
+    public static BigDecimal calculateFinalAmount(BigDecimal principal, boolean isRising, int days, BigDecimal rate) {
+        if (principal == null || rate == null || principal.compareTo(BigDecimal.ZERO) < 0 || rate.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException("Principal and rate must be non-negative and not null");
+        }
+
+        BigDecimal dailyRate = isRising ? BigDecimal.ONE.add(rate) : BigDecimal.ONE.subtract(rate);
+        BigDecimal finalAmount = principal;
+
+        for (int i = 0; i < days; i++) {
+            finalAmount = finalAmount.multiply(dailyRate).setScale(2, RoundingMode.HALF_UP);
+        }
+
+        return finalAmount;
+    }
+
+    /**
      * 数字返回true，否则false
      *
      * @param str
@@ -1706,6 +1734,7 @@ public class CodeX {
         // 格式化返回结果
         return resultDate.format(formatter);
     }
+
     /**
      * 获取当前时间的年月日 yyyy-MM-dd
      */

@@ -1,15 +1,14 @@
 package xCloud.util;
 
-import cn.hutool.core.date.DateUtil;
 import xCloud.service.serviceImpl.CodeX;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.math.BigDecimal;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.Date;
 
 /**
  * @Description
@@ -20,6 +19,15 @@ import java.util.Date;
 public class andyTest6 {
     public static void main(String[] args) {
         try {
+
+            BigDecimal bigDecimal = CodeX.calculateFinalAmount(BigDecimal.valueOf(100000), true, 10, BigDecimal.valueOf(0.1));
+            System.out.println("本金：" + BigDecimal.valueOf(100000));
+            System.out.println("年化利率：" + BigDecimal.valueOf(0.1));
+            System.out.println(bigDecimal);
+            System.out.println("净赚：" + bigDecimal.subtract(BigDecimal.valueOf(100000)));
+            if (true) {
+                return;
+            }
             URL url = new URL("https://space.robotcy.cn:18082/mini_api/wxRoom/selectRoomUser");
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("POST");

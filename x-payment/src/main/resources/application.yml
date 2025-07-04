@@ -1,24 +1,5 @@
 server:
   port: 8077
-
-spring:
-  application:
-    name: x-payment
-  # 0-配置nacos
-  config:
-    import:
-      #      - optional:nacos:${spring.application.name}
-      - optional:nacos:x-payment.yml
-  cloud:
-    nacos:
-      config:
-        namespace: andy_namespace
-        server-addr: 127.0.0.1:8848
-        group: ANDY_GROUP
-      discovery:
-        server-addr: 127.0.0.1:8848
-
-
 alipay:
   app-id: "2021000147692713"
   #  你的私钥

@@ -18,7 +18,7 @@ import org.springframework.web.client.RestTemplate;
 //@EnableDiscoveryClient
 //@MapperScan("xCloud.mapper")
 @SpringBootApplication
-//开启Fegin
+//开启 Fegin 远程调用
 @EnableFeignClients
 public class OrderApplication {
     public static void main(String[] args) {

@@ -240,6 +240,7 @@ public class XOrderController {
      * @return
      */
     int i = 0;
+
     @GetMapping("/message3")
     @SentinelResource(value = "message3",
             blockHandler = "blockHandlerForMessage3",//发生BlockException时进入的方法

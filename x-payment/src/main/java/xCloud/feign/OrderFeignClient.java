@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
  * @ClassName OrderFeignClient
  */
 @Tag(name = "OrderFeignClient", description = "通过 Feign 调用订单服务")
-@FeignClient(name = "order-service") // 假设订单服务注册名为 order-service
+@FeignClient(name = "x-order") // 假设订单服务注册名为 x-order
 public interface OrderFeignClient {
 
     @Operation(summary = "updateOrderStatus", description = "更新订单状态")

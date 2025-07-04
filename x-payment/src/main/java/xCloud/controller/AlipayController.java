@@ -2,7 +2,7 @@ package xCloud.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @Tag(name = "AlipayController", description = "AlipayController")
 @RestController
+@Slf4j
 public class AlipayController {
 
     @Operation(summary = "pay", description = "pay")
@@ -23,6 +24,7 @@ public class AlipayController {
             @RequestParam("orderId") String orderId,
             @RequestParam("amount") String amount,
             @RequestParam("subject") String subject) throws Exception {
-        return null;
+        log.info("\nPayment开始调用支付宝接口\n订单号: " + orderId + ", 金额: " + amount + ", 标题: " + subject + "\n支付成功");
+        return "支付成功";
     }
 }

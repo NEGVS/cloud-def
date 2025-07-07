@@ -36,6 +36,7 @@ import java.math.RoundingMode;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.channels.FileChannel;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -739,6 +740,11 @@ public class CodeX {
         }
         return result;
     }
+
+
+
+
+
 
     /**
      * md5 加密--md5 无法解密的，判断密码是否正确就把源文件再次加密，和加密后的文件进行比较

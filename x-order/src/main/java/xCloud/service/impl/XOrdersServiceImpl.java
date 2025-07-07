@@ -9,10 +9,10 @@ import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import xCloud.entity.Products;
+import xCloud.feignClient.productClient.Products;
 import xCloud.entity.XOrders;
 import xCloud.mapper.XOrdersMapper;
-import xCloud.service.ProductService;
+import xCloud.feignClient.productClient.ProductClient;
 import xCloud.service.XOrdersService;
 
 import java.util.List;
@@ -34,7 +34,7 @@ public class XOrdersServiceImpl extends ServiceImpl<XOrdersMapper, XOrders>
     DiscoveryClient discoveryClient;
 
     @Autowired
-    ProductService productService;
+    ProductClient productService;
 
     @Override
     public XOrders createOrder(String pid) {

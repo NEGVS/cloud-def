@@ -12,6 +12,22 @@ import java.util.Map;
  * @createDate 2025-04-07 10:51:53
  */
 public interface UserService extends IService<User> {
+
+    /**
+     * authenticate
+     */
+    User authenticate(String username, String password);
+
+    /**
+     * 获取用户信息
+     */
+    public UserDTO getUser(Long userId);
+
+    /**
+     * RabbitMQ 订单通知监听
+     */
+    public void sendOrderNotification(String orderId, Long userId);
+
     /**
      * 1-新增
      *

@@ -28,11 +28,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
-import xCloud.entity.Products;
+import xCloud.feignClient.productClient.Products;
 import xCloud.entity.ResultEntity;
 import xCloud.entity.XOrders;
-import xCloud.feign.PaymentFeignClient;
-import xCloud.service.ProductService;
+import xCloud.feignClient.productClient.ProductClient;
 import xCloud.service.XOrdersService;
 
 import java.math.BigDecimal;
@@ -56,11 +55,11 @@ public class XOrderController {
     private XOrdersService orderService;
 
     @Autowired
-    private ProductService productService;
+    private ProductClient productService;
 
     //DiscoveryClient是专门负责服务注册和发现的，可以通过它获取到注册到注册中心的所有服务
-    @Autowired
-    private PaymentFeignClient paymentClient;
+//    @Autowired
+//    private PaymentFeignClient paymentClient;
 
     /**
      * 创建订单并支付
@@ -70,9 +69,9 @@ public class XOrderController {
      * @param subject
      * @return
      */
-    public String createOrderAndPay(String orderId, String amount, String subject) {
-        return paymentClient.pay(orderId, amount, subject);
-    }
+//    public String createOrderAndPay(String orderId, String amount, String subject) {
+//        return paymentClient.pay(orderId, amount, subject);
+//    }
 
     /**
      * 更新订单状态--订单服务端点（示例）

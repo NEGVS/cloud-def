@@ -26,7 +26,7 @@ import xCloud.service.RabbitMQService;
 @Configuration
 public class RabbitMQConfig {
 
-
+    public static final String USER_NOTIFICATION_QUEUE = "user-notification-queue";
     /**
      * 主要队列
      */
@@ -92,6 +92,7 @@ public class RabbitMQConfig {
     public DirectExchange delayExchange() {
         return new DirectExchange(delayExchangeName, true, false);
     }
+
     /**
      * main queue,binding dlxExchange and dlxRoutingKey
      * 死信触发场景 ok
@@ -108,6 +109,15 @@ public class RabbitMQConfig {
                 .withArgument("x-max-length", 10) // 队列长度限制
                 .withArgument("x-message-ttl", 10000)  //  消息存活时间（毫秒）
                 .build();
+    }
+
+    /**
+     * USER_NOTIFICATION_QUEUE
+     * @return Queue
+     */
+    @Bean
+    public Queue userNotificationQueue() {
+        return new Queue(USER_NOTIFICATION_QUEUE, true);
     }
 
     /**

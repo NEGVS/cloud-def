@@ -16,7 +16,28 @@
 
 
     <dependencies>
+        <!-- ✅ Nacos 服务发现 -->
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+        </dependency>
 
+        <!-- ✅ Nacos 配置中心（如需要）-->
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.opencensus</groupId>
+            <artifactId>opencensus-contrib-grpc-metrics</artifactId>
+            <version>0.31.1</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/com.alibaba.nacos/nacos-client -->
+        <dependency>
+            <groupId>com.alibaba.nacos</groupId>
+            <artifactId>nacos-client</artifactId>
+            <version>2.4.0</version>
+        </dependency>
         <!--Spring AMQP依赖-->
         <dependency>
             <groupId>org.springframework.boot</groupId>

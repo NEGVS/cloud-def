@@ -1,5 +1,5 @@
 server:
-  port: 8082
+  port: 8072
 spring:
   #  数据库配置
   datasource:
@@ -53,8 +53,8 @@ logging:
     com.alibaba.nacos: DEBUG
     #    org.springframework.cloud.alibaba.nacos: DEBUG
     org.springframework.cloud: DEBUG
-    io.grpc: DEBUG
-    org.springframework.web: DEBUG
+#    io.grpc: DEBUG
+#    org.springframework.web: DEBUG
 
 
 
@@ -74,7 +74,7 @@ logging:
 #enabled: false
 
 # grpc
-grpc:
-  server:
-    port: 9898
+#grpc:
+#  server:
+#    port: 9898
 

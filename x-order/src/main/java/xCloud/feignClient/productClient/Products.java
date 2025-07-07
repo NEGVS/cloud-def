@@ -1,4 +1,4 @@
-package xCloud.entity;
+package xCloud.feignClient.productClient;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;

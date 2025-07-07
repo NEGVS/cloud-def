@@ -2,6 +2,8 @@ package xCloud.service;
 
 import com.rabbitmq.client.Channel;
 import jakarta.annotation.PostConstruct;
+import jakarta.annotation.Resource;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageDeliveryMode;
@@ -51,6 +53,9 @@ public class RabbitMQService {
 
     @Autowired
     private RabbitTemplate rabbitTemplate;
+
+    @Resource
+    private UserService userService;
 
     /**
      * 项目启动后执行
@@ -170,4 +175,17 @@ public class RabbitMQService {
         // 示例业务逻辑
         log.debug("\n处理延迟消息: {}", message);
     }
+
+    @RabbitListener(queues = "user-notification-queue")
+    public void handleOrderNotification(OrderMessage message) {
+        userService.sendOrderNotification(message.getOrderId(), message.getUserId());
+    }
+
+    // 内部类表示消息格式
+    @Data
+    public static class OrderMessage {
+        private String orderId;
+        private Long userId;
+    }
+
 }

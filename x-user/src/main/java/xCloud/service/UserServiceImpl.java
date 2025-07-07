@@ -25,6 +25,57 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Resource
     private UserMapper userMapper;
 
+    // 模拟数据库
+    private User findUserById(Long userId) {
+        User user = new User();
+        user.setId(String.valueOf(userId));
+        user.setUsername("user" + userId);
+        user.setEmail("user" + userId + "@example.com");
+        user.setToken("jwt-token-" + userId); // 模拟 JWT 令牌
+        return user;
+    }
+
+    private User findUserByUsernameAndPassword(String username, String password) {
+        // 模拟用户认证
+        if ("testuser".equals(username) && "password".equals(password)) {
+            User user = new User();
+            user.setId(String.valueOf(1L));
+            user.setUsername(username);
+            user.setEmail("testuser@example.com");
+            user.setToken("jwt-token-1");
+            return user;
+        }
+        return null;
+    }
+
+    @Override
+    public User authenticate(String username, String password) {
+        User user = findUserByUsernameAndPassword(username, password);
+        if (user == null) {
+            throw new RuntimeException("认证失败：用户名或密码错误");
+        }
+        return user;
+    }
+
+    @Override
+    public UserDTO getUser(Long userId) {
+        User user = findUserById(userId);
+        if (user == null) {
+            throw new RuntimeException("用户不存在");
+        }
+        UserDTO userDTO = new UserDTO();
+        userDTO.setId(user.getId());
+        userDTO.setUsername(user.getUsername());
+        userDTO.setEmail(user.getEmail());
+        return userDTO;
+    }
+
+    public void sendOrderNotification(String orderId, Long userId) {
+        // 模拟发送通知（例如邮件或推送）
+        System.out.println("发送订单通知给用户 " + userId + "，订单ID: " + orderId);
+        // 实际实现可能调用邮件服务或推送服务
+    }
+
     /**
      * 1-新增
      *

@@ -1,4 +1,4 @@
-package xCloud.entity;
+package xCloud.feignClient.userClient;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
@@ -164,9 +164,5 @@ public class User implements Serializable {
     @Schema(name = "client_id", description = "设备ID")
     @TableField("client_id")
     private String client_id;
-
-    @Schema(name = "token", description = "令牌")
-    @TableField(exist = false)
-    private String token; // 模拟 JWT 令牌
 
 }

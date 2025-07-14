@@ -1,6 +1,6 @@
 package xcloud.xproduct.config.kafka;
 
-import com.alibaba.nacos.shaded.com.google.gson.JsonDeserializationContext;
+//import com.alibaba.nacos.shaded.com.google.gson.JsonDeserializationContext;
 import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;

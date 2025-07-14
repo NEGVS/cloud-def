@@ -111,6 +111,21 @@
     </update>
 
     <!--4.查询-->
+    <select id="selectStockCount" parameterType="xCloud.entity.Stock" resultType="int">
+        SELECT
+             count(*)
+        FROM
+            stock
+        WHERE
+        1 = 1
+        <if test="entity.startDate != null and entity.startDate != ''">
+            AND created_time &gt;= #{entity.startDate}
+        </if>
+        <if test="entity.endDate != null and entity.endDate != ''">
+            AND created_time &lt;= #{entity.endDate}
+        </if>
+    </select>
+
     <select id="selectStock" parameterType="xCloud.entity.Stock" resultMap="result">
         SELECT
         a.id,
@@ -157,9 +172,6 @@
         </if>
         <if test="entity.rank_diff != null and entity.rank_diff != ''">
             AND a.rank_diff = #{entity.rank_diff}
-        </if>
-        <if test="entity.created_time != null">
-            AND a.created_time = #{entity.created_time}
         </if>
         <if test="entity.startDate != null and entity.startDate != ''">
             AND a.created_time &gt;= #{entity.startDate}

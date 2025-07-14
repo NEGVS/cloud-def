@@ -110,12 +110,12 @@ import java.util.zip.GZIPOutputStream;
 public class CodeX {
     /**
      * 入参数：本金、涨or跌？（bool）、n天、涨跌幅，返回最终金额
+     *
      * @param principal
-     * @param isRising 如果是涨（isRising=true
+     * @param isRising  如果是涨（isRising=true
      * @param days
      * @param rate
-     * @return
-     * BigDecimal：使用 BigDecimal 替代 double，以避免浮点数精度问题，适合金融计算。
+     * @return BigDecimal：使用 BigDecimal 替代 double，以避免浮点数精度问题，适合金融计算。
      * 参数校验：检查本金和涨跌幅是否为非负且非空。
      * 涨跌逻辑：如果是涨（isRising=true），每日倍数为 1 + rate；如果是跌（isRising=false），每日倍数为 1 - rate。
      * 精度控制：每次乘法后使用 setScale(8, RoundingMode.HALF_UP) 保留 8 位小数，四舍五入。
@@ -367,6 +367,65 @@ public class CodeX {
 
         return UUID.randomUUID().toString().replace("-", "");
     }
+
+    /**
+     * 将 InputStream 保存为本地文件
+     *
+     * @param inputStream 输入流
+     * @param fileName    保存文件路径和名称，./static/xx/aa.txt
+     */
+    public static void saveInputStreamToFile(InputStream inputStream, String fileName) {
+        // 确保文件名有效
+        if (fileName == null || fileName.isEmpty()) {
+            throw new IllegalArgumentException("文件名不能为空");
+        }
+        File file = null;
+
+        // 指定保存路径
+        if (!fileName.contains("/")) {
+            file = new File(fileName);
+        } else {
+            file = new File("./" + fileName);
+        }
+
+        try (FileOutputStream outputStream = new FileOutputStream(file)) {
+            // 缓冲区
+            byte[] buffer = new byte[1024];
+            int bytesRead;
+
+            // 读取 InputStream 并写入文件
+            while ((bytesRead = inputStream.read(buffer)) != -1) {
+                outputStream.write(buffer, 0, bytesRead);
+            }
+
+            // 确保所有数据写入
+            outputStream.flush();
+            log.info("文件已保存到: " + file.getAbsolutePath());
+
+        } catch (IOException e) {
+            log.error("保存文件时发生错误: " + e.getMessage());
+            e.printStackTrace();
+        } finally {
+            // 关闭 InputStream
+            try {
+                if (inputStream != null) {
+                    inputStream.close();
+                }
+            } catch (IOException e) {
+                log.error("关闭 InputStream 时发生错误: " + e.getMessage());
+            }
+        }
+    }
+
+    // 示例用法
+//    public static void main(String[] args) {
+//        // 示例 InputStream（这里使用字符串作为示例）
+//        String sampleData = "这是一个测试文件的内容";
+//        InputStream inputStream = new ByteArrayInputStream(sampleData.getBytes());
+//
+//        // 保存到 ./test.txt
+//        saveInputStreamToFile(inputStream, "test.txt");
+//    }
 
     /**
      * downLoadInputStreamToFile-- InputStream 流转为文件
@@ -740,10 +799,6 @@ public class CodeX {
         }
         return result;
     }
-
-
-
-
 
 
     /**
@@ -1956,7 +2011,12 @@ public class CodeX {
 
     //   mybatis* 继承自 AbstractWrapper ,自身的内部属性 entity 也用于生成 where 条件
     //及 LambdaQueryWrapper, 可以通过 new QueryWrapper().lambda() 方法获取.
-    //
+    //  EQ("="),
+    //    NE("<>"),
+    //    GT(">"),
+    //    GE(">="),
+    //    LT("<"),
+    //    LE("<="),
     //queryWrapper.lt（）——小于
     //queryWrapper.le（）——小于等于
     //queryWrapper.gt（）——大于

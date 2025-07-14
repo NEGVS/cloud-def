@@ -49,6 +49,8 @@ public interface StockMapper extends BaseMapper<Stock> {
      */
     List<Stock> selectStock(@Param("entity") Stock entity);
 
+    int selectStockCount(@Param("entity") Stock entity);
+
     /**
      * 4-查询
      *

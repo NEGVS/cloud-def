@@ -3,6 +3,7 @@ package xCloud.service.serviceImpl;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.json.JSONUtil;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -29,6 +30,8 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -58,22 +61,28 @@ public class StockServiceImpl extends ServiceImpl<StockMapper, Stock> implements
         log.info("\nstart get Stock data....");
         try {
             Stock stock = new Stock();
-            if (dateStr == null || dateStr.length() != 10 || !dateStr.contains("-")) {
+            if (dateStr == null || !dateStr.contains("-")) {
                 stock.setStartDate(CodeX.getDate_yyyy_MM_dd());
-                stock.setEndDate(String.valueOf(DateUtil.tomorrow()).split(" ")[0]);
+                stock.setEndDate(CodeX.getDate_yyyy_MM_dd(DateUtil.tomorrow()));
             } else {
                 stock.setStartDate(dateStr);
                 stock.setEndDate(CodeX.getDate_yyyy_MM_dd(dateStr, 1));
             }
             log.info("start get Stock data...." + stock.getStartDate() + "--" + stock.getEndDate());
-            List<Stock> stocks = stockMapper.selectStock(stock);
-
-            if (stocks != null && !stocks.isEmpty()) {
-                log.info("\n\n今日数据已经更新，无需重复更新" + stocks.size() + "条数据\n\n" + JSONUtil.toJsonStr(stocks));
-                return ResultEntity.success(null, "今日数据已经更新，无需重复更新");
+            int i = stockMapper.selectStockCount(stock);
+            if (i > 0) {
+                List<Stock> stocks = stockMapper.selectStock(stock);
+                Set<String> set_date = new TreeSet<>();
+                for (Stock stock1 : stocks) {
+                    set_date.add(stock1.getLogo_type().trim());
+                }
+                if (set_date.size() == 1 && set_date.contains(dateStr)) {
+                    log.info("\n\n今日数据已经更新，无需重复更新. 已经存在 " + i + " 条数据\n");
+                    return ResultEntity.success(null, "今日数据已经更新，无需重复更新");
+                }
             }
             String url = "https://finance.pae.baidu.com/vapi/v1/hotrank?tn=wisexmlnew&dsp=iphone&product=stock&style=tablelist&market=all&type=hour&day=20250609&hour=17&pn=0&rn=&finClientType=pc";
-            String urlAllDay = "https://finance.pae.baidu.com/vapi/v1/hotrank?tn=wisexmlnew&dsp=iphone&product=stock&style=tablelist&market=all&type=day&day=" + stock.getStartDate() + "&hour=17&pn=0&rn=&finClientType=pc";
+            String urlAllDay = "https://finance.pae.baidu.com/vapi/v1/hotrank?tn=wisexmlnew&dsp=iphone&product=stock&style=tablelist&market=all&type=day&day=" + stock.getStartDate().replace("-", "") + "&hour=17&pn=0&rn=&finClientType=pc";
             String jsonString = HttpUtil.doPost(urlAllDay);
             ObjectMapper mapper = new ObjectMapper();
             if (jsonString == null || jsonString.isEmpty()) {
@@ -90,30 +99,31 @@ public class StockServiceImpl extends ServiceImpl<StockMapper, Stock> implements
 
     AtomicInteger count2 = new AtomicInteger(0);
 
-    @Scheduled(fixedRate = 1000 * 60)
+    @Scheduled(fixedRate = 1000 * 60 * 60)
     public void test3() {
-        log.info("\n-----------...." + count2.getAndIncrement());
+        log.info("\n....一个小时执行一次 " + DateUtil.now());
     }
 
     /**
      * 每个工作日的17:00执行一次
      */
-    @Scheduled(cron = "0 38 17 * * MON-FRI")
-    @Override
+    @Scheduled(cron = "0 08 17 * * MON-FRI")
+//    @Scheduled(fixedRate = 1000 * 6)
     public void test2() {
-        log.info("\nstart get Stock data....");
+        log.info("\n\n\n------@Scheduled(cron = \"0 08 17 * * MON-FRI\")---start get Stock data....");
         try {
             Stock stock = new Stock();
             stock.setStartDate(CodeX.getDate_yyyy_MM_dd());
-            stock.setEndDate(String.valueOf(DateUtil.tomorrow()).split(" ")[0]);
+            stock.setEndDate(CodeX.getDate_yyyy_MM_dd(DateUtil.tomorrow()));
             List<Stock> stocks = stockMapper.selectStock(stock);
             if (stocks != null && !stocks.isEmpty()) {
                 log.info("今日数据已经更新，无需重复更新");
                 return;
             }
-            Thread.sleep((long) (Math.random() * 100 * DateUtil.dayOfYear(new Date()) / 2));
+//            Thread.sleep((long) (Math.random() * 100 * DateUtil.dayOfYear(new Date()) / 2));
+
             String url = "https://finance.pae.baidu.com/vapi/v1/hotrank?tn=wisexmlnew&dsp=iphone&product=stock&style=tablelist&market=all&type=hour&day=20250609&hour=17&pn=0&rn=&finClientType=pc";
-            String urlAllDay = "https://finance.pae.baidu.com/vapi/v1/hotrank?tn=wisexmlnew&dsp=iphone&product=stock&style=tablelist&market=all&type=day&day=" + stock.getStartDate() + "&hour=17&pn=0&rn=&finClientType=pc";
+            String urlAllDay = "https://finance.pae.baidu.com/vapi/v1/hotrank?tn=wisexmlnew&dsp=iphone&product=stock&style=tablelist&market=all&type=day&day=" + CodeX.getDateOfyyyyMMdd() + "&hour=17&pn=0&rn=&finClientType=pc";
             String jsonString = HttpUtil.doPost(urlAllDay);
             ObjectMapper mapper = new ObjectMapper();
             StockDataParser.XStockData xStockData = mapper.readValue(jsonString, StockDataParser.XStockData.class);

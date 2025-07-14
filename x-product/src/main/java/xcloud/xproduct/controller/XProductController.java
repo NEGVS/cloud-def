@@ -52,6 +52,7 @@ public class XProductController {
 
     /**
      * 4-list Page
+     *
      * @param xProducts
      * @return
      */
@@ -87,7 +88,7 @@ public class XProductController {
         XProducts productById = xProductsService.getProductById(1L);
         log.info("------------");
         log.info(JSONUtil.toJsonStr(list));
-        HttpRestResult<List<XProducts>> httpRestResult2 = new HttpRestResult<>();
+        ResultEntity<List<XProducts>> httpRestResult2 = new ResultEntity<>();
         httpRestResult2.setData(list);
         httpRestResult2.setCode(200);
         httpRestResult2.setMessage("查询成功");

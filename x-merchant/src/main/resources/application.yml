@@ -23,7 +23,9 @@ server:
 #      model-name: "gpt-4o-mini"
 logging:
   level:
+    com.baomidou.mybatisplus: DEBUG
     org:
+      apache.ibatis: DEBUG
       springframework:
         transaction=DEBUG:
 
@@ -33,8 +35,9 @@ mybatis-plus:
   #  classpath:就是resources文件夹
   mapper-locations: classpath*:mapper/**/*.xml
   type-aliases-package: xCloud.entity
-#  configuration:
-#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl # 调试 SQL
+  configuration:
+    #    输出 SQL和结果
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl # 调试 SQL
 
 spring:
   application:

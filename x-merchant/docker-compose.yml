@@ -9,9 +9,13 @@ services:
     environment:
 #      - SPRING_PROFILES_ACTIVE=prod
       - JAVA_OPTS=-Xmx512m -Xms512m
-    depends_on:
+      - TZ=Asia/Shanghai
+      #一定要指定时区（environment、volumes），否则会出现时区错误
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+#    depends_on:
 #      - mysql
-      - nacos
+#      - nacos
     networks:
       - app-network
     restart: unless-stopped

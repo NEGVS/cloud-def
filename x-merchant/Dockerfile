@@ -1,6 +1,6 @@
 FROM openjdk:17-jdk-slim
 WORKDIR /app22
-COPY target/x-merchant-0.0.1-SNAPSHOT.jar app22.jar
+COPY ./target/x-merchant-0.0.1-SNAPSHOT.jar app22.jar
 EXPOSE 8087
 ENTRYPOINT ["java", "-jar", "app22.jar"]
 #说明：在项目根目录创建 Dockerfile，用于构建 Spring Boot 应用的镜像。

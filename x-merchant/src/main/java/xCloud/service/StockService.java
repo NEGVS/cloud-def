@@ -32,7 +32,6 @@ public interface StockService extends IService<Stock> {
      */
     public ResultEntity<Stock> test(String dateStr);
 
-    public void test2();
 
     /**
      * 2-删除

@@ -43,6 +43,7 @@ spring:
 mybatis-plus:
   mapper-locations: classpath*:/mapper/**/*.xml
   type-aliases-package: xCloud.entity
+  #  配置mybatis-plus日志必须1
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 
@@ -55,6 +56,8 @@ logging:
     org.springframework.cloud: DEBUG
     io.grpc: DEBUG
     org.springframework.web: DEBUG
+    #  配置mybatis-plus日志必须2
+    com.baomidou.mybatisplus: DEBUG
 
 #        spring:
 #  datasource:

@@ -1,12 +1,14 @@
 package xCloud.util;
 
 
+import cn.hutool.core.date.DateUtil;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
+import xCloud.service.serviceImpl.CodeX;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -29,6 +31,13 @@ public class andyTest777 {
     public static final String EsignHost = "https://smlopenapi.esign.cn";
 
     public static void main(String[] args) {
+        System.out.println(CodeX.getDate_yyyy_MM_dd());
+        System.out.println(CodeX.getDate_yyyy_MM_dd(DateUtil.tomorrow()));
+
+        System.out.println(CodeX.getDate_yyyy_MM_dd("2025-07-08", 1).replace("-", ""));
+        if (true) {
+            return;
+        }
         String bodyData = "{\"name\":\"张某人\",\"age\":18}";
         String bodyContentMD5 = getBodyContentMD5(bodyData);
         System.out.println("请求Body体Content-MD5值:\n" + bodyContentMD5);

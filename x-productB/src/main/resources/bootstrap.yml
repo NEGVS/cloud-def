@@ -22,3 +22,5 @@ spring:
         server-addr: 127.0.0.1:8848 # Nacos 服务发现地址
         namespace: 18ec5d27-3a62-473b-a8c4-d5cfdb7b3a25 # 与配置管理保持一致
         group: ANDY_GROUP
+#        file-extension: yml # 配置文件格式
+

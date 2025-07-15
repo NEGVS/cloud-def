@@ -34,17 +34,22 @@ spring:
   config:
     import:
       #      - optional:nacos:${spring.application.name}
-      - optional:nacos:shop-product.yml
+      - optional:nacos:x-product.yml
   application:
-    name: shop-product
+    name: x-product
+#1-nacos配置
   cloud:
     nacos:
       config:
-        namespace:
-        server-addr: 127.0.0.1:8848
-        group: ANDY_GROUP
+        namespace: 18ec5d27-3a62-473b-a8c4-d5cfdb7b3a25 # Nacos 命名空间，默认为 public
+        server-addr: 127.0.0.1:8848 # Nacos 服务器地址
+        group: ANDY_GROUP # 配置分组，默认为 DEFAULT_GROUP
+        file-extension: yml # 配置文件格式
       discovery:
-        server-addr: 127.0.0.1:8848
+        namespace: 18ec5d27-3a62-473b-a8c4-d5cfdb7b3a25 # Nacos 命名空间，默认为 public
+        server-addr: 127.0.0.1:8848 # Nacos 服务器地址
+        group: ANDY_GROUP # 配置分组，默认为 DEFAULT_GROUP
+#        file-extension: yml # 配置文件格式
 # 1-swagger配置
 springdoc:
   swagger-ui:
@@ -76,10 +81,14 @@ springdoc:
 #2-日志
 logging:
   level:
+#    es日志
     org.elasticsearch.client: debug
     co.elastic.clients: debug
+#    kafka日志
+#    mybatis日志
+#    nacos日志
 
-#    3-
+#    3-langchain4j配置
 #  langchain4j.open-ai.chat-model.api-key=${OPENAI_API_KEY}
 #  langchain4j.open-ai.chat-model.model-name=gpt-4o
 #  langchain4j.open-ai.chat-model.log-requests=true

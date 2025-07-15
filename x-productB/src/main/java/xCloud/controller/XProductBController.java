@@ -30,7 +30,7 @@ import xCloud.service.XProductsBService;
 @RestController
 @Slf4j
 @RequestMapping("/product")
-public class XProductController {
+public class XProductBController {
 
     @Resource
     XProductsBService xProductsService;

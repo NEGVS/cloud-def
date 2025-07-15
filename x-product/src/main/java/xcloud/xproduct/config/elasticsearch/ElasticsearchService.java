@@ -3,6 +3,7 @@ package xcloud.xproduct.config.elasticsearch;
 //import co.elastic.clients.elasticsearch.ElasticsearchClient;
 //import co.elastic.clients.elasticsearch.core.IndexResponse;
 
+import cn.hutool.json.JSONUtil;
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch.core.IndexResponse;
 import jakarta.annotation.PostConstruct;
@@ -41,8 +42,13 @@ public class ElasticsearchService {
         product.setProduct_id(Long.valueOf(11111111));
         product.setName("Laptop");
         product.setDescription("High-performance laptop");
-        xProductRepository.save(product);
-        System.out.println("Initialized product: " + product.getName());
+        log.info("\n\n-----------启动时执行--ElasticsearchService--initData" + JSONUtil.toJsonStr(product));
+        try {
+            XProducts save = xProductRepository.save(product);
+            log.info("\n\n-----------启动时执行--ElasticsearchService--initData--保存成功" + JSONUtil.toJsonStr(save));
+        } catch (Exception e) {
+            log.error("\n\n-----------启动时执行异常--ElasticsearchService--initData" + e.getMessage());
+        }
     }
     /**
      * 保存商品信息
@@ -65,7 +71,11 @@ public class ElasticsearchService {
         return xProductRepository.findByName(name);
     }
 
-    // 根据名称模糊搜索
+    /**
+     * 根据名称模糊搜索
+     * @param name  x
+     * @return  x
+     */
     public List<XProducts> searchByNameContaining(String name) {
         log.info("--------service---searchByNameContaining-");
         return xProductRepository.findByNameContaining(name);

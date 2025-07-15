@@ -1,10 +1,11 @@
 # 单节点 Elasticsearch 安装（适合开发/测试）
-1.1 快速启动（默认配置）
+## 1.1 快速启动（默认配置）
 docker run -d \
 --name elasticsearch \
 -p 9200:9200 -p 9300:9300 \
 -e "discovery.type=single-node" \
 docker.elastic.co/elasticsearch/elasticsearch:8.12.0
+- 命令解析：
 - -d：后台运行
 - --name elasticsearch：容器名称
 - -p 9200:9200：HTTP API 端口（REST 访问）
@@ -13,9 +14,7 @@ docker.elastic.co/elasticsearch/elasticsearch:8.12.0
 - docker.elastic.co/elasticsearch/elasticsearch:8.12.0：官方镜像（可替换版本号）
 
 
----
-
-1.2 挂载数据卷（持久化数据）
+## 1.2 挂载数据卷（持久化数据）
 docker run -d \
 --name elasticsearch \
 -p 9200:9200 -p 9300:9300 \

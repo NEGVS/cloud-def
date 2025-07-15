@@ -35,7 +35,7 @@ import org.springframework.data.elasticsearch.repository.config.EnableElasticsea
 //@EnableElasticsearchRepositories 启用 Spring Data Elasticsearch,
 public class ElasticsearchConfig {
 
-    //@Value 注解会从 application.properties 或 application.txt 中读取属性,确认文件名是 application.properties 或 application.txt，且位于 src/main/resources 下。
+    //@Value 注解会从 application.properties 或 application.yml 中读取属性,确认文件名是 application.properties 或 application.yml，且位于 src/main/resources 下。
     //如果使用了自定义配置文件（例如 custom.yml），需要通过 @PropertySource 加载：
     @Value("${spring.elasticsearch.uris}")
     private String elasticsearchUris;

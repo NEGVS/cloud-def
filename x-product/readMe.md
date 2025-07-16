@@ -4,4 +4,6 @@
 2-ElasticSearch
 3-rabbitMQ
 
+# 问题
+1-数据库监控没有启动
 

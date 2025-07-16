@@ -6,6 +6,7 @@ package xcloud.xproduct.config.elasticsearch;
 import cn.hutool.json.JSONUtil;
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch.core.IndexResponse;
+import co.elastic.clients.elasticsearch.indices.CreateIndexResponse;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
@@ -50,6 +51,7 @@ public class ElasticsearchService {
             log.error("\n\n-----------启动时执行异常--ElasticsearchService--initData" + e.getMessage());
         }
     }
+
     /**
      * 保存商品信息
      *
@@ -73,8 +75,9 @@ public class ElasticsearchService {
 
     /**
      * 根据名称模糊搜索
-     * @param name  x
-     * @return  x
+     *
+     * @param name x
+     * @return x
      */
     public List<XProducts> searchByNameContaining(String name) {
         log.info("--------service---searchByNameContaining-");
@@ -87,13 +90,15 @@ public class ElasticsearchService {
      * @param indexName x
      * @throws IOException x
      */
-    public void createIndex(String indexName) throws IOException {
+    public CreateIndexResponse createIndex(String indexName) throws IOException {
         try {
-            elasticsearchClient.indices().create(c -> c.index(indexName));
-            System.out.println("创建索引成功" + indexName);
+            CreateIndexResponse createIndexResponse = elasticsearchClient.indices().create(c -> c.index(indexName));
+            log.info("\n创建索引成功 " + indexName);
+            return createIndexResponse;
         } catch (Exception e) {
             log.error("\n创建索引失败", e);
         }
+        return null;
     }
 
     /**

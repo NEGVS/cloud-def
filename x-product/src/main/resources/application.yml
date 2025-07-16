@@ -16,7 +16,7 @@ spring:
       test-on-borrow: true
       test-on-return: false
       test-while-idle: true
-      #是否启用 Druid 的监控统计页面（StatViewServlet）。【访问 http://localhost:8080/druid】如 Spring Boot 3.x 需要额外配置「启动类加：@ServletComponentScan // 启用 Servlet 组件扫描（Druid 的 StatViewServlet 需要）」
+      #是否启用 Druid 的监控统计页面（StatViewServlet）。【访问 http://localhost:8072/druid】如 Spring Boot 3.x 需要额外配置「启动类加：@ServletComponentScan // 启用 Servlet 组件扫描（Druid 的 StatViewServlet 需要）」
       filters: stat,wall,slf4j # 启用 SQL 统计功能、防火墙、日志
       filter:
         stat:

@@ -37,8 +37,7 @@ public class KafkaProducer {
      * @param message message
      */
     public void sendMessage(String message) {
-        log.info("topic:{}", TOPIC);
-        log.info("\n========Kafka Producer send message: {}", message);
+        log.info("\n----Kafka Producer send \nmessage: {}", message + "\ntopic:{}", TOPIC);
         this.kafkaTemplate.send(TOPIC, message);
     }
 

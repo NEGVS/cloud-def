@@ -108,13 +108,137 @@ import java.util.zip.GZIPOutputStream;
 @Slf4j
 @Component
 public class CodeX {
+    public static void main(String[] args) {
+        // 本金 1000，上涨 5%，目标 1200--3731-3500=231/3500=0.066 6.6%
+        System.out.println(calculateDaysToTargetCompound(100000, true, 1, 3731)); // 输出：4
+        System.out.println(calculateFinalAmount(BigDecimal.valueOf(100000), true, 10, BigDecimal.valueOf(5))); // 输出：4
+
+        System.out.println(calculateDaysToTargetCompound(1000.0, true, 5.0, 1200.0)); // 输出：4
+        // 本金 1000，下跌 2%，目标 900
+        System.out.println(calculateDaysToTargetCompound(1000.0, false, 2.0, 900.0)); // 输出：6
+
+        // 示例 1：本金 1000，上涨 5%，目标 1200
+        System.out.println(calculateDaysToTarget222(1000.0, true, 5.0, 1200.0)); // 输出：4
+
+        // 示例 2：本金 1000，下跌 2%，目标 900
+        System.out.println(calculateDaysToTarget222(1000.0, false, 2.0, 900.0)); // 输出：5
+
+        // 示例 3：本金 1000，上涨 5%，目标 900（无法达到）
+        System.out.println(calculateDaysToTarget222(1000.0, true, 5.0, 900.0)); // 输出：-1
+
+        // 示例 4：本金 1000，目标 1000
+        System.out.println(calculateDaysToTarget222(1000.0, true, 5.0, 1000.0)); // 输出：0
+    }
+
     /**
-     * 入参数：本金、涨or跌？（bool）、n天、涨跌幅，返回最终金额
+     * 计算达到目标金额所需的天数（复利）
      *
-     * @param principal
-     * @param isRising  如果是涨（isRising=true
-     * @param days
-     * @param rate
+     * @param principal    本金
+     * @param isRising     涨(true)或跌(false)
+     * @param rate         每日涨跌幅（百分比，例如 5 表示 5%）
+     * @param targetAmount 目标金额
+     * @return 达到目标金额所需的天数，如果无法达到返回 -1
+     */
+    public static int calculateDaysToTargetCompound(double principal, boolean isRising, double rate, double targetAmount) {
+        // 输入校验
+        if (principal <= 0 || rate < 0 || targetAmount <= 0) {
+            return -1;
+        }
+
+        // 检查是否合理
+        if (isRising && principal >= targetAmount) {
+            return principal == targetAmount ? 0 : -1;
+        }
+        if (!isRising && principal <= targetAmount) {
+            return principal == targetAmount ? 0 : -1;
+        }
+
+        // 每日涨跌率（小数形式）
+        double dailyRate = (rate / 100.0) * (isRising ? 1 : -1) + 1; // 例如，上涨 5% -> 1.05，下跌 5% -> 0.95
+
+        // 复利公式：A = P * (1 + r)^n，求 n
+        // n = log(A/P) / log(1 + r)
+        double logTarget = Math.log(targetAmount / principal);
+        double logRate = Math.log(dailyRate);
+
+        // 检查是否可达
+        if (logRate == 0 || (isRising && logTarget < 0) || (!isRising && logTarget > 0)) {
+            return -1;
+        }
+
+        double days = logTarget / logRate;
+
+        // 确保天数是正整数
+        if (days <= 0 || Double.isInfinite(days) || Double.isNaN(days)) {
+            return -1;
+        }
+        System.out.println("本金: " + principal + "，日利率: " + rate + "%，目标金额: " + targetAmount + "，是否递增: " + isRising);
+        double money = principal;
+        int daysToTarget = (int) Math.ceil(days);
+        for (int i = 1; i <= daysToTarget; i++) {
+            BigDecimal bigDecimal = calculateFinalAmount(BigDecimal.valueOf(money), isRising, 1, BigDecimal.valueOf(rate));
+            money = bigDecimal.doubleValue();
+            System.out.println("第 " + i + " 天后，总金额： " + bigDecimal);
+        }
+
+        return daysToTarget;
+    }
+
+    /**
+     * 2.2-计算达到目标金额所需的天数（非复利-不需要）
+     * 入参数：本金、涨or跌？（bool）涨跌幅，最终目标金额，计算多少天能刚好达到最终目标金额
+     * 计算在给定本金、涨跌状态、涨跌幅和目标金额的情况下，需要多少天能刚好达到目标金额。假设涨跌幅是每天固定的简单利率（非复利），且涨跌幅以百分比表示
+     *
+     * @param principal    本金
+     * @param isRising     涨(true)或跌(false)
+     * @param rate         每日涨跌幅（百分比，例如 5 表示 5%）
+     * @param targetAmount 目标金额
+     * @return 达到目标金额所需的天数，如果无法达到返回 -1
+     * <p>
+     * 逻辑：
+     * 输入校验：确保本金、涨跌幅和目标金额非负。如果本金已达到或超过目标（上涨时）或低于目标（下跌时），根据情况返回 0 或 -1。
+     * 每日变化计算：根据涨跌状态，计算每日金额变化（dailyChange）。上涨时为正，下跌时为负。
+     * 天数计算：通过 (目标金额 - 本金) / 每日变化 计算所需天数。
+     * 结果处理：使用 Math.ceil 向上取整，确保刚好达到或超过目标金额。如果计算结果无效（负数、无穷或 NaN），返回 -1。
+     */
+    public static int calculateDaysToTarget222(double principal, boolean isRising, double rate, double targetAmount) {
+        // 输入校验
+        if (principal <= 0 || rate < 0 || targetAmount <= 0) {
+            log.info("数据异常！");
+            return -1;
+        }
+
+        // 如果本金已经等于或超过目标金额（上涨）或低于目标金额（下跌），检查是否合理
+        if (isRising && principal >= targetAmount) {
+            return principal == targetAmount ? 0 : -1;
+        }
+        if (!isRising && principal <= targetAmount) {
+            return principal == targetAmount ? 0 : -1;
+        }
+
+        // 每日涨跌金额（rate 转换为小数）
+        double dailyChange = principal * (rate / 100.0) * (isRising ? 1 : -1);
+
+        // 计算所需天数
+        double difference = targetAmount - principal;
+        double days = difference / dailyChange;
+
+        // 确保天数是正整数且合理
+        if (days <= 0 || Double.isInfinite(days) || Double.isNaN(days)) {
+            return -1;
+        }
+
+        // 如果有小数，向上取整（因为需要刚好达到或超过目标金额）
+        return (int) Math.ceil(days);
+    }
+
+    /**
+     * 1- 入参数：本金、涨or跌？（bool）、n天、涨跌幅，返回最终金额
+     *
+     * @param principal 本金
+     * @param isRising  如果是涨（isRising=true）
+     * @param days      天数
+     * @param rate      涨跌幅
      * @return BigDecimal：使用 BigDecimal 替代 double，以避免浮点数精度问题，适合金融计算。
      * 参数校验：检查本金和涨跌幅是否为非负且非空。
      * 涨跌逻辑：如果是涨（isRising=true），每日倍数为 1 + rate；如果是跌（isRising=false），每日倍数为 1 - rate。
@@ -125,12 +249,17 @@ public class CodeX {
         if (principal == null || rate == null || principal.compareTo(BigDecimal.ZERO) < 0 || rate.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException("Principal and rate must be non-negative and not null");
         }
+        if (rate.subtract(BigDecimal.valueOf(1)).compareTo(BigDecimal.ZERO) >= 0) {
 
+        }
+        rate = rate.divide(BigDecimal.valueOf(100));
         BigDecimal dailyRate = isRising ? BigDecimal.ONE.add(rate) : BigDecimal.ONE.subtract(rate);
         BigDecimal finalAmount = principal;
 
+        System.out.println("Principal：" + principal + "  Days：" + days + "  Rate：" + rate.multiply(BigDecimal.valueOf(100)) + "%");
         for (int i = 0; i < days; i++) {
             finalAmount = finalAmount.multiply(dailyRate).setScale(2, RoundingMode.HALF_UP);
+            System.out.println("第" + (i + 1) + "天余额：" + finalAmount);
         }
 
         return finalAmount;

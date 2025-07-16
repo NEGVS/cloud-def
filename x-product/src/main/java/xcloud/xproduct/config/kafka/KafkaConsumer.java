@@ -1,26 +1,10 @@
 package xcloud.xproduct.config.kafka;
 
-//import com.alibaba.nacos.shaded.com.google.gson.JsonDeserializationContext;
-import com.fasterxml.jackson.core.JacksonException;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonDeserializer;
+
 import lombok.extern.slf4j.Slf4j;
-import org.apache.kafka.clients.consumer.ConsumerConfig;
-import org.apache.kafka.common.serialization.StringDeserializer;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScans;
 import org.springframework.kafka.annotation.KafkaListener;
-import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
-import org.springframework.kafka.config.KafkaListenerContainerFactory;
-import org.springframework.kafka.core.ConsumerFactory;
-import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.stereotype.Component;
 import xcloud.xproduct.domain.XProducts;
-
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @Description
@@ -32,16 +16,23 @@ import java.util.Map;
 @Slf4j
 public class KafkaConsumer {
 
-
-    //@KafkaListener 注解来监听指定的 Kafka Topic 并消费消息
+    /**
+     * 监听指定 andy_topic 的消息
+     *
+     * @KafkaListener 注解来监听指定的 Kafka Topic 并消费消息
+     */
     @KafkaListener(topics = "andy_topic", groupId = "andy_group")
     public void consume(String message) {
-        log.info("\n--------Consumer message: {}", message);
+        log.info("\n--------Kafka Consumer message: {}", message);
     }
 
+    /**
+     * 监听指定 another-topic 的消息
+     * @param message message
+     */
     @KafkaListener(topics = "another-topic", groupId = "another-group")
     public void consumeFromAnotherTopic(String message) {
-        log.info("Consumed message from another-topic: %s%n", message);
+        log.info("\nKafka Consumed message from another-topic: %s%n", message);
     }
 
     /**
@@ -52,13 +43,13 @@ public class KafkaConsumer {
      */
     @KafkaListener(topics = "my-topic", groupId = "my-group", properties = {"key.deserializer=org.apache.kafka.common.serialization.StringDeserializer"})
     public void consumeWithKey(String message, String key) {
-        log.info("Consumed message with key %s: %s%n", key, message);
+        log.info("\nKafka Consumed message with key %s: %s%n", key, message);
     }
 
-    //    -------可以消费对象-------
+    //-------可以消费对象-------
     @KafkaListener(topics = "my-topic", groupId = "my-group")
     public void consumeUser(XProducts user) {
-        System.out.println(String.format("Consumed user: %s", user));
+        log.info(String.format("Consumed user: %s", user));
     }
 
 //    @Bean

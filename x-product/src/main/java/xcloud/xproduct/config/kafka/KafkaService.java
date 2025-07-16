@@ -1,5 +1,6 @@
 package xcloud.xproduct.config.kafka;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
  * @Date 2025/5/27 19:51
  * @ClassName KafkaService
  */
+@Slf4j
 @Service
 public class KafkaService {
     private static final String TOPIC = "test_topic";
@@ -22,21 +24,30 @@ public class KafkaService {
     @Autowired
     private KafkaTemplate<String, String> kafkaTemplate;
 
+    /**
+     * 发送消息
+     *
+     * @param message message
+     */
     public void sendMessage(String message) {
+        log.info("\n开始发送消息：" + message);
         kafkaTemplate.send(TOPIC, message).whenComplete((result, ex) -> {
             if (ex == null) {
-                System.out.println("send message success ,topic" + result.getRecordMetadata().topic() +
+                log.info("\nsend message success ,topic " + result.getRecordMetadata().topic() +
                         " partition: " + result.getRecordMetadata().partition());
             } else {
-                System.out.println("send message failed");
-                ex.printStackTrace();
+                log.error("\nsend message failed: " + ex.getMessage());
             }
         });
     }
 
-
+    /**
+     * 监听消息
+     *
+     * @param message message
+     */
     @KafkaListener(topics = "test_topic", groupId = "test_group")
     public void consumeMessage(String message) {
-        System.out.println("consume message: " + message);
+        log.info("\nKafka Consumers receive messages：" + message);
     }
 }

@@ -109,6 +109,17 @@ import java.util.zip.GZIPOutputStream;
 @Component
 public class CodeX {
     public static void main(String[] args) {
+
+//        3506.94，0.09涨
+//
+        double money = 1000;
+        double rate = 0.09;
+        double result = 3506.94;
+        double kkkk = 0.004;
+//        result = kkkk * (1 + rate);
+//        get kkkk
+        System.out.println(result / (1 + rate));
+
         // 本金 1000，上涨 5%，目标 1200--3731-3500=231/3500=0.066 6.6%
         System.out.println(calculateDaysToTargetCompound(100000, true, 1, 3731)); // 输出：4
         System.out.println(calculateFinalAmount(BigDecimal.valueOf(100000), true, 10, BigDecimal.valueOf(5))); // 输出：4

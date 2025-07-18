@@ -17,7 +17,11 @@ public class ResultEntity<T> {
 
     private T data; // 数据
 
-    // 成功返回
+    /**
+     * 成功返回
+     * @param data data
+     * @return ResultEntity<T>
+     */
     public static <T> ResultEntity<T> success(T data) {
         ResultEntity<T> result = new ResultEntity<>();
         result.setCode(200);
@@ -26,7 +30,11 @@ public class ResultEntity<T> {
         return result;
     }
 
-    // 失败返回
+    /**
+     * 失败返回
+     * @param message message
+     * @return ResultEntity<T>
+     */
     public static <T> ResultEntity<T> error(String message) {
         ResultEntity<T> result = new ResultEntity<>();
         result.setCode(500);
@@ -34,7 +42,12 @@ public class ResultEntity<T> {
         return result;
     }
 
-    // 成功返回
+    /**
+     * 成功返回
+     * @param data data
+     * @param message message
+     * @return ResultEntity<T>
+     */
     public static <T> ResultEntity<T> success(T data,String message) {
         ResultEntity<T> result = new ResultEntity<>();
         result.setCode(200);

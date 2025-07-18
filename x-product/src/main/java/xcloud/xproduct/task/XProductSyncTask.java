@@ -1,13 +1,11 @@
 package xcloud.xproduct.task;
 
 import jakarta.annotation.Resource;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import xcloud.xproduct.domain.XProducts;
 import xcloud.xproduct.mapper.XProductsMapper;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -22,10 +20,9 @@ public class XProductSyncTask {
     XProductsMapper productsMapper;
 
 
-    @Scheduled(fixedRate = 1000 * 60 * 60)
+//    @Scheduled(fixedRate = 1000 * 60 * 60)
     public void syncProductsToEs() {
         List<XProducts> products = productsMapper.selectList(null);
-
         System.out.println("同步商品");
     }
 }

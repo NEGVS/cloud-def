@@ -1,0 +1,172 @@
+/* pages/order-detail/order-detail.wxss */
+.order-info {
+  margin-bottom: 20rpx;
+}
+
+.order-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20rpx;
+  padding-bottom: 20rpx;
+  border-bottom: 1rpx solid #eee;
+}
+
+.order-id {
+  font-size: 32rpx;
+  color: #333;
+  font-weight: bold;
+}
+
+.order-status {
+  font-size: 24rpx;
+  padding: 8rpx 16rpx;
+  border-radius: 20rpx;
+  color: white;
+}
+
+.status-pending {
+  background-color: #ff9500;
+}
+
+.status-completed {
+  background-color: #34c759;
+}
+
+.order-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 10rpx;
+}
+
+.meta-item {
+  display: flex;
+  align-items: center;
+}
+
+.meta-label {
+  font-size: 28rpx;
+  color: #666;
+  width: 160rpx;
+}
+
+.meta-value {
+  font-size: 28rpx;
+  color: #333;
+}
+
+.items-section,
+.cost-section {
+  margin-bottom: 20rpx;
+}
+
+.section-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 20rpx;
+  padding-bottom: 20rpx;
+  border-bottom: 1rpx solid #eee;
+}
+
+.item-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+
+.order-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.item-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 5rpx;
+}
+
+.item-name {
+  font-size: 28rpx;
+  color: #333;
+  font-weight: bold;
+}
+
+.item-spec {
+  font-size: 24rpx;
+  color: #666;
+}
+
+.item-quantity {
+  margin: 0 20rpx;
+}
+
+.item-quantity text {
+  font-size: 28rpx;
+  color: #666;
+}
+
+.item-total {
+  text-align: right;
+}
+
+.total-price {
+  font-size: 28rpx;
+  color: #ff6b35;
+  font-weight: bold;
+}
+
+.cost-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15rpx;
+}
+
+.cost-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.cost-item.total {
+  padding-top: 15rpx;
+  border-top: 1rpx solid #eee;
+  margin-top: 10rpx;
+}
+
+.cost-label {
+  font-size: 28rpx;
+  color: #666;
+}
+
+.cost-value {
+  font-size: 28rpx;
+  color: #333;
+}
+
+.total-amount {
+  font-size: 32rpx;
+  color: #ff6b35;
+  font-weight: bold;
+}
+
+.actions {
+  display: flex;
+  gap: 20rpx;
+  padding: 40rpx 0;
+}
+
+.actions button {
+  flex: 1;
+}
+
+.loading,
+.error {
+  text-align: center;
+  padding: 100rpx 0;
+  color: #666;
+  font-size: 28rpx;
+}
+

@@ -6,6 +6,7 @@ import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 @OpenAPIDefinition(
         info = @Info(
@@ -17,6 +18,8 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 @SpringBootApplication
 //启用nacos
 @EnableDiscoveryClient
+//开启定时任务
+@EnableScheduling
 @MapperScan("xcloud.xproduct.mapper")
 public class XProductApplication {
 

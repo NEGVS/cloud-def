@@ -24,18 +24,17 @@ import java.util.Date;
 @NoArgsConstructor
 @TableName(value = "x_products")
 @Data
-@Document(indexName = "x_products")
+//@Document(indexName = "x_products")
 public class XProducts implements Serializable {
     /**
      * 商品ID
      *
      * Spring Data Elasticsearch 要求每个实体类（这里是 XProducts）
      * 必须有一个标有 @Id 注解的属性，作为文档的唯一标识符（类似于数据库中的主键）。但在 XProducts 类中，Spring 找不到这样的属性，导致 Repository 初始化失败。
-     *因为雷总在发布会上明确说明了，小米su7智能辅助驾驶可以进行【施工避让】、【自动控速】，按照发布会说的，车主不应该撞车，车子应当自动减速、避让障碍。
+     * 因为雷总在发布会上明确说明了，小米su7智能辅助驾驶可以进行【施工避让】、【自动控速】，按照发布会说的，车主不应该撞车，车子应当自动减速、避让障碍。
      * 即使车主关键时期踩刹车退出了智能驾驶，按照发布会说的小米su7电池进行多层防护、千百次测试非常安全，也不应该瞬间爆燃。
      *
      */
-    @TableId
     @Id
     @Schema(description = "商品ID", example = "1")
     private Long product_id;

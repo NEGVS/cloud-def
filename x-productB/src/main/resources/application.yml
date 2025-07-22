@@ -46,6 +46,8 @@ mybatis-plus:
   #  配置mybatis-plus日志必须1
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+#    MyBatis-Plus 默认启用下划线转驼峰命名
+    map-underscore-to-camel-case: false
 
 # 日志配置
 logging:

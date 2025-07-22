@@ -35,9 +35,8 @@ public class XProductSyncService {
     @Scheduled(fixedRate = 1000 * 60)
     public void syncProducts() {
         log.info("\n开始同步商品数据-->ES，find all");
-        //1-find all，
+        //1-find all，方便的话可以让我俩加个微信，我可以带领这他做商业项目，小白最好，他能学到东西，也能为我所用
         List<XProducts> xProducts = xProductsMapper.selectList(null);
-
 
         List<XProductsDocument> documents = xProducts.stream().map(
                 p -> {

@@ -19,20 +19,16 @@
     "list": [
       {
         "pagePath": "pages/index/index",
-        "iconPath": "images/home.png",
-        "selectedIconPath": "images/home-active.png",
+        "iconPath": "images/weChat/home.png",
+        "selectedIconPath": "images/weChat/home-active.png",
         "text": "首页"
       },
       {
         "pagePath": "pages/cart/cart",
-        "iconPath": "images/cart.png",
-        "selectedIconPath": "images/cart-active.png",
         "text": "购物车"
       },
       {
         "pagePath": "pages/order/order",
-        "iconPath": "images/order.png",
-        "selectedIconPath": "images/order-active.png",
         "text": "订单"
       }
     ]

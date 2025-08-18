@@ -110,8 +110,12 @@ import java.util.zip.GZIPOutputStream;
 public class CodeX {
     public static void main(String[] args) {
 
-//        3506.94，0.09涨
-//
+//        3506.94，0.09涨--7-18
+//3603,7-25,5day
+//        3593,4day
+//        计算5天时间从3603涨到3731.94，5天的最佳涨幅是多少
+//        月底想突破3731，需要下周每天涨到头晕目眩，每天1个点 或某天1个点以上
+
         double money = 1000;
         double rate = 0.09;
         double result = 3506.94;
@@ -121,7 +125,11 @@ public class CodeX {
         System.out.println(result / (1 + rate));
 
         // 本金 1000，上涨 5%，目标 1200--3731-3500=231/3500=0.066 6.6%
-        System.out.println(calculateDaysToTargetCompound(100000, true, 1, 3731)); // 输出：4
+        System.out.println(calculateDaysToTargetCompound(3593.66, true, 1, 3731.94)); // 输出：4
+        if (true) {
+            return;
+        }
+
         System.out.println(calculateFinalAmount(BigDecimal.valueOf(100000), true, 10, BigDecimal.valueOf(5))); // 输出：4
 
         System.out.println(calculateDaysToTargetCompound(1000.0, true, 5.0, 1200.0)); // 输出：4
@@ -183,13 +191,13 @@ public class CodeX {
         if (days <= 0 || Double.isInfinite(days) || Double.isNaN(days)) {
             return -1;
         }
-        System.out.println("本金: " + principal + "，日利率: " + rate + "%，目标金额: " + targetAmount + "，是否递增: " + isRising);
+        System.out.println("本金: " + principal + "，日利率: " + rate + "%，目标点数: " + targetAmount + "，是否递增: " + isRising);
         double money = principal;
         int daysToTarget = (int) Math.ceil(days);
         for (int i = 1; i <= daysToTarget; i++) {
             BigDecimal bigDecimal = calculateFinalAmount(BigDecimal.valueOf(money), isRising, 1, BigDecimal.valueOf(rate));
             money = bigDecimal.doubleValue();
-            System.out.println("第 " + i + " 天后，总金额： " + bigDecimal);
+            System.out.println("第 " + i + " 天后，点数： " + bigDecimal);
         }
 
         return daysToTarget;
@@ -270,7 +278,7 @@ public class CodeX {
         System.out.println("Principal：" + principal + "  Days：" + days + "  Rate：" + rate.multiply(BigDecimal.valueOf(100)) + "%");
         for (int i = 0; i < days; i++) {
             finalAmount = finalAmount.multiply(dailyRate).setScale(2, RoundingMode.HALF_UP);
-            System.out.println("第" + (i + 1) + "天余额：" + finalAmount);
+//            System.out.println("第" + (i + 1) + "天余额：" + finalAmount);
         }
 
         return finalAmount;

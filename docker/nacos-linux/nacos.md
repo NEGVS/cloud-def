@@ -1,3 +1,9 @@
+
+
+网址
+# ---2-本地nacos--
+
+# ---1-服务器nacos
 Nacos Server API 3.0.1
 ,`--.'`|  ' :                       ,---.               Running in stand alone mode, All function modules
 |   :  :  | |                      '   ,'\   .--.--.    Port: 8848
@@ -68,7 +74,7 @@ Nacos 3.0 最主要的能力就是作为MCP Registry，支持了MCP服务的注�
 
 https://nacos.io/docs/latest/overview/?spm=5238cd80.2ef5001f.0.0.3f613b7c69AHfm
 
-为什么 Nacos Console 使用 8080 端口？
+# 为什么 Nacos Console 使用 8080 端口？
 19. Nacos 的双端口架构：
   - Nacos 在 3.0.1 版本（日志显示 Nacos Server API 3.0.1 和 Nacos Console 3.0.1）中将服务分为两个主要模块：
     - Nacos Server API：负责核心功能（如配置管理、服务注册与发现），运行在 8848 端口，上下文路径为 /nacos。

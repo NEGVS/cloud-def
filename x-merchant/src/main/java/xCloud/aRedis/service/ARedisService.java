@@ -4,7 +4,6 @@ import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
-import xCloud.aRedis.entity.User;
 import xCloud.aRedis.entity.request.LimitRequest;
 import xCloud.aRedis.entity.vo.LimitVo;
 import xCloud.entity.ResultEntity;
@@ -30,6 +29,7 @@ public class ARedisService {
 
     //每日限制数量
     private static final int DAILY_LIMIT = 30;
+
     //自营团队ID
     private static final int SELF_OPERATED_TEAM_ID = 1000000;
 

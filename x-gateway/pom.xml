@@ -17,7 +17,11 @@
 
 
     <dependencies>
-
+<!--        Spring Cloud Gateway 基于 WebFlux，所以使用 spring-boot-starter-webflux 而不是普通 spring-boot-starter-web。-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webflux</artifactId>
+        </dependency>
         <!--        sentinel,从1.6.0版本开始，Sentinel 提供了SpringCloud Gateway的适配模块，可以提供两种资源维度的限流：
         route维度：即在Spring配置文件中配置的路由条目，资源名为对应的routeId
         自定义API维度：用户可以利用Sentinel提供的API来自定义一些API分组-->

@@ -42,15 +42,16 @@ springCloud
 技术栈
 1-nacos ✅
 2-负载均衡Ribbon✅
-3-Feign ✅
+3-Feign ✅ order模块
 4-Sentinel ✅......
 5-gateway ✅
 6-rabbitMQ、RocketMQ，
 7-swagger，✅
-8-elasticsearch 8.12.0 ✅
+8-elasticsearch 8.12.0 ✅ product 模块
 
-9- kafka ✅
+9- kafka ✅ product 模块
 10- seata
+11-grpc  order模块，进行中...
 
 
 

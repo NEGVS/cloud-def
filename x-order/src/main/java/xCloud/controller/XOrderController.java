@@ -234,7 +234,7 @@ public class XOrderController {
     }
 
     /**
-     * 1.5-测试sentinel
+     * 1.5-测试 sentinel
      *
      * @return
      */

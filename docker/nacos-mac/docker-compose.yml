@@ -1,0 +1,42 @@
+version: "3"
+services:
+  nacos:
+    image: nacos/nacos-server:latest
+    container_name: nacos-standalone
+    environment:
+      - PREFER_HOST_MODE=hostname
+      - MODE=standalone
+      - SPRING_DATASOURCE_PLATFORM=mysql
+      - MYSQL_SERVICE_HOST=101.35.226.226
+      - MYSQL_SERVICE_PORT=3306
+      - MYSQL_SERVICE_DB_NAME=nacos_config
+      - MYSQL_SERVICE_USER=root
+      - MYSQL_SERVICE_PASSWORD=A5%Bd$#a7.Q
+      - MYSQL_SERVICE_DB_PARAM=characterEncoding=utf8&connectTimeout=1000&socketTimeout=3000&autoReconnect=true&allowPublicKeyRetrieval=true&useSSL=false
+      - JVM_XMS=1g
+      - JVM_XMX=2g
+#      - JVM_XMN=256m
+      # ✅ 开启认证并配置 JWT 密钥
+      - NACOS_AUTH_ENABLE=true
+      - NACOS_AUTH_IDENTITY_KEY=serverIdentity
+      - NACOS_AUTH_IDENTITY_VALUE=nacos
+      - NACOS_AUTH_TOKEN=zii9LV1IpDwWB0K5DIcT0ETRVOHffooWM/Z2d8J70us=
+    volumes:
+      - ./mydata/nacos/logs:/home/nacos/logs
+      - ./mydata/nacos/conf:/home/nacos/conf
+#      - 挂载配置文件：
+#      - - /mydata/nacos/conf/application.properties:/home/nacos/conf/application.properties
+    ports:
+      - "8848:8848" # 主服务端口（API 和客户端交互）
+      - "9848:9848" # gRPC 客户端通信端口
+      - "9849:9849" # gRPC 集群通信端口
+      - "8080:8080"  # 控制台端口（Nacos 3.x 新增）
+    restart: always
+    networks:
+      - nacos-network
+networks:
+  nacos-network:
+    driver: bridge
+
+#    docker-compose up -d
+#     docker-compose down

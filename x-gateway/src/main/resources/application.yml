@@ -8,17 +8,37 @@ spring:
     gateway:
       #路由数组[路由 就是指定当请求满足什么条件的时候转到哪个微服务]
       routes:
-        #id:当前路由的标识, 要求唯一
-        - id: product-route
-          # 请求要转发到的地址
-          uri: http://localhost:8072
-          # 路由的优先级,数字越小级别越高
-          order: 1
-          # 断言(就是路由转发要满足的条件)
+        - id: x-user
+          uri: http://localhost:8083
           predicates:
-            # 当请求路径满足Path指定的规则时,才进行路由转发
-            - Path=/gateway-product/**
-          # 过滤器,请求在传递过程中可以通过过滤器对其进行一定的修改
+            - Path=/user/**  # 匹配 /user/** 的请求
           filters:
-            # 转发之前去掉1层路径
-            - StripPrefix=1
+            - StripPrefix=1 # 去掉 /user 前缀
+        - id: x-order
+          uri: http://localhost:8082
+          predicates:
+            - Path=/order/**  # 匹配 /order/** 的请求
+          filters:
+            - StripPrefix=1 # 去掉 /order 前缀
+#            解释：
+#routes：定义路由规则
+#id：路由 ID
+#uri：要转发到的微服务地址
+#predicates：匹配规则
+#filters：对请求的过滤，例如去掉前缀
+
+
+#        #id:当前路由的标识, 要求唯一
+#        - id: product-route
+#          # 请求要转发到的地址
+#          uri: http://localhost:8072
+#          # 路由的优先级,数字越小级别越高
+#          order: 1
+#          # 断言(就是路由转发要满足的条件)
+#          predicates:
+#            # 当请求路径满足Path指定的规则时,才进行路由转发
+#            - Path=/gateway-product/**
+#          # 过滤器,请求在传递过程中可以通过过滤器对其进行一定的修改
+#          filters:
+#            # 转发之前去掉1层路径
+#            - StripPrefix=1

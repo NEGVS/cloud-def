@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,7 @@ import xCloud.entity.Stock;
 import xCloud.entity.StockDTO;
 import xCloud.entity.StockVO;
 import xCloud.service.StockService;
+import xCloud.service.zhengZhou.ZhengZhouService;
 
 
 /**
@@ -39,6 +41,19 @@ public class StockController {
 
     @Autowired
     private StockService stockService;
+    @Resource
+    ZhengZhouService zhengZhouService;
+
+    /**
+     * 0-test
+     */
+    @Operation(summary = "zhengZhou", description = "zhengZhou")
+    @PostMapping("/zhengzhou")
+    public ResultEntity<Stock> zhengzhou() {
+        log.info("\n-----------zhengzhou");
+        zhengZhouService.getZhengZhouData();
+        return ResultEntity.success(null, "zhengzhou");
+    }
 
     /**
      * 1-test

@@ -1,15 +1,25 @@
-#spring:
-#  config:
-#    import:
-#      #      - optional:nacos:${spring.application.name}                    # ???2???????
-#      - optional:nacos:x-gateway.yml
-#  application:
-#    name: x-gateway
-#  cloud:
-#    nacos:
-#      config:
-#        namespace:
-#        server-addr: 127.0.0.1:8848
-#        group: ANDY_GROUP
-#      discovery:
-#        server-addr: 127.0.0.1:8848
+spring:
+  config:
+    import:
+      #      - optional:nacos:${spring.application.name}                    # ???2???????
+      - optional:nacos:x-gateway #optional:前缀确保Nacos配置不可用时应用仍可启动
+  application:
+    name: x-gateway # 用于构造 Nacos 的 Data ID（如 ${spring.application.name}.yaml）。
+  cloud:
+    nacos:
+      # nacos 配置管理（spring.cloud.nacos.config）
+      config:
+        # Nacos 命名空间，默认为 public, 如果使用自己的命名空间，则需要配置,使用的是命名空间ID，而不是名称，public的ID是空，所以不填写
+        namespace: ba2af5d9-ccb9-46f1-b325-cfa1da420099
+        server-addr: 127.0.0.1:8848 # Nacos 服务器地址
+        group: ANDY_GROUP  # 配置分组，默认为 DEFAULT_GROUP
+        file-extension: yml
+      #        如果Nacos需要认证
+      #        username: nacos
+      #        password: nacos
+      # Nacos 服务发现（Service Discovery），启用服务发现 需要在 Spring Boot 主类上添加 @EnableDiscoveryClient 注解：在“服务管理 > 服务列表”中，确认 your-app-name 已注册。
+      discovery:
+        server-addr: 127.0.0.1:8848
+        namespace: ba2af5d9-ccb9-46f1-b325-cfa1da420099 # 与配置管理保持一致
+        group: ANDY_GROUP
+        #        file-extension: yml # 配置文件格式

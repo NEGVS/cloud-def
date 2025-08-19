@@ -39,6 +39,11 @@ public class GatewayConfig {
     //配置编码解码器
     private final ServerCodecConfigurer serverCodecConfigurer;
 
+//    @Bean
+//    public ServerCodecConfigurer serverCodecConfigurer() {
+//        return ServerCodecConfigurer.create();
+//    }
+
     public GatewayConfig(List<ViewResolver> viewResolvers, ServerCodecConfigurer serverCodecConfigurer) {
         this.viewResolvers = viewResolvers;
         this.serverCodecConfigurer = serverCodecConfigurer;

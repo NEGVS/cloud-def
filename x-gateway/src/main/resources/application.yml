@@ -3,6 +3,13 @@ server:
 spring:
   application:
     name: x-gateway
+#  确保 WebFlux 自动配置启用 [必须]
+  #在 application.yml 中添加：
+  #spring:
+  #  main:
+  #    web-application-type: reactive
+  main:
+    web-application-type: reactive
   cloud:
     #    gateway config
     gateway:

@@ -13,21 +13,34 @@ spring:
   cloud:
     #    gateway config
     gateway:
+#      动态路由 start
+      discovery:
+        locator:
+          enabled: true # 启用动态路由,自动根据注册中心服务生成路由
+          lower-case-service-id: true
+#          这样，Gateway 会自动把 Nacos 注册的服务（user-service、order-service）生成路由：
+      #http://localhost:8080/user-service/xxx -> 转发到 user-service
+      #http://localhost:8080/order-service/xxx -> 转发到 order-service
+      #      动态路由 end
+
+#手动定义路由规则 start 注释，使用动态路由
       #路由数组[路由 就是指定当请求满足什么条件的时候转到哪个微服务]
-      routes:
-        - id: x-user
-          uri: http://localhost:8083
-          predicates:
-            - Path=/user/**  # 匹配 /user/** 的请求
-          filters:
-            - StripPrefix=1 # 去掉 /user 前缀
-        - id: x-order
-          uri: http://localhost:8082
-          predicates:
-            - Path=/order/**  # 匹配 /order/** 的请求
-          filters:
-            - StripPrefix=1 # 去掉 /order 前缀
-#            解释：
+#      routes:
+#        - id: x-user
+#          uri: http://localhost:8083
+#          predicates:
+#            - Path=/user/**  # 匹配 /user/** 的请求
+#          filters:
+#            - StripPrefix=1 # 去掉 /user 前缀
+#        - id: x-order
+#          uri: http://localhost:8082
+#          predicates:
+#            - Path=/order/**  # 匹配 /order/** 的请求
+#          filters:
+#            - StripPrefix=1 # 去掉 /order 前缀
+# 手动定义路由规则 end
+
+# 解释：
 #routes：定义路由规则
 #id：路由 ID
 #uri：要转发到的微服务地址
@@ -49,3 +62,9 @@ spring:
 #          filters:
 #            # 转发之前去掉1层路径
 #            - StripPrefix=1
+#启用 Actuator 和监控,访问：http://localhost:8080/actuator/routes 可以查看所有路由信息。
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"

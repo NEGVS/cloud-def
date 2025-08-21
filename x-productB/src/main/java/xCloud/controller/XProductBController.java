@@ -20,6 +20,8 @@ import xCloud.entity.Result;
 import xCloud.entity.XProductsB;
 import xCloud.service.XProductsBService;
 
+import java.util.List;
+
 /**
  * @Description
  * @Author Andy Fan
@@ -34,7 +36,10 @@ public class XProductBController {
 
     @Resource
     XProductsBService xProductsService;
-
+    @GetMapping("/listProduct")
+    public List<String> getProduct() {
+        return List.of("product001", "product002");
+    }
     @GetMapping("/find/{id}")
     public XProductsB findGet(@PathVariable("id") String id) {
         XProductsB productById = xProductsService.getProductById(Long.valueOf(id));

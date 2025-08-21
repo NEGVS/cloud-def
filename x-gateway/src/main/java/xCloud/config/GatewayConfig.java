@@ -39,11 +39,6 @@ public class GatewayConfig {
     //配置编码解码器
     private final ServerCodecConfigurer serverCodecConfigurer;
 
-//    @Bean
-//    public ServerCodecConfigurer serverCodecConfigurer() {
-//        return ServerCodecConfigurer.create();
-//    }
-
     public GatewayConfig(List<ViewResolver> viewResolvers, ServerCodecConfigurer serverCodecConfigurer) {
         this.viewResolvers = viewResolvers;
         this.serverCodecConfigurer = serverCodecConfigurer;
@@ -60,6 +55,7 @@ public class GatewayConfig {
     @PostConstruct
     public void initGatewayRules() {
         Set<GatewayFlowRule> rules = new HashSet<>();
+
 
         rules.add(
                 new GatewayFlowRule("x-product")//资源名称，对应路由ID

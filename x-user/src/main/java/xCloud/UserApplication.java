@@ -5,6 +5,11 @@ import io.swagger.v3.oas.annotations.info.Info;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+
+import javax.sql.DataSource;
+
 @OpenAPIDefinition(
         info = @Info(
                 title = "ANDY API X User",
@@ -13,7 +18,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
         )
 )
 //启用nacos
-//@EnableDiscoveryClient
+@EnableDiscoveryClient
 @SpringBootApplication
 @MapperScan("xCloud.mapper")
 public class UserApplication {

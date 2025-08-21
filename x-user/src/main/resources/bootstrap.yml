@@ -5,11 +5,11 @@ spring:
   config:
     import:
       #      - optional:nacos:${spring.application.name}
-      - optional:nacos:x-user.yml
+      - optional:nacos:x-user
   cloud:
     nacos:
       config:
-        namespace: 18ec5d27-3a62-473b-a8c4-d5cfdb7b3a25 # Nacos 命名空间，默认为 public
+        namespace: ba2af5d9-ccb9-46f1-b325-cfa1da420099 # Nacos 命名空间，默认为 public
         server-addr: 127.0.0.1:8848 # Nacos 服务器地址
         group: ANDY_GROUP # 配置分组，默认为 DEFAULT_GROUP
         file-extension: yml # 配置文件格式
@@ -19,6 +19,6 @@ spring:
           # Nacos 服务发现（Service Discovery），启用服务发现 需要在 Spring Boot 主类上添加 @EnableDiscoveryClient 注解：在“服务管理 > 服务列表”中，确认 your-app-name 已注册。
       discovery:
         server-addr: 127.0.0.1:8848 # Nacos 服务发现地址
-        namespace: 18ec5d27-3a62-473b-a8c4-d5cfdb7b3a25 # 与配置管理保持一致
+        namespace: ba2af5d9-ccb9-46f1-b325-cfa1da420099 # 与配置管理保持一致
         group: ANDY_GROUP
 

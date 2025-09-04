@@ -1,7 +1,20 @@
 server:
   port: 8072
+# redisson设置
+redisson:
+  singleServerConfig:
+    address: "redis://127.0.0.1:6379"
+    database: 0
 spring:
-  #  数据库配置
+
+  #  解释
+  #在 Spring Boot 1.x 版本里用的是 spring.redis。#从 Spring Boot 2.x（包含 3.x）开始，官方推荐写法是 spring.data.redis
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      database: 0
+  #  mysql数据库配置
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -31,6 +44,7 @@ spring:
         login-password: andy
         # 关闭登录验证（不推荐生产环境使用）
         allow: 127.0.0.1  # 允许的 IP（空表示允许所有）
+
 #        deny: 192.168.1.100 # 拒绝的 IP
 #    sql:
 #      init:

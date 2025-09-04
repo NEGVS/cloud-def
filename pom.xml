@@ -76,6 +76,19 @@
         </pluginRepository>
     </pluginRepositories>
     <dependencies>
+<!--        todo 公共依赖-->
+<!--     跨服务调用   -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-openfeign</artifactId>
+        </dependency>
+<!--        Redisson 分布式锁-->
+        <dependency>
+            <groupId>org.redisson</groupId>
+            <artifactId>redisson-spring-boot-starter</artifactId>
+            <version>3.27.2</version>
+        </dependency>
+
         <!--2-使用swagger-->
         <dependency>
             <groupId>org.springdoc</groupId>
@@ -231,6 +244,9 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+
+
+
         </dependencies>
     </dependencyManagement>
 <!--    todo -->

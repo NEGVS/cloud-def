@@ -1,7 +1,7 @@
 spring:
   config:
     import:
-      #      - optional:nacos:${spring.application.name}
+      # - optional:nacos:${spring.application.name}
       - optional:nacos:x-productB      #optional:前缀确保Nacos配置不可用时应用仍可启动
   # 如果使用Spring Boot 2.4或更高版本，Spring Cloud需要显式通过spring.config.import导入Nacos配置，否则nacos配置不生效
   application:

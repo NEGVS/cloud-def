@@ -87,3 +87,15 @@ logging:
 #      schema-locations: classpath:schema.sql
 #      data-locations: classpath:data.sql
 #
+#langchain4j配置 2
+langchain4j:
+  open-ai:
+    chat-model:
+      api-key: ${OPENAI_API_KEY}
+      model-name: gpt-4o
+      log-requests: true
+      log-responses: true
+
+#
+# application.properties 或启动参数
+#JAVA_OPTS"-Xlog:library=off"

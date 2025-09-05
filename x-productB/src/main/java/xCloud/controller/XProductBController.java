@@ -49,9 +49,6 @@ public class XProductBController {
     @Operation(
             summary = "Search products with pagination",
             description = "Retrieve a paginated list of products based on search criteria",
-//            requestBody = @RequestBody(description = "Search parameters including pagination and product filters",
-//                    required = true, content = @Content(schema = @Schema(implementation = PageRequest.class))
-//            ),
             responses = {
                     @ApiResponse(
                             responseCode = "200",

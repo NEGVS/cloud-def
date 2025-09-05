@@ -2,6 +2,10 @@
 
 网址
 # ---2-本地nacos--
+url
+http://localhost:8848/nacos
+注意事项：默认显示的命名空间是public，命名空间ID为空。需要选择自定义的命名空间。
+
 
 # ---1-服务器nacos
 Nacos Server API 3.0.1

@@ -16,6 +16,20 @@
 
 
     <dependencies>
+<!--     langchain4j 1  -->
+<!--        2, starter -->
+        <dependency>
+            <groupId>dev.langchain4j</groupId>
+            <artifactId>langchain4j-spring-boot-starter</artifactId>
+            <version>1.4.0-beta10</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.langchain4j</groupId>
+            <artifactId>langchain4j-open-ai-spring-boot-starter</artifactId>
+            <version>1.4.0-beta10</version>
+        </dependency>
+<!--        -->
         <!-- ✅ Nacos 服务发现 -->
         <dependency>
             <groupId>com.alibaba.cloud</groupId>

@@ -17,6 +17,18 @@
 
     <dependencies>
 <!--     langchain4j 1  -->
+        <!-- 核心模块 -->
+<!--        <dependency>-->
+<!--            <groupId>dev.langchain4j</groupId>-->
+<!--            <artifactId>langchain4j</artifactId>-->
+<!--            <version>${langchain4j.version}</version>-->
+<!--        </dependency>-->
+<!--        &lt;!&ndash; OpenAI 集成 &ndash;&gt;-->
+<!--        <dependency>-->
+<!--            <groupId>dev.langchain4j</groupId>-->
+<!--            <artifactId>langchain4j-open-ai</artifactId>-->
+<!--            <version>${langchain4j.version}</version>-->
+<!--        </dependency>-->
 <!--        2, starter -->
         <dependency>
             <groupId>dev.langchain4j</groupId>

@@ -76,7 +76,7 @@
         </pluginRepository>
     </pluginRepositories>
     <dependencies>
-<!--        todo 公共依赖-->
+<!--        todo 只放所有微服务都需要的通用依赖 1；spring-boot-starter-web 2；nacos 3；swagger-->
 <!--     跨服务调用   -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>

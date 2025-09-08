@@ -16,6 +16,49 @@
 
 
     <dependencies>
+
+        <!-- Elasticsearch -->
+        <!-- Spring Data Elasticsearch (可选，推荐用于Repository模式) ，依赖关系：Spring Data Elasticsearch 是一个高层抽象库，它内部使用了 Elasticsearch Java Client
+                （或其前身如 RestHighLevelClient）来发送请求到 Elasticsearch 服务器。Spring Data Elasticsearch 提供简化的 API（如 Repository、注解查询等），但底层的 HTTP 通信
+                和 Elasticsearch API 调用仍然由 Elasticsearch Java Client 实现。
+        功能实现：Spring Data Elasticsearch 的功能（如索引、搜索、映射）依赖 Elasticsearch Java Client 提供的底层方法。如果不引入 Elasticsearch Java Client，Spring Data Elasticsearch
+                将无法正常工作，会导致类似“类缺失”或“方法不可用”的错误。
+        即使你只显式声明了 Spring Data Elasticsearch 的依赖，Maven 会自动拉取其传递依赖，包括 Elasticsearch Java Client
+        -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-elasticsearch</artifactId>
+        </dependency>
+
+        <!-- Elasticsearch Java API Client (必须) -->
+        <!--        <dependency>-->
+        <!--            <groupId>co.elastic.clients</groupId>-->
+        <!--            <artifactId>elasticsearch-java</artifactId>-->
+        <!--            <version>8.14.3</version> &lt;!&ndash; 必须与服务端版本一致 &ndash;&gt;-->
+        <!--        </dependency>-->
+
+        <!--        [INFO] +- org.springframework.boot:spring-boot-starter-data-elasticsearch:jar:3.4.3:compile
+        [INFO] |  \- org.springframework.data:spring-data-elasticsearch:jar:5.4.2:compile
+        [INFO] |     \- org.springframework.data:spring-data-commons:jar:3.4.2:compile
+        [INFO] +- co.elastic.clients:elasticsearch-java:jar:8.12.0:compile
+        [INFO] |  +- org.elasticsearch.client:elasticsearch-rest-client:jar:8.15.5:compile
+        -->
+
+        <!-- Seata Starter（兼容 Spring Boot 3.x） -->
+        <!--        <dependency>-->
+        <!--            <groupId>io.seata</groupId>-->
+        <!--            <artifactId>seata-spring-boot-starter</artifactId>-->
+        <!--            <version>1.8.0</version>-->
+        <!--        </dependency>-->
+
+
+        <!-- Spring Boot Starter for Kafka -->
+        <dependency>
+            <groupId>org.springframework.kafka</groupId>
+            <artifactId>spring-kafka</artifactId>
+            <!--                <version>2.8.0</version>  &lt;!&ndash; 使用最新版本,可以不用指定，默认就有 &ndash;&gt;-->
+        </dependency>
+
 <!--     langchain4j 1  -->
         <!-- 核心模块 -->
 <!--        <dependency>-->

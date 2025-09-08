@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import xCloud.openAiChatModel.orchestrator.RagClient;
+import xCloud.openAiChatModel.orchestrator.entity.UserPrincipal;
 import xCloud.openAiChatModel.orchestrator.request.ChatReq;
 import xCloud.openAiChatModel.orchestrator.request.RagRequest;
 import xCloud.openAiChatModel.orchestrator.response.RagResponse;
@@ -58,16 +59,38 @@ public class ChatController {
     }
 
     /**
+     * 从用户登录上下文与请求中构造用户画像。
+     * 典型字段：年龄、学历、技能、过往投递、简历亮点。
+     */
+    private Map<String, Object> buildProfile(UserPrincipal up, ChatReq req) {
+        Map<String, Object> p = new HashMap<>();
+        p.put("user_id", up.getUserId());
+        p.put("username", up.getUsername());
+        p.put("skills", up.getSkills());
+        p.put("preferred_city", req.getCity());
+        return p;
+    }
+
+    /**
+     * 从请求参数构建过滤条件（传递给 Chroma 向量库的 metadata filter）。
+     */
+    private Map<String, Object> buildFilters(ChatReq req) {
+        Map<String, Object> f = new HashMap<>();
+        if (req.getCity() != null) f.put("city", req.getCity());
+        if (req.getSalaryMin() != null) f.put("salary_min", req.getSalaryMin());
+        if (req.getSkills() != null) f.put("skills", req.getSkills());
+        return f;
+    }
+
+    /**
      * @param req req
      * @return
-     * @AuthenticationPrincipal UserPrincipal up
+     * @AuthenticationPrincipal UserPrincipal up ,@AuthenticationPrincipal
      */
     @PostMapping
-    public Object chat(@RequestBody ChatReq req) {
-//        Map<String, Object> profile = buildProfile(up, req); // 从用户/简历服务聚合
-//        Map<String, Object> filters = buildFilters(req);     // city/salary/skills -> Chroma metadata
-        Map<String, Object> profile = new HashMap<>();
-        Map<String, Object> filters = new HashMap<>();
+    public Object chat(@RequestBody ChatReq req, UserPrincipal up) {
+        Map<String, Object> profile = buildProfile(up, req); // 从用户/简历服务聚合
+        Map<String, Object> filters = buildFilters(req);     // city/salary/skills -> Chroma metadata
 
         RagRequest r = new RagRequest();
         r.setQuery(req.getMessage());

@@ -12,5 +12,8 @@ import lombok.Data;
 public class ChatReq {
 
     private String message;
+    private String city;
+    private String salaryMin;
+    private String skills;
 
 }

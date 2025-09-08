@@ -43,7 +43,7 @@
     "useCompilerPlugins": false
   },
   "compileType": "miniprogram",
-  "libVersion": "3.8.11",
+  "libVersion": "3.10.0",
   "appid": "wx67ada595b082338e",
   "projectname": "wechat-food-delivery",
   "condition": {},

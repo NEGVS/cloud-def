@@ -29,6 +29,14 @@ https://mvnrepository.com/artifact/com.baomidou/mybatis-plus-boot-starter
 Elasticsearch 8.12.0
 
 Spring Boot 3.4.3 匹配的swagger是什么版本？
+springCloud
+├── payment-service 支付模块
+├── config-service 配置模块
+├── order-service 订单模块
+├── user-service 用户模块   
+├── product-service 商品模块 
+├── productB-service 商品模块
+└── merchant-service 商户模块
 
 springCloud
 ├── payment-service 支付模块

@@ -45,7 +45,7 @@ public class ChatController {
     @Resource
     ToolExecutor toolExecutor;
 
-
+    @Resource
     ChatModel chatModel;
 
 

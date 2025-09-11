@@ -49,7 +49,8 @@ mybatis-plus:
 #    MyBatis-Plus 默认启用下划线转驼峰命名
     map-underscore-to-camel-case: false
 
-# 日志配置
+# 日志配置log---
+#logging.level.xCloud.openAiChatModel.orchestrator.RagClient=DEBUG
 logging:
   level:
     # nacos日志，查找Nacos连接或配置加载的错误信息
@@ -60,6 +61,7 @@ logging:
     org.springframework.web: DEBUG
     #  配置mybatis-plus日志必须2
     com.baomidou.mybatisplus: DEBUG
+
 
 #        spring:
 #  datasource:
@@ -99,3 +101,6 @@ langchain4j:
 #
 # application.properties 或启动参数
 #JAVA_OPTS"-Xlog:library=off"
+#rag
+rag:
+  url: http://localhost:8080/api/v1/rag

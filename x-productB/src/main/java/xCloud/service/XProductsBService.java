@@ -2,6 +2,7 @@ package xCloud.service;
 
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import xCloud.entity.Result;
 import xCloud.entity.XProductsB;
 
 /**
@@ -12,4 +13,6 @@ import xCloud.entity.XProductsB;
 public interface XProductsBService extends IService<XProductsB> {
 
     XProductsB getProductById(Long productId);
+
+    Result<XProductsB> addProduct(XProductsB request);
 }

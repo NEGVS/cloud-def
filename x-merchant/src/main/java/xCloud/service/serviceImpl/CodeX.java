@@ -36,7 +36,6 @@ import java.math.RoundingMode;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.channels.FileChannel;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -110,8 +109,14 @@ import java.util.zip.GZIPOutputStream;
 public class CodeX {
     public static void main(String[] args) {
 
+        BigDecimal bigDecimal = calculateFinalAmount(new BigDecimal(1000), true, 7, BigDecimal.valueOf(10));
+        System.out.println(bigDecimal);
+        System.out.println("------");
 //        3506.94，0.09涨--7-18
-//3603,7-25,5day
+        if (true) {
+            return;
+        }
+            //3603,7-25,5day
 //        3593,4day
 //        计算5天时间从3603涨到3731.94，5天的最佳涨幅是多少
 //        月底想突破3731，需要下周每天涨到头晕目眩，每天1个点 或某天1个点以上
@@ -263,6 +268,7 @@ public class CodeX {
      * 涨跌逻辑：如果是涨（isRising=true），每日倍数为 1 + rate；如果是跌（isRising=false），每日倍数为 1 - rate。
      * 精度控制：每次乘法后使用 setScale(8, RoundingMode.HALF_UP) 保留 8 位小数，四舍五入。
      * 循环计算：通过循环实现 n 天的复利计算。
+     * 把问题具体细化：每月8%，
      */
     public static BigDecimal calculateFinalAmount(BigDecimal principal, boolean isRising, int days, BigDecimal rate) {
         if (principal == null || rate == null || principal.compareTo(BigDecimal.ZERO) < 0 || rate.compareTo(BigDecimal.ZERO) < 0) {
@@ -280,6 +286,28 @@ public class CodeX {
             finalAmount = finalAmount.multiply(dailyRate).setScale(2, RoundingMode.HALF_UP);
 //            System.out.println("第" + (i + 1) + "天余额：" + finalAmount);
         }
+        //计算最终的涨幅
+        BigDecimal increaseAmount = finalAmount.subtract(principal);
+        // 3. 计算涨幅比例（涨幅金额 / 本金），指定精度（如保留4位小数）和舍入模式
+        // RoundingMode.HALF_UP：四舍五入（常用，符合日常计算习惯）
+        BigDecimal increaseRate = increaseAmount.divide(
+                principal,
+                4,                  // 保留4位小数（可根据需求调整，如2位表示百分比小数点后2位）
+                RoundingMode.HALF_UP
+        );
+
+        // 4. 可选：转换为百分比格式（乘以100，保留2位小数），更直观
+        BigDecimal increaseRatePercent = increaseRate.multiply(new BigDecimal("100"))
+                .setScale(2, RoundingMode.HALF_UP);
+
+        // 输出结果
+        System.out.println("--------------------------------");
+        System.out.println("初始金额：" + principal);
+        System.out.println("最终金额：" + finalAmount);
+        System.out.println("增涨：" + increaseAmount);
+//        System.out.println("涨幅（小数）：" + increaseRate);       // 示例输出：涨幅（小数）：0.2501
+        System.out.println("涨幅（百分比）：" + increaseRatePercent + "%");  // 示例输出：涨幅（百分比）：25.01%
+        System.out.println("--------------------------------");
 
         return finalAmount;
     }

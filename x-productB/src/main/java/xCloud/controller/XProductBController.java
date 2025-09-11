@@ -36,10 +36,12 @@ public class XProductBController {
 
     @Resource
     XProductsBService xProductsService;
+
     @GetMapping("/listProduct")
     public List<String> getProduct() {
         return List.of("product001", "product002");
     }
+
     @GetMapping("/find/{id}")
     public XProductsB findGet(@PathVariable("id") String id) {
         XProductsB productById = xProductsService.getProductById(Long.valueOf(id));
@@ -76,5 +78,26 @@ public class XProductBController {
         // Execute paginated query
         Page<XProductsB> resultPage = xProductsService.page(page, queryWrapper);
         return Result.success(resultPage);
+    }
+
+    @Operation(
+            summary = "Add products",
+            description = "Add products",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Successful retrieval of products",
+                            content = @Content(schema = @Schema(implementation = Result.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "444",
+                            description = "Invalid request parameters",
+                            content = @Content
+                    )
+            }
+    )
+    @PostMapping("/add")
+    public Result<XProductsB> addProduct(@RequestBody XProductsB request) {
+        return xProductsService.addProduct(request);
     }
 }

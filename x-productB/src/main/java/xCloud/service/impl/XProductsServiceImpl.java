@@ -4,6 +4,7 @@ import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
+import xCloud.entity.Result;
 import xCloud.entity.XProductsB;
 import xCloud.mapper.XProductsBMapper;
 import xCloud.service.XProductsBService;
@@ -31,6 +32,16 @@ public class XProductsServiceImpl extends ServiceImpl<XProductsBMapper, XProduct
         System.out.println(JSONUtil.toJsonStr(productById));
 
         return productsMapper.selectById(productId);
+    }
+
+    @Override
+    public Result<XProductsB> addProduct(XProductsB request) {
+        int insert = productsMapper.insert(request);
+        if (insert > 0) {
+            return Result.success(request);
+        } else {
+            return Result.error("添加失败");
+        }
     }
 }
 

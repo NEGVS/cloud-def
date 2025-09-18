@@ -3,6 +3,7 @@ package xCloud.util;
 import cn.hutool.json.JSONUtil;
 import com.sun.source.tree.MemberReferenceTree;
 import xCloud.entity.Merchants;
+import xCloud.entity.User;
 import xCloud.service.serviceImpl.CodeX;
 
 import java.io.BufferedReader;
@@ -29,7 +30,16 @@ import java.util.stream.Collectors;
 public class andyTest6 {
     public static void main(String[] args) {
         try {
-
+            User user = new User();
+            user.setDept_id(null);
+            if (user.getDept_id() != null && 1 == user.getDept_id()) {
+                System.out.println("1====");
+            } else {
+                System.out.println("1-------");
+            }
+            if (true) {
+                return;
+            }
             List<Merchants> businessUsers = new ArrayList<>();
             businessUsers.add(new Merchants(1, "1", "1", "1", "1", "1", 1, 1, new BigDecimal("1"), new BigDecimal("1"), new BigDecimal("1"), "1", "1", new Date(), new Date()));
             businessUsers.add(new Merchants(2, "1", "1", "1", "1", "1", 1, 1, new BigDecimal("1"), new BigDecimal("1"), new BigDecimal("1"), "1", "1", new Date(), new Date()));

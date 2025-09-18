@@ -109,14 +109,15 @@ import java.util.zip.GZIPOutputStream;
 public class CodeX {
     public static void main(String[] args) {
 
-        BigDecimal bigDecimal = calculateFinalAmount(new BigDecimal(1000), true, 7, BigDecimal.valueOf(10));
+        BigDecimal bigDecimal = calculateFinalAmount(new BigDecimal(500000), true, 5, BigDecimal.valueOf(14));
         System.out.println(bigDecimal);
         System.out.println("------");
 //        3506.94，0.09涨--7-18
+//        成为千万富翁的秘诀：未来24个月每月盈利14%。
         if (true) {
             return;
         }
-            //3603,7-25,5day
+//        3603,7-25,5day
 //        3593,4day
 //        计算5天时间从3603涨到3731.94，5天的最佳涨幅是多少
 //        月底想突破3731，需要下周每天涨到头晕目眩，每天1个点 或某天1个点以上

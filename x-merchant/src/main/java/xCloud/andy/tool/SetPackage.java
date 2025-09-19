@@ -21,11 +21,11 @@ public class SetPackage {
     // Java源文件的基础路径（根据实际项目结构调整）
     // 例如：如果文件完整路径是 /xxx/ruoyi-system/src/main/java/com/xxx/AiRobotVO.java
     // 则基础路径应为 /xxx/ruoyi-system/src/main/java/
-    private static final String BASE_JAVA_PATH = "com/ruoyi/";
+    private static final String BASE_JAVA_PATH = "/Users/andy_mac/Documents/CodeSpace/andyProject0/demi_vue_boot/ruoyi-system/src/main/java/";
 
     public static void main(String[] args) {
         System.out.println("xCloud.andy.tool");
-        String packageName2 = "/Users/andy_mac/Documents/CodeSpace/cloud-def/x-merchant/src/main/java/xCloud/andy/file";
+        String packageName2 = "/Users/andy_mac/Documents/CodeSpace/andyProject0/demi_vue_boot/ruoyi-system/src/main/java/com/ruoyi/hro/srzp";
 
         Set<String> filePaths = CodeX.listFiles(packageName2);
         System.out.println(filePaths);
@@ -83,13 +83,14 @@ public class SetPackage {
      */
     private static String generatePackageName(String filePath) {
         // 找到基础路径在文件路径中的位置
-        int baseIndex = filePath.indexOf(BASE_JAVA_PATH);
-        if (baseIndex == -1) {
-            return null;
-        }
+//        int baseIndex = filePath.indexOf(BASE_JAVA_PATH);
+//        if (baseIndex == -1) {
+//            return null;
+//        }
 
         // 提取基础路径之后的部分（包路径+文件名）
-        String packagePathPart = filePath.substring(baseIndex + BASE_JAVA_PATH.length());
+//        String packagePathPart = filePath.substring(baseIndex + BASE_JAVA_PATH.length());
+        String packagePathPart = filePath.replace(BASE_JAVA_PATH,"");
 
         // 找到最后一个斜杠的位置（分割目录和文件名）
         int lastSlashIndex = packagePathPart.lastIndexOf('/');

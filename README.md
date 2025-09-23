@@ -44,7 +44,7 @@ springCloud
 ├── order-service 订单模块
 ├── user-service 用户模块   rabbitMQ
 ├── product-service 商品模块  kafka,es,redis
-├── productB-service 商品模块 ，使用nacos,lang chain
+├── productB-service 商品模块 ，使用nacos,LangChain4j
 └── merchant-service 商户模块
 
 技术栈

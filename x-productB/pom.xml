@@ -25,10 +25,10 @@
                 将无法正常工作，会导致类似“类缺失”或“方法不可用”的错误。
         即使你只显式声明了 Spring Data Elasticsearch 的依赖，Maven 会自动拉取其传递依赖，包括 Elasticsearch Java Client
         -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-elasticsearch</artifactId>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.springframework.boot</groupId>-->
+<!--            <artifactId>spring-boot-starter-data-elasticsearch</artifactId>-->
+<!--        </dependency>-->
 
         <!-- Elasticsearch Java API Client (必须) -->
         <!--        <dependency>-->
@@ -53,11 +53,11 @@
 
 
         <!-- Spring Boot Starter for Kafka -->
-        <dependency>
-            <groupId>org.springframework.kafka</groupId>
-            <artifactId>spring-kafka</artifactId>
-            <!--                <version>2.8.0</version>  &lt;!&ndash; 使用最新版本,可以不用指定，默认就有 &ndash;&gt;-->
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.springframework.kafka</groupId>-->
+<!--            <artifactId>spring-kafka</artifactId>-->
+<!--            &lt;!&ndash;                <version>2.8.0</version>  &lt;!&ndash; 使用最新版本,可以不用指定，默认就有 &ndash;&gt;&ndash;&gt;-->
+<!--        </dependency>-->
 
 <!--     langchain4j 1  -->
         <!-- 核心模块 -->

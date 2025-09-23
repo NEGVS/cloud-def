@@ -40,13 +40,13 @@ import java.util.Optional;
 public class ChatController {
 
     @Resource
-    RagClient ragClient;
+    private RagClient ragClient;
     //    private final JobService jobService; // MyBatis-Plus
     @Resource
-    ToolExecutor toolExecutor;
+    private ToolExecutor toolExecutor;
 
     @Resource
-    ChatModel chatModel;
+    private ChatModel chatModel;
 
 
     @Operation(

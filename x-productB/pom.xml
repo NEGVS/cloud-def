@@ -17,6 +17,17 @@
 
     <dependencies>
 
+        <dependency>
+            <groupId>io.milvus</groupId>
+            <artifactId>milvus-sdk-java</artifactId>
+            <version>2.6.2</version> <!-- 请使用最新版本 -->
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-pool2</artifactId>
+            <version>2.12.0</version>
+        </dependency>
+
         <!-- Elasticsearch -->
         <!-- Spring Data Elasticsearch (可选，推荐用于Repository模式) ，依赖关系：Spring Data Elasticsearch 是一个高层抽象库，它内部使用了 Elasticsearch Java Client
                 （或其前身如 RestHighLevelClient）来发送请求到 Elasticsearch 服务器。Spring Data Elasticsearch 提供简化的 API（如 Repository、注解查询等），但底层的 HTTP 通信

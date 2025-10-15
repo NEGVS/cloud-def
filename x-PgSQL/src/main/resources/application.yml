@@ -1,6 +1,18 @@
 server:
   port: 8084
 spring:
+  kafka:
+    listener:
+      ack-mode: manual_immediate # 手动确认模式
+    bootstrap-servers: localhost:9092
+    producer:
+      transaction-id-prefix: tx-order- # 添加事务 ID 前缀
+    consumer:
+      group-id: fund-group
+      enable-auto-commit: false # 关闭自动提交,需手动提交事务,确保exactly-once
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: xCloud.entity.PaymentSuccessEvent
   sql:
     init:
       data-locations: classpath:data.sql

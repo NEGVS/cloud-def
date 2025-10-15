@@ -259,6 +259,7 @@
         <module>x-merchant</module>
         <module>x-payment</module>
         <module>x-yz</module>
+        <module>x-PgSQL</module>
     </modules>
 
     <build>

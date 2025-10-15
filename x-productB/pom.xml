@@ -17,6 +17,7 @@
 
     <dependencies>
 
+<!--        -->
         <dependency>
             <groupId>io.milvus</groupId>
             <artifactId>milvus-sdk-java</artifactId>

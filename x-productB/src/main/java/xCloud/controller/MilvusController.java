@@ -1,11 +1,6 @@
 package xCloud.controller;
 
-/**
- * @Description
- * @Author Andy Fan
- * @Date 2025/10/10 10:44
- * @ClassName MilvusTestController
- */
+
 
 import io.milvus.client.MilvusServiceClient;
 import io.milvus.param.collection.HasCollectionParam;
@@ -22,7 +17,12 @@ import xCloud.service.MilvusService;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-
+/**
+ * @Description
+ * @Author Andy Fan
+ * @Date 2025/10/10 10:44
+ * @ClassName MilvusTestController
+ */
 @Tag(name = "Milvus Test", description = "Milvus 测试接口")
 @RestController
 public class MilvusController {

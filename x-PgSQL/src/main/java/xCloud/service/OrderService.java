@@ -1,5 +1,6 @@
 package xCloud.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.Resource;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -55,7 +56,12 @@ public class OrderService {
         orderMapper.insert(order);
         // 发布Kafka事件，开启事务
         kafkaTemplate.executeInTransaction(t -> {
-            kafkaTemplate.send("order-paid-topic", orderNo, order);
+            try {
+                String orderJson = objectMapper.writeValueAsString(order);
+                t.send("order-paid-topic", orderNo, order);
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException("Kafka 消息序列化失败", e);
+            }
             return null;
         });
         return orderNo;

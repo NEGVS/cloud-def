@@ -1,6 +1,8 @@
 package xCloud.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -13,6 +15,8 @@ import java.time.LocalDateTime;
  * @ClassName PaymentFailedEvent
  */
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class PaymentFailedEvent implements Serializable {
     private String orderNo;
     private Long userId;// 新增：用户ID，用于补偿查询

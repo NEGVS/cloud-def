@@ -7,12 +7,17 @@ package xCloud.entity;
  * @Date 2025/10/15 19:19
  * @ClassName PaymentSuccessEvent
  */
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class PaymentSuccessEvent implements Serializable {
     private String orderNo;
     private Long userId;

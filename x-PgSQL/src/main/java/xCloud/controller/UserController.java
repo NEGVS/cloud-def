@@ -47,6 +47,16 @@ public class UserController {
         return userService.save(user);  // 内置方法
     }
 
+    // 增（Create）
+    @PostMapping("kk")
+    public boolean createUsers(@RequestBody User user) {
+        for (int i = 1; i < 10000; i++) {
+            user.setId((long) i * 1000);
+            userService.save(user);
+        }
+        return true;  // 内置方法
+    }
+
     // 改（Update）
     @PutMapping("/{id}")
     public boolean updateUser(@PathVariable Long id, @RequestBody User user) {

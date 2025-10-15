@@ -7,17 +7,22 @@ spring:
     bootstrap-servers: localhost:9092
     producer:
       transaction-id-prefix: tx-order- # 添加事务 ID 前缀
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
     consumer:
       group-id: fund-group
-      enable-auto-commit: false # 关闭自动提交,需手动提交事务,确保exactly-once
+      enable-auto-commit: false # 关闭自动提交,需手动提交事务,确保exactly-once,如果你想手动调用 Acknowledgment.acknowledge() 提交偏移量，确保消息消费一次且仅一次。
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
       properties:
-        spring.json.trusted.packages: xCloud.entity.PaymentSuccessEvent
-  sql:
-    init:
-      data-locations: classpath:data.sql
-      mode: ALWAYS
-      schema-locations: classpath:schema.sql
+#        spring.json.value.default.type: com.example.dto.OrderPaidEvent
+#        spring.json.trusted.packages: xCloud.entity.PaymentSuccessEvent
+        spring.json.trusted.packages: "*"
+#  sql:
+#    init:
+#      data-locations: classpath:data.sql
+#      mode: ALWAYS
+#      schema-locations: classpath:schema.sql
   #  数据库配置
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
@@ -68,7 +73,7 @@ mybatis-plus:
 #    打印 SQL 日志
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 #    MyBatis-Plus 默认启用下划线转驼峰命名
-    map-underscore-to-camel-case: false
+    map-underscore-to-camel-case: true
 
 # 日志配置log---
 #logging.level.xCloud.openAiChatModel.orchestrator.RagClient=DEBUG

@@ -1,3 +1,11 @@
+最佳实践：创建 DTO 来发送而不是整个 Order 实体
+public class OrderPaidEvent {
+   private String orderNo;
+   private BigDecimal amount;
+   private String status;
+}
+
+
 # 启动命令：:单节点 Kafka(KRaft 模式）
 命令1，
 docker run -d \

@@ -11,10 +11,15 @@ spring:
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
     consumer:
       group-id: fund-group
+      auto-offset-reset: earliest  # 从最早消费，测试时用；生产用 latest
+      max-poll-records: 1  # 避免批量失败
+#    session-timeout-ms: 30000  # 延长心跳
       enable-auto-commit: false # 关闭自动提交,需手动提交事务,确保exactly-once,如果你想手动调用 Acknowledgment.acknowledge() 提交偏移量，确保消息消费一次且仅一次。
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
       properties:
+        retries: 3  # 全局重试次数
+        retry-backoff-ms: 1000
 #        spring.json.value.default.type: com.example.dto.OrderPaidEvent
 #        spring.json.trusted.packages: xCloud.entity.PaymentSuccessEvent
         spring.json.trusted.packages: "*"
@@ -79,6 +84,9 @@ mybatis-plus:
 #logging.level.xCloud.openAiChatModel.orchestrator.RagClient=DEBUG
 logging:
   level:
+    # 开启kafka调试日志，观察 poll/assign,重启应用，查看日志中 "Partitions assigned" 和 "Consumed message"。
+    org.springframework.kafka: DEBUG
+
     # nacos日志，查找Nacos连接或配置加载的错误信息
     com.alibaba.nacos: DEBUG
     #    org.springframework.cloud.alibaba.nacos: DEBUG

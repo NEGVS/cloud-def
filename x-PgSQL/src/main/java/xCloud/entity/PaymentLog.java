@@ -19,6 +19,7 @@ public class PaymentLog {
     private String orderNo;
     private Long userId;
     private BigDecimal amount;
+    private BigDecimal actualDeducted;
     private String status;
     private String errorMessage;
     private LocalDateTime createdAt;

@@ -1,16 +1,16 @@
 package xCloud.config.exception;
 
+import com.alibaba.fastjson.JSON;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.kafka.clients.consumer.Consumer;
 import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.kafka.listener.ConsumerAwareListenerErrorHandler;
 import org.springframework.kafka.listener.KafkaListenerErrorHandler;
 import org.springframework.kafka.listener.ListenerExecutionFailedException;
 import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.Message;
 import org.springframework.stereotype.Component;
 import xCloud.entity.PaymentSuccessEvent;
+import xCloud.mapper.LogsMapper;
 
 /**
  * @Description
@@ -24,8 +24,8 @@ import xCloud.entity.PaymentSuccessEvent;
 public class CustomKafkaErrorHandler implements KafkaListenerErrorHandler {
     @Resource
     private KafkaTemplate<String, Object> kafkaTemplate;  // 用于发送 DLQ
-
-    //
+    @Resource
+    private LogsMapper logsMapper;
 
     /**
      * @param message   message
@@ -49,28 +49,43 @@ public class CustomKafkaErrorHandler implements KafkaListenerErrorHandler {
      */
     @Override
     public Object handleError(Message<?> message, ListenerExecutionFailedException exception) {
+
         // 从 message 获取 payload（PaymentSuccessEvent）和 headers
         Object payload = message.getPayload();
         String topic = (String) message.getHeaders().get(KafkaHeaders.RECEIVED_TOPIC);
         Integer partition = (Integer) message.getHeaders().get(KafkaHeaders.RECEIVED_PARTITION);
         Long offset = (Long) message.getHeaders().get(KafkaHeaders.OFFSET);
+        String orderNo = ((PaymentSuccessEvent) payload).getOrderNo();  // 从 payload 获取订单号作为 DLQ key
 
         // 记录异常详情：包含消息记录（record）和数据（data）
         log.error("Kafka 消费异常，主题: {}, 分区: {}, 偏移: {}, 异常: {}",
                 topic, partition, offset, exception.getMessage(), exception.getCause());
+        logsMapper.insertLogs("handleError 1 Kafka消费异常，主题：" + topic + ",偏移: " + offset, JSON.toJSONString(message));
 
+        Throwable cause = exception.getCause();  // 获取原始异常
+        String causeMsg = cause.getMessage() != null ? cause.getMessage().toLowerCase() : "";
         // 示例：如果异常是 "订单不存在"，发送到 DLQ 主题
-        if (exception.getMessage().contains("订单不存在")) {
+        String dlqTopic = "dlq-payment-topic";  // 统一 DLQ 主题，或按异常分：e.g., "dlq-insufficient-balance-topic"
+        if (cause instanceof InsufficientBalanceException || causeMsg.contains("余额不足")) {
             try {
-                // 发送原始消息到 DLQ（保留 headers）
-                kafkaTemplate.send("dlq-payment-success-topic", message.getHeaders().get(KafkaHeaders.RECEIVED_KEY, String.class), payload);
-                log.warn("已发送到 DLQ: 订单号 {}", ((PaymentSuccessEvent) payload).getOrderNo());
-                return "handled";  // 已处理，不重试
+                kafkaTemplate.send(dlqTopic, orderNo, payload);  // 使用 orderNo 作为 key，保留 payload
+                log.warn("余额不足异常，已发送到 DLQ: 订单号 {}", orderNo);
+                logsMapper.insertLogs("handleError 2 余额不足异常，已发送到 DLQ: 订单号 " + orderNo + ",偏移: " + offset, JSON.toJSONString(message));
+                return "insufficient-balance-handled";  // 已处理，不重试
             } catch (Exception dlqEx) {
-                log.error("DLQ 发送失败", dlqEx);
+                log.error("DLQ 发送失败（余额不足）", dlqEx);
+            }
+        } else if (causeMsg.contains("订单不存在")) {
+            try {
+                kafkaTemplate.send(dlqTopic, orderNo, payload);
+                log.warn("订单不存在异常，已发送到 DLQ: 订单号 {}", orderNo);
+                logsMapper.insertLogs("handleError 3 订单不存在异常，已发送到 DLQ: 订单号 " + orderNo + ",偏移: " + offset, JSON.toJSONString(message));
+                return "order-not-found-handled";  // 已处理，不重试
+            } catch (Exception dlqEx) {
+                log.error("DLQ 发送失败（订单不存在）", dlqEx);
             }
         }
-
+        logsMapper.insertLogs("handleError 4 其他异常：返回 null，让 Kafka 重试（默认 3 次，根据配置）" + orderNo + ",偏移: " + offset, JSON.toJSONString(message));
         // 其他异常：返回 null，让 Kafka 重试（默认 3 次，根据配置）
         // 可添加重试计数：if (deliveryAttempt > 3) { 发送 DLQ; return "failed"; }
         Integer deliveryAttempt = (Integer) message.getHeaders().get(KafkaHeaders.DELIVERY_ATTEMPT);

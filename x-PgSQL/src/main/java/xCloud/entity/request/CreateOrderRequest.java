@@ -14,6 +14,5 @@ import java.math.BigDecimal;
 public class CreateOrderRequest {
     private BigDecimal amount;
     private Long userId;
-    private Long amountFen;
-    private String idempotencyKey;
+//    private String idempotencyKey;
 }

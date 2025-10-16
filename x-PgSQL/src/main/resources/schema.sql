@@ -48,3 +48,13 @@ CREATE TABLE IF NOT EXISTS payment_logs
 CREATE INDEX idx_payment_logs_order_no ON payment_logs (order_no);
 CREATE INDEX idx_payment_logs_user_id ON payment_logs (user_id);
 CREATE INDEX idx_payment_logs_status ON payment_logs (status);
+
+-- 日志表
+CREATE TABLE IF NOT EXISTS logs
+(
+    id BIGSERIAL PRIMARY KEY,
+    remark     VARCHAR(255)  DEFAULT NULL,
+    note       VARCHAR(255) DEFAULT NULL,
+    created_at TIMESTAMP    DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP    DEFAULT CURRENT_TIMESTAMP
+);

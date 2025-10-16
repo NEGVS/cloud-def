@@ -156,3 +156,99 @@ Raft 是一种分布式一致性算法，用于在分布式系统中实现数据
 - **广泛应用**：被用于分布式数据库（如 TiDB、etcd）和分布式存储系统。
 
 如果你需要更详细的解释或具体实现方式，可以告诉我！
+
+----1----
+### 优化后的 handlePaymentFailed 方法：添加手动确认
+
+基于您的 `handlePaymentFailed` 方法，我进行了以下优化，以实现高一致性（Saga 补偿的 exactly-once 语义）：
+- **添加手动 ack**：引入 `ConsumerRecord<?, ?> record` 和 `Acknowledgment ack` 参数。成功补偿后调用 `ack.acknowledge()` 提交偏移；异常时不提交，触发 Kafka 重试（避免无限 Lag）。
+- **异常处理增强**：try-catch 内处理业务异常，结合 `errorHandler`（参考之前配置）捕获监听器级异常。日志中添加偏移信息，便于 Offset Explorer 追踪。
+- **幂等检查**：添加 Redis 幂等（使用订单号作为 key），防止重复补偿。
+- **日志优化**：统一使用 SLF4J `log`（假设已 `@Slf4j`），并在关键点记录偏移。
+- **配置前提**：确保 application.yml 中 `spring.kafka.listener.ack-mode: manual_immediate` 和 `enable-auto-commit: false`。指定 `errorHandler = "customKafkaErrorHandler"` 以处理未捕获异常。
+
+#### 优化后完整代码
+```java
+import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.support.Acknowledgment;
+import org.springframework.transaction.annotation.Transactional;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.alibaba.fastjson.JSON;  // 假设用于 JSON.toJSONString
+import java.math.BigDecimal;
+import java.time.Duration;
+
+// ... 其他 import 和类注解（如 @Slf4j）
+
+@KafkaListener(topics = "payment-failed-topic", groupId = "fund-group", errorHandler = "customKafkaErrorHandler")
+@Transactional(rollbackFor = Exception.class)
+public void handlePaymentFailed(PaymentFailedEvent event, ConsumerRecord<?, ?> record, Acknowledgment ack) {
+    // 步骤0: 幂等检查（使用 Redis，防止重复补偿）
+    String key = "compensation:" + event.getOrderNo();
+    if (Boolean.TRUE.equals(redisTemplate.hasKey(key))) {
+        log.info("补偿幂等，已处理，订单号: {}, 偏移: {}", event.getOrderNo(), record.offset());
+        ack.acknowledge();  // 幂等时确认，避免卡住
+        return;
+    }
+    redisTemplate.opsForValue().set(key, "compensated", Duration.ofHours(24));  // 过期 24h
+
+    // 步骤1: 记录初始日志
+    logsMapper.insertLogs("failed 1 消费失败事件：payment-failed-topic, 偏移: " + record.offset(), JSON.toJSONString(event));
+
+    String orderNo = event.getOrderNo();
+    Long userId = event.getUserId();
+    try {
+        // 步骤2: 从日志获取已扣金额
+        BigDecimal deductedAmount = fundsMapper.getDeductedAmountFromLog(orderNo);
+        if (deductedAmount == null || deductedAmount.compareTo(BigDecimal.ZERO) <= 0) {
+            log.warn("无扣款记录，无需补偿，订单号: {}", orderNo);
+            logsMapper.insertLogs("failed 2 无扣款记录，无需补偿，订单号: " + orderNo, "{}");  // 空 JSON
+            ack.acknowledge();  // 无需补偿也确认
+            return;
+        }
+
+        // 步骤3: 查询资金账户
+        Funds funds = fundsMapper.selectOne(new QueryWrapper<Funds>().eq("user_id", userId));
+        if (funds == null) {
+            throw new RuntimeException("用户资金账户不存在");
+        }
+
+        // 步骤4: 回滚余额（乐观锁）
+        int rows = fundsMapper.updateBalance(userId, deductedAmount, funds.getVersion());
+        if (rows == 0) {
+            throw new OptimisticLockException("回滚并发冲突");
+        }
+
+        // 步骤5: 更新日志状态
+        fundsMapper.updatePaymentLogStatus(orderNo, "COMPENSATED", "补偿完成");
+
+        // 步骤6: 记录成功日志
+        logsMapper.insertLogs("failed 3 回滚余额: " + deductedAmount + ", 用户ID: " + userId, JSON.toJSONString(event));
+        log.info("支付补偿成功，订单号: {}, 回滚金额: {}, 偏移: {}", orderNo, deductedAmount, record.offset());
+
+        // 步骤7: 手动确认（补偿成功后提交偏移）
+        ack.acknowledge();
+
+    } catch (Exception e) {
+        // 步骤8: 异常日志（不 ack，触发重试）
+        log.error("补偿处理异常，订单号: {}, 偏移: {}, 错误: {}", orderNo, record.offset(), e.getMessage(), e);
+        logsMapper.insertLogs("failed 4 补偿异常: " + e.getMessage(), JSON.toJSONString(event));
+        // errorHandler 会进一步处理（如 DLQ）
+        throw e;  // 抛出让 Kafka/ errorHandler 重试
+    }
+}
+```
+
+#### 优化说明
+- **手动确认位置**：
+   - **成功路径**：在回滚余额、更新日志后调用 `ack.acknowledge()`，确保补偿原子后提交（结合 `@Transactional`，如果事务回滚，会重新抛异常不 ack）。
+   - **幂等/无需补偿**：也 ack，避免消息卡在 Lag 中。
+   - **异常路径**：不 ack，Kafka 会根据配置（retries=3）重试；超过后 errorHandler 发送 DLQ。
+- **幂等性**：用 Redis 缓存订单号，防止重复回滚（资金账户有乐观锁辅助）。
+- **日志增强**：添加偏移（`record.offset()`）和结构化 JSON，便于追踪（e.g., Offset Explorer 中搜索偏移）。
+- **性能影响**：手动 ack 增加少量延迟，但提升一致性（Lag 清零更快）。测试中，Lag 应在 1-3s 内从 5 → 0。
+- **测试建议**：
+   - 模拟失败：临时抛异常，观察 Offset Explorer Lag 增加，重试后清零。
+   - 监控：日志搜索 "偏移"，确认 ack 执行。
+
+如果需要类似优化 `processPayment`、完整 errorHandler 扩展或单元测试代码，请提供更多细节！

@@ -53,6 +53,7 @@ public class FundsService {
      * spring.json.trusted.packages: com.yourpackage.entity  # 允许反序列化
      */
     @KafkaListener(topics = "order-paid-topic", groupId = "fund-group")
+    @Transactional(rollbackFor = Exception.class)
     public void processPayment(ConsumerRecord<?, ?> record, Acknowledgment ack) {
 
         // 解析消息：假设value是Order的JSON
@@ -62,13 +63,17 @@ public class FundsService {
         BigDecimal amount = order.getAmount();
         String key = "payment:" + order.getOrderNo();
         if (Boolean.TRUE.equals(redisTemplate.hasKey(key))) {
+            ack.acknowledge();
             return;  // 幂等
         }
+        boolean deductionSuccess = false;  // 标记扣款是否成功
+        BigDecimal actualDeducted = BigDecimal.ZERO;
+
         logsMapper.insertLogs("f1 监听：order-paid-topic 消费订单支付事件,进行资金扣款,订单号：" + orderNo, JSON.toJSONString(order));
 
         redisTemplate.opsForValue().set(key, "processed", Duration.ofHours(1));
         // 步骤1: 记录日志为PENDING
-        fundsMapper.insertPaymentLog(orderNo, userId, amount, "PENDING", null);
+        fundsMapper.insertPaymentLog(orderNo, userId, amount, BigDecimal.ZERO, "PENDING", null);
         try {
             // 步骤2: 检查余额
             Funds funds = fundsMapper.selectOne(new QueryWrapper<Funds>().eq("user_id", order.getUserId()));
@@ -78,17 +83,27 @@ public class FundsService {
 
             //步骤3:本地事务扣款（使用乐观锁）
             int rows = fundsMapper.deductBalance(order.getUserId(), order.getAmount(), funds.getVersion());
+            //实际扣款
             if (rows == 0) {
-                throw new OptimisticLockException("并发冲突");
+                // 扣款失败（乐观锁）：FAILED，actual_deducted=0
+                fundsMapper.updatePaymentLogStatus(orderNo, "FAILED", actualDeducted, "扣款并发冲突");
+                log.warn("扣款失败，订单: {}", orderNo);
+                ack.acknowledge();  // 确认
+                return;
             }
+            actualDeducted = amount;
+            deductionSuccess = true;
             // 步骤4: 更新日志为SUCCESS
-            fundsMapper.updatePaymentLogStatus(orderNo, "SUCCESS", null);
+            fundsMapper.updatePaymentLogStatus(orderNo, "SUCCESS", actualDeducted, null);
             logsMapper.insertLogs("f2 扣款SUCCESS,订单号：" + orderNo, JSON.toJSONString(order));
 
-            // 步骤5: 发布成功事件
+            // 步骤5: 发布成功事件（用 Kafka 事务，确保原子）
             PaymentSuccessEvent successEvent = new PaymentSuccessEvent(order.getOrderNo(), order.getUserId(), order.getAmount());
             logsMapper.insertLogs("f3 发布成功事件：payment-success-topic,订单号：" + orderNo, JSON.toJSONString(successEvent));
-            kafkaTemplate.send("payment-success-topic", order.getOrderNo(), successEvent);
+            kafkaTemplate.executeInTransaction(t -> {
+                kafkaTemplate.send("payment-success-topic", order.getOrderNo(), successEvent);
+                return null;
+            });
 
             // 步骤6: 手动确认 成功后提交偏移
             ack.acknowledge();
@@ -98,45 +113,57 @@ public class FundsService {
             log.info("支付成功，订单号: {}, 扣款金额: {}", orderNo, amount);
 
         } catch (Exception e) {
-            // 更新日志为FAILED
-            fundsMapper.updatePaymentLogStatus(orderNo, "FAILED", e.getMessage());
+            // 扣款后异常：更新 FAILED（actual_deducted=amount）
+            fundsMapper.updatePaymentLogStatus(orderNo, "FAILED", actualDeducted, e.getMessage());
+            // 发 failed event 触发补偿（Saga）
+            kafkaTemplate.send("payment-failed-topic", orderNo, new PaymentFailedEvent(orderNo, userId, amount, e.getMessage()));
+            logsMapper.insertLogs("f4 支付失败（扣款后），发布失败事件：payment-failed-topic", JSON.toJSONString(new PaymentFailedEvent(orderNo, userId, amount, e.getMessage())));
+            log.error("支付失败（扣款后），订单: {}, 错误: {}", orderNo, e.getMessage());
 
-            // 不确认ack，Kafka会重试（配置max.poll.records=1避免批量失败）
-            log.error("支付失败，订单号: {}, 错误: {}", orderNo, e.getMessage(), e);
-
-            // Saga补偿：发布失败事件，订单服务监听回滚
-            PaymentFailedEvent failedEvent = new PaymentFailedEvent(
-                    orderNo, order.getUserId(), amount, e.getMessage());
-            kafkaTemplate.send("payment-failed-topic", orderNo, failedEvent);
-            logsMapper.insertLogs("f4 支付失败，发布失败事件：payment-failed-topic", JSON.toJSONString(failedEvent));
-
-            // 可选：超过重试阈值后，发送到死信队列（需配置ErrorHandler）
-            throw e;  // 抛出让Kafka重试
+            // 优化：仅扣款成功后才处理补偿
+//            if (deductionSuccess) {
+//                // 扣款后异常：更新 FAILED（actual_deducted=amount）
+//                fundsMapper.updatePaymentLogStatus(orderNo, "FAILED", actualDeducted, e.getMessage());
+//                // 发 failed event 触发补偿（Saga）
+//                kafkaTemplate.send("payment-failed-topic", orderNo, new PaymentFailedEvent(orderNo, userId, amount, e.getMessage()));
+//                logsMapper.insertLogs("f4 支付失败（扣款后），发布失败事件：payment-failed-topic", JSON.toJSONString(new PaymentFailedEvent(orderNo, userId, amount, e.getMessage())));
+//                log.error("支付失败（扣款后），订单: {}, 错误: {}", orderNo, e.getMessage());
+//                // 不 throw：已发事件，补偿处理；避免事务回滚（因为补偿异步）
+//                // ack.acknowledge();  // 可选：如果不想重试整个消息
+//            } else {
+//                // 扣款前异常：已早返回或日志 FAILED，无需补偿
+//                log.error("支付前异常，订单: {}, 错误: {}", orderNo, e.getMessage());
+//                ack.acknowledge();  // 确认结束
+//            }
+            // 无 throw e：避免不必要的重试；ErrorHandler 处理剩余异常
         }
     }
 
 
     /**
      * 额外：Saga补偿监听器（消费失败事件，回滚资金）
-     * @param event event
+     *
+     * @param event  event
      * @param record record
-     * @param ack ack
-     * 优化说明
-     * 手动确认位置：
-     * 成功路径：在回滚余额、更新日志后调用 ack.acknowledge()，确保补偿原子后提交（结合 @Transactional，如果事务回滚，会重新抛异常不 ack）。
-     * 幂等/无需补偿：也 ack，避免消息卡在 Lag 中。
-     * 异常路径：不 ack，Kafka 会根据配置（retries=3）重试；超过后 errorHandler 发送 DLQ。
-     * <p>
-     * 幂等性：用 Redis 缓存订单号，防止重复回滚（资金账户有乐观锁辅助）。
-     * 日志增强：添加偏移（record.offset()）和结构化 JSON，便于追踪（e.g., Offset Explorer 中搜索偏移）。
-     * 性能影响：手动 ack 增加少量延迟，但提升一致性（Lag 清零更快）。测试中，Lag 应在 1-3s 内从 5 → 0。
-     * 测试建议：
-     * 模拟失败：临时抛异常，观察 Offset Explorer Lag 增加，重试后清零。
-     * 监控：日志搜索 "偏移"，确认 ack 执行。
+     * @param ack    ack
+     *               优化说明
+     *               手动确认位置：
+     *               成功路径：在回滚余额、更新日志后调用 ack.acknowledge()，确保补偿原子后提交（结合 @Transactional，如果事务回滚，会重新抛异常不 ack）。
+     *               幂等/无需补偿：也 ack，避免消息卡在 Lag 中。
+     *               异常路径：不 ack，Kafka 会根据配置（retries=3）重试；超过后 errorHandler 发送 DLQ。
+     *               <p>
+     *               幂等性：用 Redis 缓存订单号，防止重复回滚（资金账户有乐观锁辅助）。
+     *               日志增强：添加偏移（record.offset()）和结构化 JSON，便于追踪（e.g., Offset Explorer 中搜索偏移）。
+     *               性能影响：手动 ack 增加少量延迟，但提升一致性（Lag 清零更快）。测试中，Lag 应在 1-3s 内从 5 → 0。
+     *               测试建议：
+     *               模拟失败：临时抛异常，观察 Offset Explorer Lag 增加，重试后清零。
+     *               监控：日志搜索 "偏移"，确认 ack 执行。
      */
     @KafkaListener(topics = "payment-failed-topic", groupId = "fund-group", errorHandler = "customKafkaErrorHandler")
     @Transactional(rollbackFor = Exception.class)
     public void handlePaymentFailed(PaymentFailedEvent event, ConsumerRecord<?, ?> record, Acknowledgment ack) {
+        logsMapper.insertLogs("failed 1 监听 消费失败事件：payment-failed-topic, 偏移: " + record.offset(), JSON.toJSONString(event));
+
         // 步骤0: 幂等检查（使用 Redis，防止重复补偿）
         String key = "compensation:" + event.getOrderNo();
         if (Boolean.TRUE.equals(redisTemplate.hasKey(key))) {
@@ -172,7 +199,7 @@ public class FundsService {
             logsMapper.insertLogs("failed 3 回滚余额" + deductedAmount, JSON.toJSONString(userId));
 
             // 步骤5: 更新日志为COMPENSATED
-            fundsMapper.updatePaymentLogStatus(orderNo, "COMPENSATED", "补偿完成");
+            fundsMapper.updatePaymentLogStatus(orderNo, "COMPENSATED", deductedAmount, "补偿完成");
 
             // 步骤6: 记录成功日志
             logsMapper.insertLogs("failed 3 回滚余额: " + deductedAmount + ", 用户ID: " + userId, JSON.toJSONString(event));

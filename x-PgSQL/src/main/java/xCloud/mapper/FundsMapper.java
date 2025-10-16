@@ -41,20 +41,20 @@ public interface FundsMapper extends BaseMapper<Funds>{
     int addBalance(@Param("userId") Long userId, @Param("amount") BigDecimal amount, @Param("version") Integer version);
 
     // 新增：插入支付日志
-    @Insert("INSERT INTO payment_logs (order_no, user_id, amount, status, error_message) " +
-            "VALUES (#{orderNo}, #{userId}, #{amount}, #{status}, #{errorMessage})")
+    @Insert("INSERT INTO payment_logs (order_no, user_id, amount,actual_deducted, status, error_message) " +
+            "VALUES (#{orderNo}, #{userId}, #{amount}, #{actualDeducted}, #{status}, #{errorMessage})")
     int insertPaymentLog(@Param("orderNo") String orderNo, @Param("userId") Long userId,
-                         @Param("amount") BigDecimal amount, @Param("status") String status,
+                         @Param("amount") BigDecimal amount,@Param("actualDeducted") BigDecimal actualDeducted, @Param("status") String status,
                          @Param("errorMessage") String errorMessage);
 
     // 新增：更新日志状态
-    @Update("UPDATE payment_logs SET status = #{status}, error_message = #{errorMessage} " +
+    @Update("UPDATE payment_logs SET status = #{status}, actual_deducted = #{actualDeducted}, error_message = #{errorMessage} " +
             "WHERE order_no = #{orderNo}")
-    int updatePaymentLogStatus(@Param("orderNo") String orderNo, @Param("status") String status,
+    int updatePaymentLogStatus(@Param("orderNo") String orderNo, @Param("status") String status, @Param("actualDeducted") BigDecimal actualDeducted,
                                @Param("errorMessage") String errorMessage);
 
     // 新增：从日志获取已扣金额（仅针对FAILED状态，用于补偿）
-    @Select("SELECT amount FROM payment_logs WHERE order_no = #{orderNo} AND status = 'FAILED' LIMIT 1")
+    @Select("SELECT amount FROM payment_logs WHERE order_no = #{orderNo} AND status = 'FAILED' AND actual_deducted > 0 LIMIT 1")
     BigDecimal getDeductedAmountFromLog(@Param("orderNo") String orderNo);
 
 

@@ -43,7 +43,10 @@ CREATE TABLE IF NOT EXISTS payment_logs
     error_message TEXT,
     created_at    TIMESTAMP   DEFAULT CURRENT_TIMESTAMP
 );
-
+-- 修改 payment_logs 表
+ALTER TABLE payment_logs ADD COLUMN actual_deducted DECIMAL(10,2) DEFAULT 0.00;
+-- 索引（可选）
+CREATE INDEX idx_payment_logs_actual_deducted ON payment_logs(actual_deducted);
 -- 索引
 CREATE INDEX idx_payment_logs_order_no ON payment_logs (order_no);
 CREATE INDEX idx_payment_logs_user_id ON payment_logs (user_id);

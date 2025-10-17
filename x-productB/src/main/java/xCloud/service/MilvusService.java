@@ -67,12 +67,8 @@ public class MilvusService {
             "工作压力大时，我会听音乐放松。"
     );
 
-
-
-
-
     /**
-     * 1 创建 Collection
+     * 0 创建 Collection
      * 创建一个简单的向量表，包含：
      * - id：主键
      * - vector：128 维向量
@@ -124,7 +120,7 @@ public class MilvusService {
     }
 
     /**
-     * 2.1 insert 向量数据
+     * 1 insert 向量数据
      *
      * @return s
      */
@@ -134,7 +130,9 @@ public class MilvusService {
         for (VectorEntity entity : entities) {
             float[] arr = entity.getVector();
             List<Float> vector = new ArrayList<>(arr.length);
-            for (float v : arr) vector.add(v);
+            for (float v : arr) {
+                vector.add(v);
+            }
             vectors.add(vector);
         }
         List<InsertParam.Field> fields = new ArrayList<>();
@@ -155,7 +153,7 @@ public class MilvusService {
     }
 
     /**
-     * 2 insert 向量数据
+     * 1 insert 向量数据
      *
      * @return s
      */
@@ -204,7 +202,7 @@ public class MilvusService {
     }
 
     /**
-     * 插入句子
+     * 1 插入句子
      */
     public void insertSentences(List<Sentence> sentences) {
         List<Long> ids = sentences.stream().map(Sentence::getId).collect(Collectors.toList());
@@ -229,7 +227,18 @@ public class MilvusService {
     }
 
     /**
-     * 搜索最匹配的句子
+     * 2 删除集合
+     */
+    public void dropCollection() {
+        DropCollectionParam dropParam = DropCollectionParam.newBuilder()
+                .withCollectionName(COLLECTION_NAME)
+                .build();
+        milvusClient.dropCollection(dropParam);
+    }
+
+
+    /**
+     * 4 搜索最匹配的句子
      */
     public List<Sentence> searchSimilarSentences(String queryText, int topK) {
 //        float[] queryVector = vectorService.textToVector(queryText);
@@ -267,7 +276,7 @@ public class MilvusService {
     }
 
     /**
-     * 3.1 搜索相似向量
+     * 4 搜索相似向量
      *
      * @return s
      */
@@ -379,7 +388,7 @@ public class MilvusService {
     }
 
     /**
-     * 3 搜索相似向量
+     * 4 搜索相似向量
      *
      * @return s
      */
@@ -404,18 +413,9 @@ public class MilvusService {
         return search.getData().getResults().toString();
     }
 
-    /**
-     * 删除集合
-     */
-    public void dropCollection() {
-        DropCollectionParam dropParam = DropCollectionParam.newBuilder()
-                .withCollectionName(COLLECTION_NAME)
-                .build();
-        milvusClient.dropCollection(dropParam);
-    }
 
     /**
-     * 4 生成随机向量
+     * 生成随机向量
      *
      * @param dim 向量维度
      * @return 向量
@@ -432,8 +432,6 @@ public class MilvusService {
     /**
      * 辅助方法：将float[]转换为List<Float>
      */
-
-
     private List<Float> convertToFloatList(float[] array) {
         List<Float> list = new ArrayList<>(array.length);
         for (float value : array) {

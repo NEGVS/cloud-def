@@ -6,27 +6,19 @@ import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
-import xCloud.entity.Sentence;
-import xCloud.service.MilvusService;
-import xCloud.service.VectorService;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @OpenAPIDefinition(
         info = @Info(
-                title = "ANDY API X XProductBApplication",
+                title = "ANDY API XProductBApplication",
                 version = "1.1.1.0",
-                description = "API documentation for my Spring Cloud  X XProductBApplication"
+                description = "API documentation for my Spring Cloud XProductBApplication"
         )
 )
 @EnableFeignClients

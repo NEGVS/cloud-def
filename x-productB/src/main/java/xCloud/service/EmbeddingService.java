@@ -1,7 +1,6 @@
 package xCloud.service;
 
 import com.alibaba.fastjson.JSON;
-import com.esotericsoftware.minlog.Log;
 import com.openai.client.OpenAIClient;
 import com.openai.models.embeddings.CreateEmbeddingResponse;
 import com.openai.models.embeddings.Embedding;
@@ -13,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @Description

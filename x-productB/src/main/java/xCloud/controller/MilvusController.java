@@ -86,12 +86,12 @@ public class MilvusController {
     }
 
     /**
-     * 1-插入 Milvus 数据
+     * 1.1-插入 Milvus 数据
      *
      * @return List<Long>
      */
     @PostMapping("/insert")
-    @Operation(summary = "1 插入 Milvus 数据")
+    @Operation(summary = "1 插入 Milvus 数据[随机]")
     public List<Long> insertVectors() {
         // 生成示例数据
         List<VectorEntity> entities = new ArrayList<>();
@@ -100,7 +100,6 @@ public class MilvusController {
         for (long i = 1; i <= 10; i++) {
             VectorEntity entity = new VectorEntity();
             entity.setId(i);
-
             // 生成随机向量
             float[] vector = new float[128];
             for (int j = 0; j < 128; j++) {

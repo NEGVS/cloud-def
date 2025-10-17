@@ -13,6 +13,7 @@ import java.io.IOException;
  */
 @Service
 public class VectorService {
+
     private static final int VECTOR_DIMENSION = 128; // 根据模型调整
 
     private final HuggingFaceTokenizer tokenizer;
@@ -36,7 +37,4 @@ public class VectorService {
         return vector;
     }
 
-    public int getVectorDimension() {
-        return VECTOR_DIMENSION;
-    }
 }

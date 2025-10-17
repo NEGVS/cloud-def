@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSON;
 import io.milvus.client.MilvusServiceClient;
 import io.milvus.grpc.DataType;
 import io.milvus.grpc.FlushResponse;
-import io.milvus.grpc.IDs;
 import io.milvus.grpc.MutationResult;
 import io.milvus.grpc.SearchResultData;
 import io.milvus.grpc.SearchResults;
@@ -21,19 +20,20 @@ import io.milvus.param.collection.HasCollectionParam;
 import io.milvus.param.collection.LoadCollectionParam;
 import io.milvus.param.dml.InsertParam;
 import io.milvus.param.dml.SearchParam;
+import io.milvus.param.highlevel.collection.ListCollectionsParam;
+import io.milvus.param.highlevel.collection.response.ListCollectionsResponse;
 import io.milvus.param.index.CreateIndexParam;
-import io.milvus.response.FieldDataWrapper;
 import io.milvus.response.SearchResultsWrapper;
 import jakarta.annotation.Resource;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import xCloud.entity.Sentence;
 import xCloud.entity.VectorEntity;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -42,14 +42,34 @@ import java.util.stream.Collectors;
  * @Date 2025/10/10 11:50
  * @ClassName MilvusService
  */
+@Slf4j
 @Service
 public class MilvusService {
     @Resource
     private MilvusServiceClient milvusClient;
+    @Resource
+    private EmbeddingService embeddingService;
     // 集合名称
     private static final String COLLECTION_NAME = "test_vector_collection";
     // 向量维度
     private static final int VECTOR_DIM = 128;
+
+    private final List<String> sampleSentences = List.of(
+            "今天天气很好，适合出去散步。",
+            "我喜欢学习人工智能知识。",
+            "今晚想吃火锅。",
+            "你觉得电影《星际穿越》怎么样？",
+            "明天需要早起去上班。",
+            "我正在学习使用 Milvus 数据库。",
+            "春天是万物复苏的季节。",
+            "请推荐一本好看的小说。",
+            "跑步是一种很好的运动方式。",
+            "工作压力大时，我会听音乐放松。"
+    );
+
+
+
+
 
     /**
      * 1 创建 Collection
@@ -110,7 +130,7 @@ public class MilvusService {
      */
     public List<Long> insertVectors(List<VectorEntity> entities) { // 准备插入数据
         List<Long> ids = entities.stream().map(VectorEntity::getId).collect(Collectors.toList());
-        List<List<Float>> vectors =new ArrayList<>();
+        List<List<Float>> vectors = new ArrayList<>();
         for (VectorEntity entity : entities) {
             float[] arr = entity.getVector();
             List<Float> vector = new ArrayList<>(arr.length);
@@ -181,6 +201,69 @@ public class MilvusService {
                         .build()
         );
         return insert.getStatus().toString();
+    }
+
+    /**
+     * 插入句子
+     */
+    public void insertSentences(List<Sentence> sentences) {
+        List<Long> ids = sentences.stream().map(Sentence::getId).collect(Collectors.toList());
+        List<String> contents = sentences.stream().map(Sentence::getContent).collect(Collectors.toList());
+        List<float[]> vectors = sentences.stream().map(Sentence::getVector).collect(Collectors.toList());
+
+//        InsertParam insertParam = InsertParam.newBuilder()
+//                .withCollectionName(COLLECTION_NAME)
+////                .withFieldNames("id", "content", "vector")
+//                .withFields(ids, contents, vectors)
+//                .build();
+
+//        InsertResponse response = milvusClient.insert(insertParam);
+//        if (response.getStatus() != R.Status.Success.getCode()) {
+//            throw new RuntimeException("插入数据失败: " + response.getMessage());
+//        }
+//
+//        // 刷新集合使数据可查
+//        milvusClient.flush(FlushParam.newBuilder()
+//                .withCollectionNames(COLLECTION_NAME)
+//                .build());
+    }
+
+    /**
+     * 搜索最匹配的句子
+     */
+    public List<Sentence> searchSimilarSentences(String queryText, int topK) {
+//        float[] queryVector = vectorService.textToVector(queryText);
+
+        List<String> outFields = new ArrayList<>();
+        outFields.add("id");
+        outFields.add("content");
+
+//        SearchParam searchParam = SearchParam.newBuilder()
+//                .withCollectionName(COLLECTION_NAME)
+//                .withFieldName("vector")
+//                .withQueryVectors(queryVector)
+//                .withTopK(topK)
+//                .withMetricType(MetricType.L2) // 使用欧氏距离
+//                .withOutFields(outFields)
+//                .withParams("{\"nprobe\": 10}")
+//                .build();
+//
+//        SearchResponse response = milvusClient.search(searchParam);
+//        if (response.getStatus() != R.Status.Success.getCode()) {
+//            throw new RuntimeException("搜索失败: " + response.getMessage());
+//        }
+//
+//        List<Sentence> result = new ArrayList<>();
+//        for (SearchResponse.QueryResult queryResult : response.getQueryResults()) {
+//            for (SearchResponse.SearchResultData resultData : queryResult.getResultList()) {
+//                Long id = resultData.getFieldValue("id");
+//                String content = resultData.getFieldValue("content");
+//                result.add(new Sentence(id, content, null));
+//            }
+//        }
+
+//        return result;
+        return null;
     }
 
     /**
@@ -273,6 +356,26 @@ public class MilvusService {
 //        }
         System.out.println("搜索结果 IDs: " + resultIds);
         return resultIds;
+    }
+
+    /**
+     * 4- 查询集合名称列表
+     */
+    public List<String> getCollectionNames() {
+        try {
+            ListCollectionsParam param = ListCollectionsParam.newBuilder().build();
+            R<ListCollectionsResponse> resp = milvusClient.listCollections(param);
+            if (resp.getStatus() != R.Status.Success.getCode()) {
+                throw new RuntimeException("Failed to list collections: " + resp.getMessage());
+            }
+            ListCollectionsResponse data = resp.getData();
+            List<String> collectionNames = data.collectionNames;
+            log.info("Collection names: {}", collectionNames);
+            return collectionNames;
+        } catch (Exception e) {
+            log.error("Failed to get Milvus collection names: {}", e.getMessage(), e);
+            throw new RuntimeException("Failed to retrieve collection names", e);
+        }
     }
 
     /**

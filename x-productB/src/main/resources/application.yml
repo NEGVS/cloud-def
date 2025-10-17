@@ -107,3 +107,9 @@ rag:
 milvus:
   host: localhost
   port: 19530   # Docker 默认端口
+openai:
+  api-key: YOUR_OPENAI_API_KEY_HERE # <-- 填入你的密钥
+  model: text-embedding-3-small # 或者 text-embedding-3-large（按需）
+# Milvus vector dimension (和模型输出维度一致)
+vector:
+  dim: 1536

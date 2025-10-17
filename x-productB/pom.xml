@@ -16,8 +16,37 @@
 
 
     <dependencies>
+<!--        <dependency>-->
+<!--            <groupId>io.grpc</groupId>-->
+<!--            <artifactId>grpc-okhttp</artifactId>-->
+<!--            <version>1.62.2</version> &lt;!&ndash; 建议使用与 grpc-core 相同版本 &ndash;&gt;-->
+<!--        </dependency>-->
 
-<!--        -->
+        <!--        OpenAI 的官方 Java 客户端-->
+        <dependency>
+            <groupId>com.openai</groupId>
+            <artifactId>openai-java</artifactId>
+            <version>4.3.0</version>
+        </dependency>
+        <!-- Spring AI OpenAI Embedding -->
+<!--        <dependency>-->
+<!--            <groupId>org.springframework.ai</groupId>-->
+<!--            <artifactId>spring-ai-starter-model-openai</artifactId>-->
+<!--            <version>1.0.0-M1</version>-->
+<!--        </dependency>-->
+        <!-- OkHttp for calling OpenAI -->
+<!--        <dependency>-->
+<!--            <groupId>com.squareup.okhttp3</groupId>-->
+<!--            <artifactId>okhttp</artifactId>-->
+<!--            <version>4.11.0</version>-->
+<!--        </dependency>-->
+        <!-- 用于生成文本向量 -->
+        <dependency>
+            <groupId>ai.djl.huggingface</groupId>
+            <artifactId>tokenizers</artifactId>
+            <version>0.23.0</version>
+        </dependency>
+        <!--     milvus   -->
         <dependency>
             <groupId>io.milvus</groupId>
             <artifactId>milvus-sdk-java</artifactId>

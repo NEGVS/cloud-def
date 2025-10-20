@@ -139,8 +139,15 @@ public class MilvusService {
     }
 
     public Mono<List<Long>> insertVectorsAsync(List<VectorEntity> entities) {
-        return Mono.fromCallable(() -> insertVectors(entities))
-                .subscribeOn(Schedulers.boundedElastic());
+        try {
+            Mono<List<Long>> listMono = Mono.fromCallable(() -> insertVectors(entities))
+                    .subscribeOn(Schedulers.boundedElastic());
+            log.info("\n--3--insertVectorsAsync--listMono: {}", JSONUtil.toJsonStr(listMono));
+            return listMono;
+        } catch (Exception e) {
+            log.error("\n\nError inserting vectors: {}", e.getMessage());
+            return Mono.error(e);
+        }
     }
 
     /**
@@ -294,20 +301,20 @@ public class MilvusService {
                         log.info("=== 步骤 2: 构建实体完成 (实体数: {}) ===", entities.size());
                     })
                     .doOnError(err -> {
-                        log.error("=== 步骤 2: 构建实体失败 (原因: {}) ===", err.getMessage(), err);
+                        log.error("=== 步骤 2: 构建实体失败 (原因: {}) ===", err.getMessage(), safeMessage(err));
                     })
                     // === 步骤 3: 执行向量插入 ===
                     .flatMap(entities -> insertVectorsAsync(entities)
                             .doOnSuccess(ids -> log.info("Step3 insertVectorsAsync OK, ids={}", ids))
                             .onErrorResume(err -> {
-                                log.error("Step3 insertVectorsAsync Failed, reason={}", err);
+                                log.error("Step3 insertVectorsAsync Failed, reason={}", safeMessage(err));
                                 return Mono.just(Collections.emptyList());  // 降级，不抛异常
                             }))
                     .doOnNext(longs -> {
                         log.info("=== 步骤 3: 插入完成 (ID 列表: {}) ===", longs);
                     })
                     .doOnError(err -> {
-                        log.error("=== 步骤 3: 插入失败 (原因: {}) ===", err.getMessage(), err);
+                        log.error("=== 步骤 3: 插入失败 (原因: {}) ===", err.getMessage(), safeMessage(err));
                     })
                     .onErrorResume(err -> {
                         // 降级：返回空 ID 列表，避免全链路崩溃

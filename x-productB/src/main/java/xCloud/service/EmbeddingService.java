@@ -122,28 +122,28 @@ public class EmbeddingService {
      * @return 浮点数组向量（维度取决于模型，例如 ada-002 为 1536 维）
      */
     public List<Float> generateEmbedding(String text) {
-        log.info("0 开始生成嵌入向量:{}", text);
+        log.info("\n0 开始生成嵌入向量:{}", text);
         // 创建嵌入请求
         EmbeddingCreateParams params = EmbeddingCreateParams.builder()
                 .input(text)// 支持单个字符串或 List<String>
                 .model("text-embedding-ada-002")// 推荐模型，维度 1536；或 "text-embedding-3-small" (维度 1536)
                 .build();
-        log.info("1 EmbeddingCreateParams:{}", JSON.toJSONString(params));
+        log.info("\n1 EmbeddingCreateParams:{}", JSON.toJSONString(params));
 
         try {
             CreateEmbeddingResponse createEmbeddingResponse = openAIClient.embeddings().create(params);
-            log.info("2 CreateEmbeddingResponse:{}", JSON.toJSONString(createEmbeddingResponse));
+            log.info("\n2 CreateEmbeddingResponse:{}", JSON.toJSONString(createEmbeddingResponse));
 
             List<Embedding> embeddings = createEmbeddingResponse.data();
-            log.info("3 List<Embedding>:{}", JSON.toJSONString(embeddings));
+            log.info("\n3 List<Embedding>:{}", JSON.toJSONString(embeddings));
 
             if (!embeddings.isEmpty()) {
                 Embedding embedding = embeddings.get(0);
-                log.info("4 Embedding:{}", JSON.toJSONString(embedding));
+                log.info("\n4 Embedding:{}", JSON.toJSONString(embedding));
                 return embedding.embedding();
             }
         } catch (Exception e) {
-            log.info("5 Embedding生成嵌入失败:{}", JSON.toJSONString(e.getMessage()));
+            log.info("\n5 Embedding生成嵌入失败:{}", JSON.toJSONString(e.getMessage()));
         }
         return new ArrayList<>();  // 错误时返回空向量
     }
@@ -162,21 +162,21 @@ public class EmbeddingService {
      * </dependency>
      */
     public List<List<Float>> generateBatchEmbeddingsA(List<String> texts) {
-        log.info("0 开始批量生成嵌入向量: {}", JSON.toJSONString(texts));
+        log.info("\n0 开始批量生成嵌入向量: {}", JSON.toJSONString(texts));
 
         EmbeddingCreateParams params = EmbeddingCreateParams.builder()
                 .input(texts.toString())   //直接传入批量文本
                 .model("text-embedding-ada-002")  // 或 "text-embedding-3-small"
                 .build();
 
-        log.info("1 EmbeddingCreateParams:{}", JSON.toJSONString(params));
+        log.info("\n1 EmbeddingCreateParams:{}", JSON.toJSONString(params));
 
         try {
             CreateEmbeddingResponse response = openAIClient.embeddings().create(params);
-            log.info("2 CreateEmbeddingResponse:{}", JSON.toJSONString(response));
+            log.info("\n2 CreateEmbeddingResponse:{}", JSON.toJSONString(response));
 
             List<Embedding> embeddings = response.data();
-            log.info("3 批量 Embeddings: {}", JSON.toJSONString(embeddings));
+            log.info("\n3 批量 Embeddings: {}", JSON.toJSONString(embeddings));
 
             List<List<Float>> results = new ArrayList<>();
             for (Embedding embedding : embeddings) {

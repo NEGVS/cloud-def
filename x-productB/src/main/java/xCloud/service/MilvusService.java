@@ -1,6 +1,7 @@
 package xCloud.service;
 
 import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.json.JSONUtil;
 import com.alibaba.fastjson.JSON;
 import io.milvus.client.MilvusServiceClient;
 import io.milvus.grpc.DataType;
@@ -86,14 +87,14 @@ public class MilvusService {
      * - id：主键
      * - vector：1024 维向量
      */
-    public String createCollection() {
+    public Result<String> createCollection() {
         // 检查集合是否已存在
         HasCollectionParam hasParam = HasCollectionParam.newBuilder()
                 .withCollectionName(COLLECTION_NAME)
                 .build();
         R<Boolean> hasResult = milvusClient.hasCollection(hasParam);
-        if (hasResult.getData() != null) {
-            return "ok";
+        if (hasResult.getData() != null && hasResult.getData()) {
+            return Result.success("集合已存在");
         }
         // 定义字段
         FieldType fieldType = FieldType.newBuilder()
@@ -129,7 +130,12 @@ public class MilvusService {
                 .withExtraParam("{\"nlist\": 1024}")
                 .build();
         R<RpcStatus> index = milvusClient.createIndex(indexParam);
-        return collection.getStatus().toString();
+        if (collection.getStatus() == 0) {
+
+            return Result.success("集合创建成功");
+        }
+
+        return Result.error("集合创建失败");
     }
 
     /**
@@ -138,7 +144,7 @@ public class MilvusService {
      * @return s
      */
     public List<Long> insertVectors(List<VectorEntity> entities) {
-        log.info("--1--insertVectors--entities: {}", JSON.toJSONString(entities));
+        log.info("\n--1--insertVectors--entities: {}", JSON.toJSONString(entities));
         List<Long> ids = entities.stream().map(VectorEntity::getId).collect(Collectors.toList());
         List<List<Float>> vectors = new ArrayList<>();
         for (VectorEntity entity : entities) {
@@ -153,7 +159,7 @@ public class MilvusService {
             vectors.add(vector);
         }
         if (vectors.isEmpty()) {
-            log.info("--2--insertVectors--vectors is empty");
+            log.info("\n--2--insertVectors--vectors is empty");
             return new ArrayList<>();
         }
         List<InsertParam.Field> fields = new ArrayList<>();
@@ -163,10 +169,10 @@ public class MilvusService {
                 .withCollectionName(COLLECTION_NAME)
                 .withFields(fields)
                 .build();
-        log.info("--2--insertVectors--insertParam: {}", JSON.toJSONString(insertParam));
+        log.info("\n--2--insertVectors--insertParam: {}", JSON.toJSONString(insertParam));
 
         R<MutationResult> result = milvusClient.insert(insertParam);
-        log.info("--3--insertVectors--result: {}", JSON.toJSONString(result));
+        log.info("\n--3--insertVectors--result: {}", JSON.toJSONString(result));
 
         if (result == null || result.getData() == null) {
             System.out.println("\n\n\n\n插入失败\n\n\n\n");
@@ -177,7 +183,7 @@ public class MilvusService {
         R<FlushResponse> flush = milvusClient.flush(
                 FlushParam.newBuilder().withCollectionNames(Collections.singletonList(COLLECTION_NAME)).build()
         );
-        log.info("--4--必须 Flush 才能检索: {}", JSON.toJSONString(flush));
+        log.info("\n--4--必须 Flush 才能检索: {}", JSON.toJSONString(flush));
 
         //=== 4 创建索引（必须）===
         // 准备 index 参数（Map）
@@ -200,7 +206,7 @@ public class MilvusService {
                         .withCollectionName(COLLECTION_NAME)
                         .build()
         );
-        log.info("--5--Load Collection 到内存用于查询: {}", JSON.toJSONString(rpcStatusR));
+        log.info("\n--5--Load Collection 到内存用于查询: {}", JSON.toJSONString(rpcStatusR));
 
         return result.getData().getIDs().getIntIdOrBuilder().getDataList();
     }
@@ -443,12 +449,14 @@ public class MilvusService {
         try {
             ListCollectionsParam param = ListCollectionsParam.newBuilder().build();
             R<ListCollectionsResponse> resp = milvusClient.listCollections(param);
+            log.info("\nListCollectionsResponse: {}", JSONUtil.toJsonStr(resp));
+
             if (resp.getStatus() != R.Status.Success.getCode()) {
                 throw new RuntimeException("Failed to list collections: " + resp.getMessage());
             }
             ListCollectionsResponse data = resp.getData();
             List<String> collectionNames = data.collectionNames;
-            log.info("Collection names: {}", collectionNames);
+            log.info("\nCollection names: {}", collectionNames);
             return collectionNames;
         } catch (Exception e) {
             log.error("Failed to get Milvus collection names: {}", e.getMessage(), e);

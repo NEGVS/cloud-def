@@ -73,10 +73,8 @@ public class MilvusController {
      */
     @PostMapping("/create-collection")
     @Operation(summary = "0 创建 Milvus Collection")
-    public String createCollection() {
-        String collection = milvusService.createCollection();
-        log.info(collection);
-        return collection;
+    public Result<String> createCollection() {
+        return milvusService.createCollection();
     }
 
     /**

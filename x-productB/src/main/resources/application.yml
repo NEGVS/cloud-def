@@ -116,6 +116,10 @@ openai:
 vector:
   dim: 1024
   collection: andy_vectors
+deepSeek:
+  api:
+    url: https://api.deepseek.com
+    key: ${DEEPSEEK_API_KEY}
 baichuan:
   api:
     url: https://api.baichuan-ai.com/v1/embeddings

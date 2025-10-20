@@ -1,14 +1,18 @@
 package xCloud.service;
 
 import com.alibaba.fastjson.JSON;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.Acknowledgment;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import xCloud.entity.Order;
@@ -18,7 +22,10 @@ import xCloud.mapper.LogsMapper;
 import xCloud.mapper.OrderMapper;
 import xCloud.mapper.OutboxMapper;
 
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @Description
@@ -32,7 +39,8 @@ import java.util.UUID;
 @Transactional(rollbackFor = Exception.class)
 public class OrderService {
 
-
+    @Resource
+    private StringRedisTemplate redisTemplate;
     @Resource
     private OrderMapper orderMapper;
     @Resource
@@ -41,6 +49,9 @@ public class OrderService {
     private OutboxMapper outboxMapper;
     @Resource
     private KafkaTemplate<String, Object> kafkaTemplate;
+
+    // 预设幂等 key，防止重复消费
+    private static final String IDEMPOTENT_PREFIX = "order:processed:";
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -105,4 +116,59 @@ public class OrderService {
         }
     }
 
+    /**
+     * Kafka 消费端异步处理订单（幂等设计）
+     */
+    @KafkaListener(topics = "order-topic", groupId = "order-group")
+    public void consumeOrder(String message) {
+        Map<String, Object> orderMsg = JSON.parseObject(message, Map.class);
+        Long orderId = (long) orderMsg.get("orderId");
+        String productId = (String) orderMsg.get("productId");
+        int num = (int) orderMsg.get("num");
+        String idempotentKey = IDEMPOTENT_PREFIX + orderId;
+        try {
+            // 幂等检查
+            Boolean processed = redisTemplate.opsForValue().setIfAbsent(idempotentKey, "1", 1, TimeUnit.DAYS);
+            if (processed == null || !processed) {
+                log.warn("重复消费消息, orderId={}", orderId);
+                return;
+            }
+            // 模拟限流，可用 RateLimiter 或 Kafka 消费端限流策略
+            // 处理订单逻辑
+            Order order = new Order();
+            order.setId(orderId);
+            int insert = orderMapper.insert(order);
+            if (insert > 0) {
+                log.info("订单创建成功, orderId={}, productId={}, num={}", orderId, productId, num);
+            } else {
+                log.info("订单创建失败, orderId={}, productId={}, num={}", orderId, productId, num);
+            }
+        } catch (Exception e) {
+            // 订单创建失败，回滚 Redis 库存
+            redisTemplate.opsForValue().decrement("stock:" + productId, num);
+            log.error("订单消费失败, orderId={}, rollback stock, exception={}", orderId, e.getMessage());
+            // 可发送告警邮件或消息
+        }
+
+    }
+
+    /**
+     * 定时任务同步库存到数据库
+     */
+    //    @Scheduled(cron = "0 0 0 * * ?")
+    @Scheduled(fixedRate = 1000 * 6)
+    public void syncStockToDB() {
+        Set<String> keys = redisTemplate.keys("stock:*");
+        if (keys == null) return;
+        for (String key : keys) {
+            String productId = key.split(":")[1];
+            int redisStock = Integer.parseInt(redisTemplate.opsForValue().get(key));
+            int update = orderMapper.update(new Order(), new QueryWrapper<Order>().eq("product_id", productId));
+            if (update > 0) {
+                log.info("同步库存成功, productId={}, redisStock={}", productId, redisStock);
+            } else {
+                log.info("同步库存失败, productId={}, redisStock={}", productId, redisStock);
+            }
+        }
+    }
 }

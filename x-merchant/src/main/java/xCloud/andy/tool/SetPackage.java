@@ -26,7 +26,7 @@ public class SetPackage {
     public static void main(String[] args) {
         System.out.println("xCloud.andy.tool");
         //该路径下时所有文件
-        String packageName2 = "/Users/andy_mac/Documents/CodeSpace/andyProject0/demi_vue_boot/ruoyi-system/src/main/java/com/ruoyi/hro/srzp";
+        String packageName2 = "/Users/andy_mac/Documents/CodeSpace/andyProject0/demi_vue_boot/ruoyi-system/src/main/java/com/ruoyi/demi/stock";
 
         Set<String> filePaths = CodeX.listFiles(packageName2);
         System.out.println(filePaths);

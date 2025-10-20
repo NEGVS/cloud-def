@@ -108,8 +108,14 @@ milvus:
   host: localhost
   port: 19530   # Docker 默认端口
 openai:
-  api-key: YOUR_OPENAI_API_KEY_HERE # <-- 填入你的密钥
+  api-key: ${OPENAI_API_KEY} # <-- 填入你的密钥
+#  如果你这样写，框架不会自动去环境变量读取，它只是一个字符串 "OPENAI_API_KEY"。
+  #除非你使用了 ${OPENAI_API_KEY} 语法，才会从系统环境变量中读取值。
   model: text-embedding-3-small # 或者 text-embedding-3-large（按需）
 # Milvus vector dimension (和模型输出维度一致)
 vector:
   dim: 1536
+baichuan:
+  api:
+    url: https://api.baichuan-ai.com/v1/embeddings
+    key: ${BAICHUAN_API_KEY}

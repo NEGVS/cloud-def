@@ -1,4 +1,9 @@
-下面是一个使用 **Spring Boot + Milvus** 的简单示例流程：
+# Embedding
+https://platform.baichuan-ai.com/docs/text-Embedding
+sess...e52c
+
+
+# 下面是一个使用 **Spring Boot + Milvus** 的简单示例流程：
 **目标**：
 
 1. 插入 **10 句文本（自然语言句子）** 到 Milvus。

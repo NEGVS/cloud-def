@@ -12,9 +12,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import xCloud.entity.Result;
 import xCloud.entity.VectorEntity;
+import xCloud.entity.dto.StockAllDTO;
+import xCloud.entity.dto.StockRuleDTO;
 import xCloud.service.MilvusService;
 
 import java.util.ArrayList;
@@ -81,7 +84,7 @@ public class MilvusController {
      */
     @GetMapping("/milvus/insert")
     @Operation(summary = "1 插入 Milvus 数据")
-    public String insert() {
+    public Result<String> insert() {
         return milvusService.insertData();
     }
 
@@ -177,4 +180,59 @@ public class MilvusController {
         }
     }
 
+    /**
+     * 9996 -插入 Milvus 数据
+     *
+     * @return List<Long>
+     */
+    @PostMapping("/insertB")
+    @Operation(summary = "999 StockRuleDTO")
+    public List<Long> sssd(@RequestBody StockRuleDTO stockRuleDTO) {
+        // 生成示例数据
+        List<VectorEntity> entities = new ArrayList<>();
+        Random random = new Random();
+
+        for (long i = 1; i <= 10; i++) {
+            VectorEntity entity = new VectorEntity();
+            entity.setId(i);
+            // 生成随机向量
+            float[] vector = new float[128];
+            for (int j = 0; j < 128; j++) {
+                vector[j] = random.nextFloat();
+            }
+            entity.setVector(vector);
+
+            entities.add(entity);
+        }
+
+        return milvusService.insertVectors(entities);
+    }
+
+    /**
+     * 999 -插入 Milvus 数据
+     *
+     * @return List<Long>
+     */
+    @PostMapping("/insertBC")
+    @Operation(summary = "999 StockAllDTO")
+    public List<Long> sswsd(@RequestBody StockAllDTO stockAllDTO) {
+        // 生成示例数据
+        List<VectorEntity> entities = new ArrayList<>();
+        Random random = new Random();
+
+        for (long i = 1; i <= 10; i++) {
+            VectorEntity entity = new VectorEntity();
+            entity.setId(i);
+            // 生成随机向量
+            float[] vector = new float[128];
+            for (int j = 0; j < 128; j++) {
+                vector[j] = random.nextFloat();
+            }
+            entity.setVector(vector);
+
+            entities.add(entity);
+        }
+
+        return milvusService.insertVectors(entities);
+    }
 }

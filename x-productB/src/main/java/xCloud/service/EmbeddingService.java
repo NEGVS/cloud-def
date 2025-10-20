@@ -1,6 +1,8 @@
 package xCloud.service;
 
 import com.alibaba.fastjson.JSON;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.openai.client.OpenAIClient;
 import com.openai.models.embeddings.CreateEmbeddingResponse;
 import com.openai.models.embeddings.Embedding;
@@ -8,10 +10,17 @@ import com.openai.models.embeddings.EmbeddingCreateParams;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Description
@@ -27,13 +36,84 @@ public class EmbeddingService {
     @Value("${openai.model}")
     private String model;
 
-
+    @Value("${openai.apiUrl}")
+    private String apiUrl;
+    @Value("${openai.apiKey}")
+    private String apiKey;
     @Value("${vector.dim}")
     private int dim;
 
     @Resource
     private OpenAIClient openAIClient;
 
+    @Resource
+    private RestTemplate restTemplate;
+
+    /**
+     * b1 【百川】将单个文本转换为向量（embedding）
+     *
+     *
+     * @param text 输入文本，长度不超过512 token。
+     * @return 1024维的embedding向量列表。
+     * @throws RuntimeException 如果API调用失败或响应无效。
+     */
+    public List<Double> getEmbedding(String text) {
+        return getEmbeddings(List.of(text)).get(0);
+    }
+
+    /**
+     * b2 【百川】将多个文本转换为向量（embedding），批量最多16个。
+     *
+     * @param texts 输入文本列表，每个不超过512 token，列表大小不超过16。
+     * @return embedding向量列表，对应输入顺序。
+     * @throws RuntimeException 如果API调用失败或响应无效。
+     */
+    public List<List<Double>> getEmbeddings(List<String> texts) {
+        if (texts.size() > 16) {
+            throw new IllegalArgumentException("Input texts size cannot exceed 16.");
+        }
+
+        // 构建请求体
+        Map<String, Object> requestBody = Map.of(
+                "model", "Baichuan-Text-Embedding",
+                "input", texts
+        );
+
+        // 设置Header
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setBearerAuth(apiKey);
+
+        HttpEntity<Map<String, Object>> entity = new HttpEntity<>(requestBody, headers);
+
+        try {
+            // 发送POST请求
+            ResponseEntity<String> response = restTemplate.postForEntity(apiUrl, entity, String.class);
+
+            if (response.getStatusCode() != HttpStatus.OK) {
+                throw new RuntimeException("API call failed with status: " + response.getStatusCode());
+            }
+            ObjectMapper objectMapper = new ObjectMapper();
+            // 解析响应
+            JsonNode root = objectMapper.readTree(response.getBody());
+            JsonNode dataArray = root.get("data");
+
+            List<List<Double>> embeddings = new ArrayList<>();
+            for (JsonNode embeddingNode : dataArray) {
+                JsonNode embeddingArray = embeddingNode.get("embedding");
+                List<Double> vector = new ArrayList<>();
+                for (JsonNode value : embeddingArray) {
+                    vector.add(value.asDouble());
+                }
+                embeddings.add(vector);
+            }
+
+            return embeddings;
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to get embeddings: " + e.getMessage(), e);
+        }
+    }
+    //---------------
 
     /**
      * 将单个文本转换为嵌入向量

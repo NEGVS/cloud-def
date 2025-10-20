@@ -2,6 +2,7 @@ package xCloud.config;
 
 import com.openai.client.OpenAIClient;
 import com.openai.client.okhttp.OpenAIOkHttpClient;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,5 +23,10 @@ public class OpenAIConfig {
         return OpenAIOkHttpClient.builder()
                 .apiKey(openaiApiKey)
                 .build();
+    }
+
+    @PostConstruct
+    public void checkApiKey() {
+        System.out.println("-----------test-----Loaded OpenAI API Key: " + openaiApiKey);
     }
 }

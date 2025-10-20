@@ -1,5 +1,6 @@
 package xCloud.service;
 
+import cn.hutool.core.util.ObjectUtil;
 import com.alibaba.fastjson.JSON;
 import io.milvus.client.MilvusServiceClient;
 import io.milvus.grpc.DataType;
@@ -27,6 +28,8 @@ import io.milvus.response.SearchResultsWrapper;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Mono;
+import xCloud.entity.Result;
 import xCloud.entity.Sentence;
 import xCloud.entity.VectorEntity;
 
@@ -45,12 +48,19 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 public class MilvusService {
+
     @Resource
     private MilvusServiceClient milvusClient;
+
+    @Resource
+    private BaichuanEmbeddingClient baichuanEmbeddingClient;
+
     @Resource
     private EmbeddingService embeddingService;
+
     // 集合名称
     private static final String COLLECTION_NAME = "test_vector_collection";
+
     // 向量维度
     private static final int VECTOR_DIM = 128;
 
@@ -124,59 +134,48 @@ public class MilvusService {
      *
      * @return s
      */
-    public List<Long> insertVectors(List<VectorEntity> entities) { // 准备插入数据
+    public List<Long> insertVectors(List<VectorEntity> entities) {
+        log.info("--1--insertVectors--entities: {}", JSON.toJSONString(entities));
         List<Long> ids = entities.stream().map(VectorEntity::getId).collect(Collectors.toList());
         List<List<Float>> vectors = new ArrayList<>();
         for (VectorEntity entity : entities) {
             float[] arr = entity.getVector();
+            if (ObjectUtil.isEmpty(arr)) {
+                continue;
+            }
             List<Float> vector = new ArrayList<>(arr.length);
             for (float v : arr) {
                 vector.add(v);
             }
             vectors.add(vector);
         }
+        if (vectors.isEmpty()) {
+            log.info("--2--insertVectors--vectors is empty");
+            return new ArrayList<>();
+        }
         List<InsertParam.Field> fields = new ArrayList<>();
-//        fields.add(new InsertParam.Field("id", ids));
         fields.add(new InsertParam.Field("vector", vectors));
 
         InsertParam insertParam = InsertParam.newBuilder()
                 .withCollectionName(COLLECTION_NAME)
                 .withFields(fields)
                 .build();
+        log.info("--2--insertVectors--insertParam: {}", JSON.toJSONString(insertParam));
 
         R<MutationResult> result = milvusClient.insert(insertParam);
+        log.info("--3--insertVectors--result: {}", JSON.toJSONString(result));
+
         if (result == null || result.getData() == null) {
             System.out.println("\n\n\n\n插入失败\n\n\n\n");
             return new ArrayList<>();
         }
-        return result.getData().getIDs().getIntIdOrBuilder().getDataList();
-    }
 
-    /**
-     * 1 insert 向量数据
-     *
-     * @return s
-     */
-    public String insertData() {
-        // === 1 构建插入数据 ===
-        List<List<Float>> vectors = Arrays.asList(randomVector(128), randomVector(128));
-
-        List<InsertParam.Field> fields = new ArrayList<>();
-        fields.add(new InsertParam.Field("vector", vectors));
-
-        InsertParam insertParam = InsertParam.newBuilder()
-                .withCollectionName(COLLECTION_NAME)
-                .withFields(fields)
-                .build();
-        // === 2 插入数据 ===
-        R<MutationResult> insert = milvusClient.insert(insertParam);
-        if (insert.getData() == null) {
-            return insert.getData().getSuccIndexCount() + " vectors inserted successfully";
-        }
         // === 3 必须 Flush 才能检索 ===
         R<FlushResponse> flush = milvusClient.flush(
                 FlushParam.newBuilder().withCollectionNames(Collections.singletonList(COLLECTION_NAME)).build()
         );
+        log.info("--4--必须 Flush 才能检索: {}", JSON.toJSONString(flush));
+
         //=== 4 创建索引（必须）===
         // 准备 index 参数（Map）
 //        Map<String, Object> indexParams = new HashMap<>();
@@ -198,7 +197,42 @@ public class MilvusService {
                         .withCollectionName(COLLECTION_NAME)
                         .build()
         );
-        return insert.getStatus().toString();
+        log.info("--5--Load Collection 到内存用于查询: {}", JSON.toJSONString(rpcStatusR));
+
+        return result.getData().getIDs().getIntIdOrBuilder().getDataList();
+    }
+
+    /**
+     * 1 insert 向量数据
+     *
+     * @return s
+     */
+    public Result<String> insertData() {
+        // === 1 构建插入数据 ===
+//        List<List<Float>> vectors = Arrays.asList(randomVector(128), randomVector(128));
+        Mono<List<Float>> listMono = baichuanEmbeddingClient.embedText("樊迎宾");
+        log.info("--1--insertData--listMono: {}", JSON.toJSONString(listMono));
+        List<Double> doubleList = embeddingService.getEmbedding("樊迎宾");
+
+        log.info("--2--insertData--doubleList: {}", JSON.toJSONString(doubleList));
+
+        List<Float> floats = embeddingService.generateEmbedding("樊迎宾");
+        if (ObjectUtil.isEmpty(floats)) {
+            return Result.error("embedding is null");
+        }
+        List<VectorEntity> entities = new ArrayList<>();
+//        for (int i = 0; i < vectors.size(); i++) {
+//            VectorEntity entity = new VectorEntity();
+//            entity.setId((long) i + 1);
+//            entity.setVector(convertToFloatArray(vectors.get(i)));
+//            entities.add(entity);
+//        }
+        VectorEntity entity = new VectorEntity();
+        entity.setId(1L);
+        entity.setVector(convertToFloatArray(floats));
+        entities.add(entity);
+        List<Long> longs = insertVectors(entities);
+        return Result.success(longs.toString());
     }
 
     /**
@@ -427,6 +461,18 @@ public class MilvusService {
         }
         System.out.println(JSON.toJSONString(vector));
         return vector;
+    }
+
+    /**
+     * 辅助方法：将 List<Float>转换为 float []
+     */
+    private float[] convertToFloatArray(List<Float> list) {
+        float[] array = new float[list.size()];
+        for (int i = 0; i < list.size(); i++) {
+// 注意：如果 list 中存在 null 元素，这里会抛出 NullPointerException
+            array[i] = list.get(i);
+        }
+        return array;
     }
 
     /**

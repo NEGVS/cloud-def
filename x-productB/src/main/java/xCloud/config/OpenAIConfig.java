@@ -25,8 +25,4 @@ public class OpenAIConfig {
                 .build();
     }
 
-    @PostConstruct
-    public void checkApiKey() {
-        System.out.println("-----------test-----Loaded OpenAI API Key: " + openaiApiKey);
-    }
 }

@@ -39,11 +39,6 @@ public class BaichuanEmbeddingClient {
 
     private static int BATCH_SIZE = 16; // 接口最大批量处理数
 
-    @PostConstruct
-    public void checkApiKey() {
-        System.out.println("-----------test-----Loaded baichuan API Key: " + apiKey);
-        System.out.println("-----------test-----Loaded baichuan url : " + url);
-    }
 
     /**
      * 将单个文本转换为向量

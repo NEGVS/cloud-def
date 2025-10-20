@@ -33,6 +33,7 @@ public class BaichuanEmbeddingClient {
 
     @Value("${baichuan.api.url}")
     private String url;
+//    sdakldfsj
 
     private static String MODEL_NAME = "Baichuan-Text-Embedding";
 

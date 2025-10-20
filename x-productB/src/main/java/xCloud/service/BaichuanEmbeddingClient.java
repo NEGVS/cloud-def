@@ -2,6 +2,7 @@ package xCloud.service;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.annotation.PostConstruct;
 import jakarta.annotation.Resource;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,16 +28,22 @@ public class BaichuanEmbeddingClient {
 
     @Resource
     private ObjectMapper objectMapper;
+
     @Value("${baichuan.api.key}")
     private String apiKey;
 
     @Value("${baichuan.api.url}")
-    private String API_URL;
+    private String url;
 
     private static String MODEL_NAME = "Baichuan-Text-Embedding";
 
     private static int BATCH_SIZE = 16; // 接口最大批量处理数
 
+    @PostConstruct
+    public void checkApiKey() {
+        System.out.println("-----------test-----Loaded baichuan API Key: " + apiKey);
+        System.out.println("-----------test-----Loaded baichuan url : " + url);
+    }
 
     /**
      * 将单个文本转换为向量
@@ -88,7 +95,7 @@ public class BaichuanEmbeddingClient {
         request.setInput(batchTexts);
 
         return webClient.post()
-                .uri(API_URL)
+                .uri(url)
                 .header("Content-Type", "application/json")
                 .header("Authorization", "Bearer " + apiKey)
                 .bodyValue(request)

@@ -27,8 +27,10 @@ import io.milvus.param.index.CreateIndexParam;
 import io.milvus.response.SearchResultsWrapper;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 import xCloud.entity.Result;
 import xCloud.entity.Sentence;
 import xCloud.entity.VectorEntity;
@@ -59,10 +61,11 @@ public class MilvusService {
     private EmbeddingService embeddingService;
 
     // 集合名称
-    private static final String COLLECTION_NAME = "test_vector_collection";
+    @Value("${vector.collection}")
+    private String COLLECTION_NAME;
 
-    // 向量维度
-    private static final int VECTOR_DIM = 128;
+    @Value("${vector.dim}")
+    private int dim;
 
     private final List<String> sampleSentences = List.of(
             "今天天气很好，适合出去散步。",
@@ -81,7 +84,7 @@ public class MilvusService {
      * 0 创建 Collection
      * 创建一个简单的向量表，包含：
      * - id：主键
-     * - vector：128 维向量
+     * - vector：1024 维向量
      */
     public String createCollection() {
         // 检查集合是否已存在
@@ -89,7 +92,7 @@ public class MilvusService {
                 .withCollectionName(COLLECTION_NAME)
                 .build();
         R<Boolean> hasResult = milvusClient.hasCollection(hasParam);
-        if (hasResult.getData()) {
+        if (hasResult.getData() != null) {
             return "ok";
         }
         // 定义字段
@@ -103,7 +106,7 @@ public class MilvusService {
         FieldType vectorField = FieldType.newBuilder()
                 .withName("vector")
                 .withDataType(DataType.FloatVector)
-                .withDimension(128)//128 维向量
+                .withDimension(dim)//1024 维向量
                 .build();
         CollectionSchemaParam schema = CollectionSchemaParam.newBuilder()
                 .addFieldType(fieldType)
@@ -123,7 +126,7 @@ public class MilvusService {
                 .withFieldName("vector")
                 .withIndexType(IndexType.IVF_FLAT)
                 .withMetricType(MetricType.L2)
-                .withExtraParam("{\"nlist\": 128}")
+                .withExtraParam("{\"nlist\": 1024}")
                 .build();
         R<RpcStatus> index = milvusClient.createIndex(indexParam);
         return collection.getStatus().toString();
@@ -179,7 +182,7 @@ public class MilvusService {
         //=== 4 创建索引（必须）===
         // 准备 index 参数（Map）
 //        Map<String, Object> indexParams = new HashMap<>();
-//        indexParams.put("nlist", 128); // 数字类型
+//        indexParams.put("nlist", 1024); // 数字类型
 //        CreateIndexParam createIndexParam = CreateIndexParam.newBuilder()
 //                .withCollectionName(COLLECTION_NAME)
 //                .withFieldName("vector")
@@ -203,23 +206,55 @@ public class MilvusService {
     }
 
     /**
+     * 插入数据的响应式版本（优化：处理异步 Mono，避免阻塞；全链路非阻塞）。
+     * 假设 insertVectors 是同步方法，若为响应式则进一步 flatMap。
+     *
+     * @return Mono<Result < String>>：异步返回插入结果（ID 列表字符串）。
+     */
+    public Mono<Result<String>> insertDataAsync() {
+        // === 1. 异步获取 embedding ===
+        return embeddingService.getEmbedding("樊迎宾")  // Mono<List<Double>>
+                .map(vectors -> {
+                    // === 2. 构建插入数据 ===
+                    List<VectorEntity> entities = new ArrayList<>();
+
+                    // 假设 vectors 是单个向量列表；若批量，取消注释循环
+                    VectorEntity entity = new VectorEntity();
+                    entity.setId(1L);
+                    entity.setVector(convertDoubleToFloatArray(vectors));  // 转换为 float[]
+                    entities.add(entity);
+
+                    // 若批量：
+                    // for (int i = 0; i < vectors.size(); i++) {
+                    //     VectorEntity e = new VectorEntity();
+                    //     e.setId((long) i + 1);
+                    //     e.setVector(convertToFloatArray(vectors.get(i)));
+                    //     entities.add(e);
+                    // }
+
+                    return entities;
+                })
+                .map(entities -> {
+                    // === 3. 插入向量（同步方法包装为 Mono） ===
+                    List<Long> longs = insertVectors(entities);
+                    return longs;
+                })
+                .subscribeOn(Schedulers.boundedElastic())  // 在 I/O 线程池执行，避免阻塞主线程
+                .map(longs -> Result.success(longs.toString()))  // === 4. 构建结果 ===
+                .onErrorMap(ex -> new RuntimeException("Insert data failed: " + ex.getMessage(), ex));  // 错误处理
+    }
+
+    /**
      * 1 insert 向量数据
      *
      * @return s
      */
     public Result<String> insertData() {
         // === 1 构建插入数据 ===
-//        List<List<Float>> vectors = Arrays.asList(randomVector(128), randomVector(128));
-        Mono<List<Float>> listMono = baichuanEmbeddingClient.embedText("樊迎宾");
-        log.info("--1--insertData--listMono: {}", JSON.toJSONString(listMono));
-        List<Double> doubleList = embeddingService.getEmbedding("樊迎宾");
 
-        log.info("--2--insertData--doubleList: {}", JSON.toJSONString(doubleList));
+        Mono<List<Double>> listMono1 = embeddingService.getEmbedding("樊迎宾");
 
-        List<Float> floats = embeddingService.generateEmbedding("樊迎宾");
-        if (ObjectUtil.isEmpty(floats)) {
-            return Result.error("embedding is null");
-        }
+
         List<VectorEntity> entities = new ArrayList<>();
 //        for (int i = 0; i < vectors.size(); i++) {
 //            VectorEntity entity = new VectorEntity();
@@ -229,7 +264,7 @@ public class MilvusService {
 //        }
         VectorEntity entity = new VectorEntity();
         entity.setId(1L);
-        entity.setVector(convertToFloatArray(floats));
+//        entity.setVector(convertToFloatArray(floats));
         entities.add(entity);
         List<Long> longs = insertVectors(entities);
         return Result.success(longs.toString());
@@ -427,7 +462,7 @@ public class MilvusService {
      * @return s
      */
     public String searchVector() {
-        List<Float> query = randomVector(128);
+        List<Float> query = randomVector(1024);
         SearchParam searchParam = SearchParam.newBuilder()
                 .withCollectionName(COLLECTION_NAME)
                 .withVectorFieldName("vector")
@@ -469,8 +504,20 @@ public class MilvusService {
     private float[] convertToFloatArray(List<Float> list) {
         float[] array = new float[list.size()];
         for (int i = 0; i < list.size(); i++) {
-// 注意：如果 list 中存在 null 元素，这里会抛出 NullPointerException
+            // 注意：如果 list 中存在 null 元素，这里会抛出 NullPointerException
             array[i] = list.get(i);
+        }
+        return array;
+    }
+
+    /**
+     * 辅助方法：将 List<Double> 转换为 float []
+     */
+    private float[] convertDoubleToFloatArray(List<Double> list) {
+        float[] array = new float[list.size()];
+        for (int i = 0; i < list.size(); i++) {
+            // 注意：如果 list 中存在 null 元素，这里会抛出 NullPointerException
+            array[i] = list.get(i).floatValue();  // Double 转换为 float
         }
         return array;
     }

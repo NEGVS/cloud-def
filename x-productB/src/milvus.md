@@ -2,6 +2,11 @@
 https://platform.baichuan-ai.com/docs/text-Embedding
 sess...e52c
 
+//        List<List<Float>> vectors = Arrays.asList(randomVector(128), randomVector(128));
+Mono<List<Float>> listMono = baichuanEmbeddingClient.embedText("樊迎宾");
+log.info("--1--insertData--listMono: {}", JSON.toJSONString(listMono));
+log.info("--2--insertData--doubleList: {}", JSON.toJSONString(listMono1));
+List<Float> floats = embeddingService.generateEmbedding("樊迎宾");
 
 # 下面是一个使用 **Spring Boot + Milvus** 的简单示例流程：
 **目标**：

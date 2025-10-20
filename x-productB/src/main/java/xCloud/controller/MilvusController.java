@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Mono;
 import xCloud.entity.Result;
 import xCloud.entity.VectorEntity;
 import xCloud.entity.dto.StockAllDTO;
@@ -73,8 +74,9 @@ public class MilvusController {
     @PostMapping("/create-collection")
     @Operation(summary = "0 创建 Milvus Collection")
     public String createCollection() {
-        milvusService.createCollection();
-        return "Collection created successfully";
+        String collection = milvusService.createCollection();
+        log.info(collection);
+        return collection;
     }
 
     /**
@@ -86,6 +88,25 @@ public class MilvusController {
     @Operation(summary = "1 插入 Milvus 数据")
     public Result<String> insert() {
         return milvusService.insertData();
+    }
+//如果必须保持同步返回（不推荐，高并发下退化
+//    public Result<String> insertData() {
+//        List<Double> vectors = milvusService.getEmbedding("樊迎宾").block();  // 阻塞获取（仅测试/低并发用）
+//        // ... 其余逻辑同上
+//        List<Long> longs = insertVectors(entities);
+//        return Result.success(longs.toString());
+//    }
+
+    /**
+     * 1111-插入 Milvus 数据
+     *
+     * @return String
+     */
+    @GetMapping("/milvus/insertAsync")
+    @Operation(summary = "1111Async 插入 Milvus 数据")
+    @PostMapping("/insert")
+    public Mono<Result<String>> insertAsync() {
+        return milvusService.insertDataAsync();
     }
 
     /**

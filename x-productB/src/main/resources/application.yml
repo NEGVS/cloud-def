@@ -49,18 +49,18 @@ mybatis-plus:
 #    MyBatis-Plus 默认启用下划线转驼峰命名
     map-underscore-to-camel-case: false
 
-# 日志配置log---
-#logging.level.xCloud.openAiChatModel.orchestrator.RagClient=DEBUG
+# 日志配置log---INFO---DEBUG
+#logging.level.xCloud.openAiChatModel.orchestrator.RagClient=INFO
 logging:
   level:
     # nacos日志，查找Nacos连接或配置加载的错误信息
-    com.alibaba.nacos: DEBUG
-    #    org.springframework.cloud.alibaba.nacos: DEBUG
-    org.springframework.cloud: DEBUG
-    io.grpc: DEBUG
-    org.springframework.web: DEBUG
+    com.alibaba.nacos: INFO
+    #    org.springframework.cloud.alibaba.nacos: INFO
+    org.springframework.cloud: INFO
+    io.grpc: INFO
+    org.springframework.web: INFO
     #  配置mybatis-plus日志必须2
-    com.baomidou.mybatisplus: DEBUG
+    com.baomidou.mybatisplus: INFO
 
 
 #        spring:
@@ -114,7 +114,8 @@ openai:
   model: text-embedding-3-small # 或者 text-embedding-3-large（按需）
 # Milvus vector dimension (和模型输出维度一致)
 vector:
-  dim: 1536
+  dim: 1024
+  collection: andy_vectors
 baichuan:
   api:
     url: https://api.baichuan-ai.com/v1/embeddings

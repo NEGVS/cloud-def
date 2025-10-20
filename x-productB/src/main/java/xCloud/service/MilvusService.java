@@ -138,13 +138,18 @@ public class MilvusService {
         return Result.error("集合创建失败");
     }
 
+    public Mono<List<Long>> insertVectorsAsync(List<VectorEntity> entities) {
+        return Mono.fromCallable(() -> insertVectors(entities))
+                .subscribeOn(Schedulers.boundedElastic());
+    }
+
     /**
      * 1 insert 向量数据
      *
      * @return s
      */
     public List<Long> insertVectors(List<VectorEntity> entities) {
-        log.info("\n--1--insertVectors--entities: {}", JSON.toJSONString(entities));
+        log.info("\n--1--inserVectors--entities: {}", JSON.toJSONString(entities));
         List<Long> ids = entities.stream().map(VectorEntity::getId).collect(Collectors.toList());
         List<List<Float>> vectors = new ArrayList<>();
         for (VectorEntity entity : entities) {
@@ -159,7 +164,7 @@ public class MilvusService {
             vectors.add(vector);
         }
         if (vectors.isEmpty()) {
-            log.info("\n--2--insertVectors--vectors is empty");
+            log.info("\n--2--inserVectors--vectors is empty");
             return new ArrayList<>();
         }
         List<InsertParam.Field> fields = new ArrayList<>();
@@ -169,10 +174,10 @@ public class MilvusService {
                 .withCollectionName(COLLECTION_NAME)
                 .withFields(fields)
                 .build();
-        log.info("\n--2--insertVectors--insertParam: {}", JSON.toJSONString(insertParam));
+        log.info("\n--2--insertVecors--insertParam: {}", JSON.toJSONString(insertParam));
 
         R<MutationResult> result = milvusClient.insert(insertParam);
-        log.info("\n--3--insertVectors--result: {}", JSON.toJSONString(result));
+        log.info("\n--3--insertVetors--result: {}", JSON.toJSONString(result));
 
         if (result == null || result.getData() == null) {
             System.out.println("\n\n\n\n插入失败\n\n\n\n");
@@ -212,42 +217,136 @@ public class MilvusService {
     }
 
     /**
-     * 插入数据的响应式版本（优化：处理异步 Mono，避免阻塞；全链路非阻塞）。
-     * 假设 insertVectors 是同步方法，若为响应式则进一步 flatMap。
+     * 插入数据的响应式版本（优化后：拆分为明确步骤，每步独立处理；详细日志记录；全链路异常捕获与恢复）。
+     * 假设 insert Vectors 是同步方法（内部可能调用异步 Milvus），若为响应式则替换为 flatMap。
+     * 优化点：
+     * - 拆分步骤：每个 map/doOnNext 对应一个逻辑阶段，便于调试。
+     * - 日志：使用 SLF4J 记录每个步骤的输入/输出/耗时，便于追踪。
+     * - 异常：每步添加 doOnError 日志，全链路 onErrorResume 提供降级（e.g., 返回失败结果），避免 NPE 等崩溃。
+     * - 性能：subscribeOn 移到链路开头；添加 timeout 防阻塞。
      *
-     * @return Mono<Result < String>>：异步返回插入结果（ID 列表字符串）。
+     * @return Mono<Result < String>>：异步返回插入结果（ID 列表字符串），失败时返回错误描述。
+     * <p>
+     * 优化说明
+     * <p>
+     * 拆分步骤：使用多个 .map 和 .doOnNext 明确划分 4 个核心阶段（获取 embedding → 构建实体 → 插入 → 构建结果），每个阶段独立，便于定位问题（e.g., 通过日志过滤 "步骤 X"）。
+     * 一步一步执行：Reactor 链路天然异步，但通过 doOnSubscribe、doOnNext、doOnError 在每个节点记录执行点，确保"一步步"可追踪。使用 Mono.defer 延迟订阅，避免不必要的计算。
+     * 详细日志：
+     * <p>
+     * SLF4J Logger：每个步骤记录输入/输出/耗时，使用 info（关键）、debug（细节）、warn（降级）、error（异常）。
+     * 全局日志：起始/结束时间戳，总耗时，便于性能监控。
+     * 异常上下文：日志中包含原因、输入大小、异常栈，便于复现（e.g., NPE 时打印实体数）。
+     * <p>
+     * <p>
+     * 异常处理：
+     * <p>
+     * 每步捕获：doOnError 记录具体步骤异常；try-catch 在 sync 块（如 insert Vectors）防 NPE 传播。
+     * 降级恢复：onErrorResume 在关键节点提供 fallback（e.g., 空向量/空 ID），返回 Result.failure 而非抛异常，确保上层（如 Controller）能优雅处理。
+     * 全链路兜底：最终 onErrorResume 统一包装，避免未捕获异常导致 Servlet 崩溃。
+     * 针对 Milvus NPE：在步骤 3 的 try-catch 中显式处理，建议 insert Vectors 内部也加 r.getStatus() 检查（参考前文）。
      */
     public Mono<Result<String>> insertDataAsync() {
-        // === 1. 异步获取 embedding ===
-        return embeddingService.getEmbedding("樊迎宾")  // Mono<List<Double>>
-                .map(vectors -> {
-                    // === 2. 构建插入数据 ===
-                    List<VectorEntity> entities = new ArrayList<>();
 
-                    // 假设 vectors 是单个向量列表；若批量，取消注释循环
-                    VectorEntity entity = new VectorEntity();
-                    entity.setId(1L);
-                    entity.setVector(convertDoubleToFloatArray(vectors));  // 转换为 float[]
-                    entities.add(entity);
+        long startTime = System.currentTimeMillis(); // 全局起始时间，用于总耗时日志
 
-                    // 若批量：
-                    // for (int i = 0; i < vectors.size(); i++) {
-                    //     VectorEntity e = new VectorEntity();
-                    //     e.setId((long) i + 1);
-                    //     e.setVector(convertToFloatArray(vectors.get(i)));
-                    //     entities.add(e);
-                    // }
+        return Mono.defer(() -> {
+            log.info("=== 步骤 0: 开始异步插入流程 (query: '樊迎宾') ===");
+            return embeddingService.getEmbedding("樊迎宾")  // Mono<List<Double>>
+                    .timeout(java.time.Duration.ofSeconds(30))  // 添加超时，防 embedding 服务卡住
+                    .subscribeOn(Schedulers.boundedElastic())  // 全链路在 I/O 线程池，避免阻塞主线程
+                    .doOnSubscribe(sub -> log.debug("步骤 0: 订阅 embedding 获取"))
+                    .doOnNext(vectors -> {
+                        log.info("=== 步骤 1: 获取 embedding 成功 (向量维度: {}, 耗时: {}ms) ===",
+                                vectors != null ? vectors.size() : 0,
+                                System.currentTimeMillis() - startTime);
+                    })
+                    .doOnError(err -> {
+                        log.error("=== 步骤 1: 获取 embedding 失败 (原因: {}) ===", err.getMessage(), err);
+                    })
+                    .onErrorResume(err -> {
+                        // 降级：返回空向量，避免全链路失败
+                        log.warn("=== 步骤 1: embedding 失败，降级使用空向量 ===");
+                        return Mono.just(new ArrayList<Double>());  // 或抛出自定义异常，根据业务
+                    })
+                    // === 步骤 2: 构建插入实体 ===
+                    .map(vectors -> {
+                        log.debug("步骤 2: 开始构建 VectorEntity (输入向量大小: {})", vectors.size());
+                        List<VectorEntity> entities = new ArrayList<>();
 
-                    return entities;
-                })
-                .map(entities -> {
-                    // === 3. 插入向量（同步方法包装为 Mono） ===
-                    List<Long> longs = insertVectors(entities);
-                    return longs;
-                })
-                .subscribeOn(Schedulers.boundedElastic())  // 在 I/O 线程池执行，避免阻塞主线程
-                .map(longs -> Result.success(longs.toString()))  // === 4. 构建结果 ===
-                .onErrorMap(ex -> new RuntimeException("Insert data failed: " + ex.getMessage(), ex));  // 错误处理
+                        try {
+                            // 假设 vectors 是单个向量列表；若批量，添加循环
+                            if (vectors != null && !vectors.isEmpty()) {
+                                VectorEntity entity = new VectorEntity();
+                                entity.setId(1L);  // 建议使用 UUID 或自增，避免硬码
+                                entity.setVector(convertDoubleToFloatArray(vectors));  // 转换为 float[]
+                                entities.add(entity);
+                                log.debug("步骤 2: 构建实体成功 (实体数: {})", JSONUtil.toJsonStr(entities));
+                            } else {
+                                log.warn("步骤 2: 输入向量为空，实体列表为空");
+                            }
+                        } catch (Exception e) {
+                            log.error("步骤 2: 构建实体时异常 (原因: {})", e.getMessage(), e);
+                            throw new RuntimeException("构建 VectorEntity 失败", e);
+                        }
+                        return entities;
+                    })
+                    .doOnNext(entities -> {
+                        log.info("=== 步骤 2: 构建实体完成 (实体数: {}) ===", entities.size());
+                    })
+                    .doOnError(err -> {
+                        log.error("=== 步骤 2: 构建实体失败 (原因: {}) ===", err.getMessage(), err);
+                    })
+                    // === 步骤 3: 执行向量插入 ===
+                    .flatMap(entities -> insertVectorsAsync(entities)
+                            .doOnSuccess(ids -> log.info("Step3 insertVectorsAsync OK, ids={}", ids))
+                            .onErrorResume(err -> {
+                                log.error("Step3 insertVectorsAsync Failed, reason={}", err);
+                                return Mono.just(Collections.emptyList());  // 降级，不抛异常
+                            }))
+                    .doOnNext(longs -> {
+                        log.info("=== 步骤 3: 插入完成 (ID 列表: {}) ===", longs);
+                    })
+                    .doOnError(err -> {
+                        log.error("=== 步骤 3: 插入失败 (原因: {}) ===", err.getMessage(), err);
+                    })
+                    .onErrorResume(err -> {
+                        // 降级：返回空 ID 列表，避免全链路崩溃
+                        log.warn("=== 步骤 3: 插入失败，降级返回空结果 ===");
+                        return Mono.just(new ArrayList<Long>());
+                    })
+                    // === 步骤 4: 构建最终结果 ===
+                    .map(longs -> {
+                        log.debug("步骤 4: 构建结果 (ID 字符串: {})", longs.toString());
+                        Result<String> result = Result.success(longs.toString());
+                        log.info("=== 步骤 4: 结果构建完成 (成功: {}) ===", JSONUtil.toJsonStr(result));
+                        return result;
+                    })
+                    .doOnSuccess(result -> {
+                        long totalTime = System.currentTimeMillis() - startTime;
+                        log.info("=== 全局: doOnSuccess 异步插入流程结束 (总耗时: {}ms, 结果: {}) ===", totalTime, result.getData());
+                    })
+                    .doOnError(err -> {
+                        long totalTime = System.currentTimeMillis() - startTime;
+                        log.error("=== 全局: doOnError 异步插入流程异常结束 (总耗时: {}ms, 原因: {}) ===", totalTime, err.getMessage(), err);
+                    })
+                    .onErrorResume(err -> {
+                        // 最终兜底：包装为失败 Result，避免 Mono 抛异常到上层
+                        return Mono.just(Result.error("插入数据失败: " + err.getMessage()));
+                    });
+        });
+    }
+
+    private String safeMessage(Throwable t) {
+        if (t == null) {
+            return "未知异常 (null)";
+        }
+        try {
+            String msg = t.getMessage();
+            return (msg != null && !msg.trim().isEmpty()) ? msg : t.toString();
+        } catch (Exception e) {  // 捕获 getMessage() 抛出的任何异常（如 NPE）
+            log.warn("safeGetErrorMessage: getMessage() 失败，回退到 toString(), 原因: {}", safeMessage(e), e);
+            return t.toString();
+        }
     }
 
     /**

@@ -1,9 +1,7 @@
 package xCloud.service;
 
-import ai.djl.huggingface.tokenizers.HuggingFaceTokenizer;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 
 /**
  * @Description
@@ -16,13 +14,8 @@ public class VectorService {
 
     private static final int VECTOR_DIMENSION = 128; // 根据模型调整
 
-    private final HuggingFaceTokenizer tokenizer;
 
-    public VectorService() throws IOException {
-        // 加载分词器，这里使用一个简单的分词器作为示例
-        // 实际应用中应使用合适的模型生成向量
-        this.tokenizer = HuggingFaceTokenizer.newInstance("sentence-transformers/all-MiniLM-L6-v2");
-    }
+
 
     /**
      * 将文本转换为向量

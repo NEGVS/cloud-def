@@ -7,7 +7,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -41,12 +40,16 @@ public class OrderService {
 
     @Resource
     private StringRedisTemplate redisTemplate;
+
     @Resource
     private OrderMapper orderMapper;
+
     @Resource
     private LogsMapper logsMapper;
+
     @Resource
     private OutboxMapper outboxMapper;
+
     @Resource
     private KafkaTemplate<String, Object> kafkaTemplate;
 
@@ -115,6 +118,7 @@ public class OrderService {
             throw e;  // 或自定义 ErrorHandler
         }
     }
+    //--------------------------1020-1--------------------------
 
     /**
      * Kafka 消费端异步处理订单（幂等设计）

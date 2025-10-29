@@ -1,11 +1,13 @@
 package xCloud.andy.tool;
 
+import cn.hutool.json.JSONUtil;
 import xCloud.service.serviceImpl.CodeX;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -18,39 +20,92 @@ import java.util.Set;
 public class SetPackage {
 
 
-    // Java源文件的基础路径（根据实际项目结构调整）
+    //1-获取该路径下所有文件
+    private static final String BASE_File_PATH = "/Users/andy_mac/Documents/CodeSpace/andyProject0/demi_vue_boot/ruoyi-system/src/main/resources/mapper/demi/stock/stockB";
+
+    //2-【不能修改】Java源文件的基础路径（根据实际项目结构调整）
     // 例如：如果文件完整路径是 /xxx/ruoyi-system/src/main/java/com/xxx/AiRobotVO.java
     // 则基础路径应为 /xxx/ruoyi-system/src/main/java/
-    private static final String BASE_JAVA_PATH = "/Users/andy_mac/Documents/CodeSpace/andyProject0/demi_vue_boot/ruoyi-system/src/main/java/";
+    private static final String BASE_JAVA_PATH = "/Users/andy_mac/Documents/CodeSpace/andyProject0/demi_vue_boot/ruoyi-admin/src/main/java/";
+//    private static final String BASE_JAVA_PATH = "/Users/andy_mac/Documents/CodeSpace/andyProject0/demi_vue_boot/ruoyi-system/src/main/java/";
 
     public static void main(String[] args) {
-        System.out.println("xCloud.andy.tool");
-        //该路径下时所有文件
-        String packageName2 = "/Users/andy_mac/Documents/CodeSpace/andyProject0/demi_vue_boot/ruoyi-system/src/main/java/com/ruoyi/demi/stock";
+        replaceFileString();
+//        getEntityPackages();
+        //运行 生成包导入
+//        generatePackage();
+    }
 
-        Set<String> filePaths = CodeX.listFiles(packageName2);
+    public static void replaceFileString() {
+        //1-获取所有文件
+        Set<String> filePaths = CodeX.listFiles(BASE_File_PATH);
         System.out.println(filePaths);
+        System.out.println(filePaths.size());
         for (String filePath : filePaths) {
-            ///filePath = Users/andy_mac/Documents/CodeSpace/andyProject0/demi_vue_boot/ruoyi-system/src/main/java/com/ruoyi/hro/srzp/andyCodeGeneration/entity/vo/AiRobotVO.java
-            System.out.println(filePath);
-            //读取文件
-            //判断第一行是否倒入包：包含关键字 package com
-            //如果没有，添加倒入包：com.ruoyi.hro.srzp.andyCodeGeneration.entity.vo
-            //注意：倒入包是根据文件路径来判断的
-            //再写入文件
+            CodeX.replaceString(filePath, "ruoyi.demi.stock.stockB", "xCloud.system", true);
         }
-        for (String filePath : filePaths) {
-            System.out.println("处理文件: " + filePath);
+    }
+    public static void getEntityPackages() {
+        //1-获取所有文件
+        Set<String> filePaths = CodeX.listFiles(BASE_File_PATH);
+        System.out.println(filePaths);
+        System.out.println(filePaths.size());
+        List<String> lines_final = new ArrayList<>();
 
+        int count = 0;
+        for (String filePath : filePaths) {
             try {
-                // 读取文件所有行
+                /*
+                 *2-读取文件所有行
+                 */
                 List<String> lines = Files.readAllLines(Paths.get(filePath), StandardCharsets.UTF_8);
+                if (!lines.isEmpty()) {
+                    lines_final.add(lines.get(0).split(" ")[1].replace(";", ".") + CodeX.getFileNameA(filePath));
+                }
+            } catch (IOException e) {
+                System.err.println("处理文件时发生错误: " + filePath);
+            }
+        }
+        System.out.println(JSONUtil.toJsonStr(lines_final));
+        lines_final.forEach(System.out::println);
+    }
+
+    /**
+     * 生成包导入
+     */
+    private static void generatePackage() {
+        //1-获取所有文件
+        Set<String> filePaths = CodeX.listFiles(BASE_File_PATH);
+        System.out.println(filePaths);
+        System.out.println(filePaths.size());
+        int count = 0;
+        for (String filePath : filePaths) {
+            System.out.println();
+            System.out.println(++count + "处理文件: " + filePath);
+            try {
+                /*
+                 *2-读取文件所有行
+                 */
+                List<String> lines = Files.readAllLines(Paths.get(filePath), StandardCharsets.UTF_8);
+                /*
+                 *3-清除元素，检查列表非空后再删除第一个元素，避免索引越界异常
+                 */
+                if (!lines.isEmpty()) {
+                    lines.remove(0); // 删除第一个元素（索引为0）
+                }
+                // 关键代码：删除所有包含"domain"的元素（不区分大小写）
+//                lines.removeIf(line -> line.contains("domain"));
+                lines.removeIf(line -> line.contains(".xCloud."));
+                // 若需不区分大小写（如删除"Domain"、"DOMAIN"等），可修改为：
+                // lines.removeIf(line -> line.toLowerCase().contains("domain"));
+
 
                 // 检查是否已包含package声明
-                boolean hasPackage = !lines.isEmpty() && lines.get(0).trim().startsWith("package com");
+//                boolean hasPackage = !lines.isEmpty() && lines.get(0).trim().startsWith("package com");
+                // 判断是否是xml文件
                 boolean isXml = !lines.isEmpty() && lines.get(0).trim().contains("xml");
                 //无包，非xml文件
-                if (!hasPackage && !isXml) {
+                if (!isXml) {
                     // 根据文件路径生成对应的包名
                     String packageName = generatePackageName(filePath);
                     if (packageName != null) {
@@ -84,14 +139,7 @@ public class SetPackage {
      * @return 包名，如com.ruoyi.hro.srzp.andyCodeGeneration.entity.vo
      */
     private static String generatePackageName(String filePath) {
-        // 找到基础路径在文件路径中的位置
-//        int baseIndex = filePath.indexOf(BASE_JAVA_PATH);
-//        if (baseIndex == -1) {
-//            return null;
-//        }
-
         // 提取基础路径之后的部分（包路径+文件名）
-//        String packagePathPart = filePath.substring(baseIndex + BASE_JAVA_PATH.length());
         String packagePathPart = filePath.replace(BASE_JAVA_PATH, "");
 
         // 找到最后一个斜杠的位置（分割目录和文件名）

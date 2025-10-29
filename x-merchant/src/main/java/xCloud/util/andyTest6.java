@@ -37,9 +37,9 @@ public class andyTest6 {
             } else {
                 System.out.println("1-------");
             }
-            if (true) {
-                return;
-            }
+//            if (true) {
+//                return;
+//            }
             List<Merchants> businessUsers = new ArrayList<>();
             businessUsers.add(new Merchants(1, "1", "1", "1", "1", "1", 1, 1, new BigDecimal("1"), new BigDecimal("1"), new BigDecimal("1"), "1", "1", new Date(), new Date()));
             businessUsers.add(new Merchants(2, "1", "1", "1", "1", "1", 1, 1, new BigDecimal("1"), new BigDecimal("1"), new BigDecimal("1"), "1", "1", new Date(), new Date()));

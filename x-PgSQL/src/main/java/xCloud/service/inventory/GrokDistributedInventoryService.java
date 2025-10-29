@@ -11,9 +11,9 @@ import xCloud.mapper.InventoryMapper;
 import java.util.concurrent.TimeUnit;
 
 /**
- * @Description
- * @Author Andy Fan
- * @Date 2025/10/21 10:17
+ * @description xx
+ * @author Andy Fan
+ * @date 2025/10/21 10:17
  * @ClassName GrokDistributedInventoryService
  * <p>
  * 5. 高可用完善：分布式库存扣减

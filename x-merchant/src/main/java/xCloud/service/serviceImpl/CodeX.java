@@ -109,14 +109,14 @@ import java.util.zip.GZIPOutputStream;
 public class CodeX {
     public static void main(String[] args) {
 
-        BigDecimal bigDecimal = calculateFinalAmount(new BigDecimal(500000), true, 5, BigDecimal.valueOf(14));
+        BigDecimal bigDecimal = calculateFinalAmount(new BigDecimal(10000), true, 10, BigDecimal.valueOf(2.7));
         System.out.println(bigDecimal);
         System.out.println("------");
 //        3506.94，0.09涨--7-18
 //        成为千万富翁的秘诀：未来24个月每月盈利14%。
-        if (true) {
-            return;
-        }
+//        if (true) {
+//            return;
+//        }
 //        3603,7-25,5day
 //        3593,4day
 //        计算5天时间从3603涨到3731.94，5天的最佳涨幅是多少
@@ -132,9 +132,9 @@ public class CodeX {
 
         // 本金 1000，上涨 5%，目标 1200--3731-3500=231/3500=0.066 6.6%
         System.out.println(calculateDaysToTargetCompound(3593.66, true, 1, 3731.94)); // 输出：4
-        if (true) {
-            return;
-        }
+//        if (true) {
+//            return;
+//        }
 
         System.out.println(calculateFinalAmount(BigDecimal.valueOf(100000), true, 10, BigDecimal.valueOf(5))); // 输出：4
 
@@ -197,7 +197,7 @@ public class CodeX {
         if (days <= 0 || Double.isInfinite(days) || Double.isNaN(days)) {
             return -1;
         }
-        System.out.println("本金: " + principal + "，日利率: " + rate + "%，目标点数: " + targetAmount + "，是否递增: " + isRising);
+        System.out.println("###############计算达到目标金额所需的天数（复利）#########################################\n本金: " + principal + "，日利率: " + rate + "%，目标点数: " + targetAmount + "，是否递增: " + isRising);
         double money = principal;
         int daysToTarget = (int) Math.ceil(days);
         for (int i = 1; i <= daysToTarget; i++) {
@@ -302,13 +302,13 @@ public class CodeX {
                 .setScale(2, RoundingMode.HALF_UP);
 
         // 输出结果
-        System.out.println("--------------------------------");
+        System.out.println("---------------==============");
         System.out.println("初始金额：" + principal);
         System.out.println("最终金额：" + finalAmount);
         System.out.println("增涨：" + increaseAmount);
 //        System.out.println("涨幅（小数）：" + increaseRate);       // 示例输出：涨幅（小数）：0.2501
         System.out.println("涨幅（百分比）：" + increaseRatePercent + "%");  // 示例输出：涨幅（百分比）：25.01%
-        System.out.println("--------------------------------");
+        System.out.println("=======================================================end");
 
         return finalAmount;
     }
@@ -360,6 +360,14 @@ public class CodeX {
         }
         System.out.println(stringBuilder2.substring(0, stringBuilder2.lastIndexOf(",")));
         System.out.println(stringBuilder3.substring(0, stringBuilder3.lastIndexOf(",")));
+    }
+
+    /**
+     * 获取名字（不包含后缀）(fileName)
+     *
+     */
+    public static String getFileNameA(String fullFilePath) {
+        return fullFilePath.substring(fullFilePath.lastIndexOf("/") + 1, fullFilePath.lastIndexOf("."));
     }
 
     public static void testSubString() {

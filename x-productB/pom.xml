@@ -16,6 +16,7 @@
 
 
     <dependencies>
+        <!-- 阿里 DashScope SDK -->
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>dashscope-sdk-java</artifactId>
@@ -67,7 +68,7 @@
         <dependency>
             <groupId>io.milvus</groupId>
             <artifactId>milvus-sdk-java</artifactId>
-            <version>2.6.2</version> <!-- 请使用最新版本 -->
+            <version>2.6.6</version> <!-- 请使用最新版本 -->
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>

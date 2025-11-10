@@ -6,6 +6,7 @@ import io.milvus.param.collection.HasCollectionParam;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,7 @@ import xCloud.entity.Result;
 import xCloud.entity.VectorEntity;
 import xCloud.entity.dto.StockAllDTO;
 import xCloud.entity.dto.StockRuleDTO;
+import xCloud.entity.request.MilvusRequest;
 import xCloud.service.MilvusService;
 
 import java.util.ArrayList;
@@ -38,6 +40,7 @@ public class MilvusController {
 
     @Resource
     private MilvusServiceClient milvusClient;
+
     @Resource
     private MilvusService milvusService;
 
@@ -67,12 +70,12 @@ public class MilvusController {
     }
 
     /**
-     * 0-创建 Milvus Collection
+     * 0-创建 Milvus 1024 Collection
      *
      * @return String
      */
     @PostMapping("/create-collection")
-    @Operation(summary = "0 创建 Milvus Collection")
+    @Operation(summary = "0 创建 Milvus 1024 Collection")
     public Result<String> createCollection() {
         return milvusService.createCollection();
     }
@@ -82,10 +85,10 @@ public class MilvusController {
      *
      * @return String
      */
-    @GetMapping("/milvus/insert")
+    @GetMapping("/milvus/insertVector")
     @Operation(summary = "1 插入 Milvus 数据")
-    public Result<String> insert() {
-        return milvusService.insertData();
+    public Result<String> insertVector(@Valid @RequestBody MilvusRequest request) {
+        return milvusService.insertVector(request);
     }
 //如果必须保持同步返回（不推荐，高并发下退化
 //    public Result<String> insertData() {

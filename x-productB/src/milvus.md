@@ -1,6 +1,27 @@
 # Embedding
 https://platform.baichuan-ai.com/docs/text-Embedding
 sess...e52c
+为向量字段设置索引参数
+为了加速语义搜索，必须为向量字段创建索引。索引可以大大提高大规模向量数据的检索效率。
+```java
+  import io.milvus.v2.common.IndexParam;
+  import java.util.*;
+  
+  List<IndexParam> indexes = new ArrayList<>();
+  
+  indexes.add(IndexParam.builder()
+  .fieldName("dense_vector")
+  .indexType(IndexParam.IndexType.AUTOINDEX)
+  .metricType(IndexParam.MetricType.IP)
+  .build());
+```
+在上面的示例中，使用AUTOINDEX 索引类型为dense_vector 字段创建了名为dense_vector_index 的索引。metric_type 设置为IP ，表示将使用内积作为距离度量。
+
+Milvus 提供多种索引类型，以获得更好的向量搜索体验。AUTOINDEX 是一种特殊的索引类型，旨在平滑向量搜索的学习曲线。有很多索引类型可供您选择。详情请参阅 xxx。
+
+
+
+
 
 //        List<List<Float>> vectors = Arrays.asList(randomVector(128), randomVector(128));
 Mono<List<Float>> listMono = baichuanEmbeddingClient.embedText("樊迎宾");

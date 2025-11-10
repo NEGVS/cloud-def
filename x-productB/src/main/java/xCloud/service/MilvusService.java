@@ -3,6 +3,8 @@ package xCloud.service;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.json.JSONUtil;
 import com.alibaba.fastjson.JSON;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import io.milvus.client.MilvusServiceClient;
 import io.milvus.grpc.DataType;
 import io.milvus.grpc.FlushResponse;
@@ -26,6 +28,11 @@ import io.milvus.param.highlevel.collection.ListCollectionsParam;
 import io.milvus.param.highlevel.collection.response.ListCollectionsResponse;
 import io.milvus.param.index.CreateIndexParam;
 import io.milvus.response.SearchResultsWrapper;
+import io.milvus.v2.client.ConnectConfig;
+import io.milvus.v2.client.MilvusClientV2;
+import io.milvus.v2.service.collection.request.CreateCollectionReq;
+import io.milvus.v2.service.vector.request.InsertReq;
+import io.milvus.v2.service.vector.response.InsertResp;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -35,6 +42,7 @@ import reactor.core.scheduler.Schedulers;
 import xCloud.entity.Result;
 import xCloud.entity.Sentence;
 import xCloud.entity.VectorEntity;
+import xCloud.entity.request.MilvusRequest;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -138,17 +146,6 @@ public class MilvusService {
         return Result.error("集合创建失败");
     }
 
-    public Mono<List<Long>> insertVectorsAsync(List<VectorEntity> entities) {
-        try {
-            Mono<List<Long>> listMono = Mono.fromCallable(() -> insertVectors(entities))
-                    .subscribeOn(Schedulers.boundedElastic());
-            log.info("\n--3--insertVectorsAsync--listMono: {}", JSONUtil.toJsonStr(listMono));
-            return listMono;
-        } catch (Exception e) {
-            log.error("\n\nError inserting vectors: {}", e.getMessage());
-            return Mono.error(e);
-        }
-    }
 
     /**
      * 1 insert 向量数据
@@ -221,6 +218,24 @@ public class MilvusService {
         log.info("\n--5--Load Collection 到内存用于查询: {}", JSON.toJSONString(rpcStatusR));
 
         return result.getData().getIDs().getIntIdOrBuilder().getDataList();
+    }
+
+    /**
+     * 1.1 异步插入向量数据
+     *
+     * @param entities
+     * @return
+     */
+    public Mono<List<Long>> insertVectorsAsync(List<VectorEntity> entities) {
+        try {
+            Mono<List<Long>> listMono = Mono.fromCallable(() -> insertVectors(entities))
+                    .subscribeOn(Schedulers.boundedElastic());
+            log.info("\n--3--insertVectorsAsync--listMono: {}", JSONUtil.toJsonStr(listMono));
+            return listMono;
+        } catch (Exception e) {
+            log.error("\n\nError inserting vectors: {}", e.getMessage());
+            return Mono.error(e);
+        }
     }
 
     /**
@@ -361,12 +376,9 @@ public class MilvusService {
      *
      * @return s
      */
-    public Result<String> insertData() {
+    public Result<String> insertVector(MilvusRequest request) {
         // === 1 构建插入数据 ===
-
         Mono<List<Double>> listMono1 = embeddingService.getEmbedding("樊迎宾");
-
-
         List<VectorEntity> entities = new ArrayList<>();
 //        for (int i = 0; i < vectors.size(); i++) {
 //            VectorEntity entity = new VectorEntity();
@@ -382,30 +394,17 @@ public class MilvusService {
         return Result.success(longs.toString());
     }
 
-    /**
-     * 1 插入句子
-     */
-    public void insertSentences(List<Sentence> sentences) {
-        List<Long> ids = sentences.stream().map(Sentence::getId).collect(Collectors.toList());
-        List<String> contents = sentences.stream().map(Sentence::getContent).collect(Collectors.toList());
-        List<float[]> vectors = sentences.stream().map(Sentence::getVector).collect(Collectors.toList());
+    public void insertR() {
+        List<JsonObject> rows = new ArrayList<>();
+        Gson gson = new Gson();
+        rows.add(gson.fromJson("{\"dense_vector\": [0.1, 0.2, 0.3, 0.4]}", JsonObject.class));
+        rows.add(gson.fromJson("{\"dense_vector\": [0.2, 0.3, 0.4, 0.5]}", JsonObject.class));
+        MilvusClientV2 client = new MilvusClientV2(ConnectConfig.builder()
+                .uri("http://localhost:19530")
+                .build());
 
-//        InsertParam insertParam = InsertParam.newBuilder()
-//                .withCollectionName(COLLECTION_NAME)
-////                .withFieldNames("id", "content", "vector")
-//                .withFields(ids, contents, vectors)
-//                .build();
-
-//        InsertResponse response = milvusClient.insert(insertParam);
-//        if (response.getStatus() != R.Status.Success.getCode()) {
-//            throw new RuntimeException("插入数据失败: " + response.getMessage());
-//        }
-//
-//        // 刷新集合使数据可查
-//        milvusClient.flush(FlushParam.newBuilder()
-//                .withCollectionNames(COLLECTION_NAME)
-//                .build());
     }
+
 
     /**
      * 2 删除集合
@@ -550,6 +549,7 @@ public class MilvusService {
 
     /**
      * 4- 查询集合名称列表
+     * url: https://milvus.io/docs/zh/view-collections.md
      */
     public List<String> getCollectionNames() {
         try {

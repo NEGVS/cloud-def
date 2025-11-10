@@ -1,4 +1,4 @@
-package xCloud.openAiChatModel.ali;
+package xCloud.openAiChatModel.ali.embedding;
 
 /**
  * @Description 文本 转 向量
@@ -19,19 +19,22 @@ package xCloud.openAiChatModel.ali;
  * 处理大规模数据：若您需要处理大规模、非实时的文本数据，建议使用 text-embedding-v4 并结合 OpenAI兼容-Batch调用，以显著降低成本。
  * <p>
  * 下表包含所有可用向量化模型的详细规格。
- *
+ * <p>
  * text-embedding-v4
  * 是通义实验室基于Qwen3训练的多语言文本统一向量模型，相较V3版本在文本检索、聚类、分类性能大幅提升；在MTEB多语言、中英、Code检索等评测任务上效果提升15%~40%；支持64~2048维用户自定义向量维度。
- *
  */
 
 import com.alibaba.dashscope.embeddings.TextEmbedding;
+import com.alibaba.dashscope.embeddings.TextEmbeddingOutput;
 import com.alibaba.dashscope.embeddings.TextEmbeddingParam;
 import com.alibaba.dashscope.embeddings.TextEmbeddingResult;
+import com.alibaba.dashscope.embeddings.TextEmbeddingResultItem;
+import com.alibaba.dashscope.embeddings.TextEmbeddingUsage;
 import com.alibaba.dashscope.exception.NoApiKeyException;
 import com.alibaba.dashscope.utils.Constants;
 
 import java.util.Collections;
+import java.util.List;
 
 public class Main {
     /**
@@ -41,6 +44,13 @@ public class Main {
      * }
      */
     public static void main(String[] args) {
+
+
+        AliEmbeddingUtil aliEmbeddingUtil = new AliEmbeddingUtil();
+
+
+
+
         // 手动从环境变量获取并设置 API Key
         String apiKey = System.getenv("DASHSCOPE_API_KEY");
         System.out.println(apiKey);
@@ -66,6 +76,23 @@ public class Main {
 
             // 输出结果
             System.out.println(result);
+
+            String requestId = result.getRequestId();
+            TextEmbeddingUsage usage = result.getUsage();
+            Integer totalTokens = usage.getTotalTokens();
+            System.out.println("请求ID：" + requestId);
+            System.out.println("总 Tokens：" + totalTokens);
+            TextEmbeddingOutput output = result.getOutput();
+            List<TextEmbeddingResultItem> embeddings = output.getEmbeddings();
+            System.out.println("向量数量：" + embeddings.size());
+            for (TextEmbeddingResultItem embedding : embeddings) {
+                Integer textIndex = embedding.getTextIndex();
+                List<Double> embeddingVector = embedding.getEmbedding();
+                System.out.println("文本索引：" + textIndex);
+                System.out.println("向量：" + embeddingVector);
+                System.out.println("向量：" + embeddingVector.size());
+            }
+
 
         } catch (NoApiKeyException e) {
             // 捕获并处理API Key未设置的异常

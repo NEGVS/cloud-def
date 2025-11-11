@@ -7,8 +7,6 @@ package xCloud.config;
  * @ClassName MilvusConfig
  */
 
-import io.milvus.client.MilvusServiceClient;
-import io.milvus.param.ConnectParam;
 import io.milvus.v2.client.ConnectConfig;
 import io.milvus.v2.client.MilvusClientV2;
 import org.springframework.beans.factory.annotation.Value;

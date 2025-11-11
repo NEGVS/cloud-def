@@ -117,7 +117,7 @@ openai:
 # Milvus vector dimension (和模型输出维度一致)
 vector:
   dim: 1024
-  collection: andy_vectors
+  collection: andy_vectorsV2
 deepSeek:
   api:
     url: https://api.deepseek.com

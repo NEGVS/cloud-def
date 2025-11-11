@@ -1,30 +1,39 @@
 package xCloud.controller;
 
 
-import io.milvus.client.MilvusServiceClient;
-import io.milvus.param.collection.HasCollectionParam;
+import io.milvus.v2.client.MilvusClientV2;
+import io.milvus.v2.service.collection.CollectionInfo;
+import io.milvus.v2.service.collection.request.DropCollectionReq;
+import io.milvus.v2.service.collection.request.HasCollectionReq;
+import io.milvus.v2.service.collection.response.ListCollectionsResp;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 import xCloud.entity.Result;
 import xCloud.entity.VectorEntity;
 import xCloud.entity.dto.StockAllDTO;
 import xCloud.entity.dto.StockRuleDTO;
+import xCloud.entity.request.DropCollectionRequest;
 import xCloud.entity.request.MilvusRequest;
-import xCloud.service.MilvusService;
+import xCloud.entity.request.MilvusSearchReq;
+import xCloud.service.Embedding2Service;
+import xCloud.tools.CodeX;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 /**
@@ -38,12 +47,15 @@ import java.util.Random;
 @RestController
 public class MilvusController {
 
-    @Resource
-    private MilvusServiceClient milvusClient;
 
     @Resource
-    private MilvusService milvusService;
+    private MilvusClientV2 milvusClientV2;
 
+    @Resource
+    private Embedding2Service embedding2Service;
+
+    @Value("${vector.collection}")
+    private String collectionName;
 
     /**
      * 0-测试 Milvus 连接
@@ -55,13 +67,13 @@ public class MilvusController {
     public String testMilvus() {
         try {
             // 测试是否能连接到 Milvus
-            boolean connected = milvusClient != null;
+            boolean connected = milvusClientV2 != null;
             // 检查一个不存在的 Collection
-            boolean has = milvusClient.hasCollection(
-                    HasCollectionParam.newBuilder()
-                            .withCollectionName("test_collection")
+            boolean has = milvusClientV2.hasCollection(
+                    HasCollectionReq.builder()
+                            .collectionName(collectionName)
                             .build()
-            ).getData();
+            ).booleanValue();
 
             return "Milvus 连接成功！客户端可用: " + connected + ", Collection存在: " + has;
         } catch (Exception e) {
@@ -77,7 +89,8 @@ public class MilvusController {
     @PostMapping("/create-collection")
     @Operation(summary = "0 创建 Milvus 1024 Collection")
     public Result<String> createCollection() {
-        return milvusService.createCollection();
+        embedding2Service.createCollection();
+        return Result.success("Collection 创建成功");
     }
 
     /**
@@ -85,38 +98,39 @@ public class MilvusController {
      *
      * @return String
      */
-    @GetMapping("/milvus/insertVector")
+    @PostMapping("/milvus/insertVector")
     @Operation(summary = "1 插入 Milvus 数据")
-    public Result<String> insertVector(@Valid @RequestBody MilvusRequest request) {
-        return milvusService.insertVector(request);
+    public Result<Object> insertVector(@Valid @RequestBody MilvusRequest request) {
+        return embedding2Service.insertVector(CodeX.nextId(), request.getText());
     }
 //如果必须保持同步返回（不推荐，高并发下退化
 //    public Result<String> insertData() {
-//        List<Double> vectors = milvusService.getEmbedding("樊迎宾").block();  // 阻塞获取（仅测试/低并发用）
+//        List<Double> vectors = embedding2Service.getEmbedding("樊迎宾").block();  // 阻塞获取（仅测试/低并发用）
 //        // ... 其余逻辑同上
 //        List<Long> longs = insertVectors(entities);
 //        return Result.success(longs.toString());
 //    }
 
     /**
-     * 1111-插入 Milvus 数据
+     * 1-1-异步 插入 Milvus 数据
      *
      * @return String
      */
     @GetMapping("/milvus/insertAsync")
-    @Operation(summary = "1111Async 插入 Milvus 数据")
+    @Operation(summary = "1-1 Async 插入 Milvus 数据")
     @PostMapping("/insert")
     public Mono<Result<String>> insertAsync() {
-        return milvusService.insertDataAsync();
+        embedding2Service.insertVector(CodeX.nextId(), "");
+        return Mono.just(Result.success("插入成功"));
     }
 
     /**
-     * 1.1-插入 Milvus 数据
+     * 1.2-插入 Milvus 数据
      *
      * @return List<Long>
      */
     @PostMapping("/insert")
-    @Operation(summary = "1 插入 Milvus 数据[随机]")
+    @Operation(summary = "1-2 插入 Milvus 数据[随机]")
     public List<Long> insertVectors() {
         // 生成示例数据
         List<VectorEntity> entities = new ArrayList<>();
@@ -134,8 +148,8 @@ public class MilvusController {
 
             entities.add(entity);
         }
-
-        return milvusService.insertVectors(entities);
+        embedding2Service.insertVectors(null, null);
+        return List.of(CodeX.nextId());
     }
 
     /**
@@ -145,13 +159,13 @@ public class MilvusController {
      */
     @DeleteMapping("/drop-collection")
     @Operation(summary = "2 删除 Milvus Collection")
-    public ResponseEntity<Void> dropCollection() {
+    public Result<Object> dropCollection(@Valid @RequestBody DropCollectionRequest request) {
         try {
-            milvusService.dropCollection();
-            return ResponseEntity.noContent().build();
+            milvusClientV2.dropCollection(DropCollectionReq.builder().collectionName(request.getName()).build());
+            return Result.success("Collection 删除成功");
         } catch (Exception e) {
             log.error("Failed to drop Milvus collection: {}", e.getMessage(), e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            return Result.error("Collection 删除失败 " + e.getMessage());
         }
     }
 
@@ -160,20 +174,20 @@ public class MilvusController {
      *
      * @return String
      */
-    @GetMapping("/milvus/search")
+    @PostMapping("/milvus/search")
     @Operation(summary = "4 搜索 Milvus 数据")
-    public String search() {
-        return milvusService.searchVector();
+    public Result<Object> search(@Valid @RequestBody MilvusSearchReq request) {
+        return Result.success(embedding2Service.search(request.getText(), 5));
     }
 
     /**
-     * 4 搜索 Milvus 数据
+     * 4-1 搜索 Milvus 数据
      *
      * @return List<Long>
      */
     @GetMapping("/search")
-    @Operation(summary = "4 搜索 Milvus 数据")
-    public List<Long> searchVectors() {
+    @Operation(summary = "4-1 搜索 Milvus 数据")
+    public ResponseEntity<Object> searchVectors() {
         // 生成随机查询向量
         Random random = new Random();
         float[] queryVector = new float[128];
@@ -182,19 +196,24 @@ public class MilvusController {
         }
 
         // 搜索Top5相似向量
-        return milvusService.searchSimilarVectors(queryVector, 5);
+        return ResponseEntity.ok(embedding2Service.search("queryVector", 5));
     }
 
     /**
-     * 4 查询 Milvus Collection 名称列表
+     * 4-2 查询 Milvus Collection 名称列表
      *
      * @return Result<List < String>>
      */
-    @GetMapping("/collection-names")
-    @Operation(summary = "4 查询 Milvus Collection 名称列表")
+    @PostMapping("/collection-names")
+    @Operation(summary = "4-2 查询 Milvus Collection 名称列表")
     public Result<List<String>> getCollectionNames() {
         try {
-            List<String> names = milvusService.getCollectionNames();
+            ListCollectionsResp listCollectionsResp = milvusClientV2.listCollections();
+            List<CollectionInfo> collectionInfos = listCollectionsResp.getCollectionInfos();
+            List<String> names = collectionInfos.stream()
+                    .map(CollectionInfo::getCollectionName)
+                    .toList();
+
             return Result.success(names);
         } catch (Exception e) {
             log.error("Failed to get Milvus collection names: {}", e.getMessage(), e);
@@ -203,58 +222,35 @@ public class MilvusController {
     }
 
     /**
-     * 9996 -插入 Milvus 数据
+     * 4-3 query
      *
-     * @return List<Long>
+     * @return Result<Object>
      */
-    @PostMapping("/insertB")
-    @Operation(summary = "999 StockRuleDTO")
-    public List<Long> sssd(@RequestBody StockRuleDTO stockRuleDTO) {
-        // 生成示例数据
-        List<VectorEntity> entities = new ArrayList<>();
-        Random random = new Random();
-
-        for (long i = 1; i <= 10; i++) {
-            VectorEntity entity = new VectorEntity();
-            entity.setId(i);
-            // 生成随机向量
-            float[] vector = new float[128];
-            for (int j = 0; j < 128; j++) {
-                vector[j] = random.nextFloat();
-            }
-            entity.setVector(vector);
-
-            entities.add(entity);
+    @GetMapping("/queryBigger")
+    @Operation(summary = "4-3 queryBigger")
+    public Result<Object> queryBigger(@RequestParam("id") Long id) {
+        try {
+            return embedding2Service.queryBigger(id);
+        } catch (Exception e) {
+            log.error("Failed queryBigger Milvus collection: {}", e.getMessage(), e);
+            return Result.error("Failed to queryBigger collection");
         }
-
-        return milvusService.insertVectors(entities);
     }
 
     /**
-     * 999 -插入 Milvus 数据
+     * 4-4 queryEqual
      *
-     * @return List<Long>
+     * @return Result<Object>
      */
-    @PostMapping("/insertBC")
-    @Operation(summary = "999 StockAllDTO")
-    public List<Long> sswsd(@RequestBody StockAllDTO stockAllDTO) {
-        // 生成示例数据
-        List<VectorEntity> entities = new ArrayList<>();
-        Random random = new Random();
-
-        for (long i = 1; i <= 10; i++) {
-            VectorEntity entity = new VectorEntity();
-            entity.setId(i);
-            // 生成随机向量
-            float[] vector = new float[128];
-            for (int j = 0; j < 128; j++) {
-                vector[j] = random.nextFloat();
-            }
-            entity.setVector(vector);
-
-            entities.add(entity);
+    @GetMapping("/queryEqual")
+    @Operation(summary = "4-4 queryEqual")
+    public Result<Object> queryEqual(@RequestParam("id") Long id) {
+        try {
+            return embedding2Service.queryEqual(id);
+        } catch (Exception e) {
+            log.error("Failed queryEqual Milvus collection: {}", e.getMessage(), e);
+            return Result.error("Failed to queryEqual collection");
         }
-
-        return milvusService.insertVectors(entities);
     }
+
 }

@@ -7,6 +7,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * @Description
@@ -15,6 +16,19 @@ import java.util.List;
  * @ClassName CodeX
  */
 public class CodeX {
+    private static final AtomicLong SEQUENCE = new AtomicLong(0);
+    private static final long EPOCH = 1288834974657L;  // Twitter 起始时间戳
+
+    /**
+     * 雪花算法（简化实现），在分布式环境中，避免纯随机；优先雪花算法。
+     *
+     * @return Long nextId
+     */
+    public static Long nextId() {
+        long timestamp = System.currentTimeMillis();
+        long seq = SEQUENCE.getAndIncrement() % 4096;  // 序列号 0-4095
+        return ((timestamp - EPOCH) << 22) | seq;  // 简化：时间戳(41位) + 序列(12位)
+    }
 
     /**
      * 001 读取文件内容，每行存储到list，返回list

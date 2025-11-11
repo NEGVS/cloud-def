@@ -16,7 +16,6 @@ import io.reactivex.schedulers.Schedulers;
 
 import java.util.Arrays;
 import java.util.concurrent.CountDownLatch;
-import com.alibaba.dashscope.utils.Constants;
 
 public class Main {
     // 若使用新加坡地域的模型，请释放下列注释
@@ -42,7 +41,7 @@ public class Main {
                 .messages(Arrays.asList(
                         Message.builder()
                                 .role(Role.USER.getValue())
-                                .content("介绍一下自己")
+                                .content("这位女子身姿高挑，亭亭玉立，身高172厘米的她宛如一幅精心勾勒的画卷。她体态匀称，曲线玲珑有致，前凸后翘的身形展现出自然流畅的美感，既不失优雅又充满健康活力。她的美不是浮于表面的艳丽，而是一种由内而外散发的魅力——举手投足间带着自信与从容，仿佛阳光洒在湖面上，波光潋滟，令人心动。她的气质如兰，清雅中透着坚韧，既有女性的柔美，又蕴含独立的力量，令人过目难忘。")
                                 .build()
                 ))
                 .resultFormat(GenerationParam.ResultFormat.MESSAGE)

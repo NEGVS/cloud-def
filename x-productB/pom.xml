@@ -16,6 +16,15 @@
 
 
     <dependencies>
+
+<!--        RxJava2Adapter 在依赖 reactor-adapter 里：-->
+        <dependency>
+            <groupId>io.projectreactor.addons</groupId>
+            <artifactId>reactor-adapter</artifactId>
+            <version>3.5.0</version>
+        </dependency>
+
+
         <!-- 阿里 DashScope SDK -->
         <dependency>
             <groupId>com.alibaba</groupId>

@@ -13,6 +13,7 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.Environment;
+import xCloud.tools.springX.MyBean;
 
 @OpenAPIDefinition(
         info = @Info(
@@ -48,6 +49,12 @@ public class XProductBApplication {
         log.info("\nAPI文档地址: http://localhost:{}{}/doc.html", actualPort, contextPath);
         log.info("\n--nacos URL");
         log.info("\nhttp://localhost:8848/nacos");
+        //获取并使用Bean
+        System.out.println("---------------获取并使用Bean");
+        MyBean bean = context.getBean(MyBean.class);
+        bean.doBusiness();
+        //关闭容器，触发销毁阶段
+        context.close();
     }
 
 

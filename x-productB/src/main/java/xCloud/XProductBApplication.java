@@ -54,7 +54,7 @@ public class XProductBApplication {
         MyBean bean = context.getBean(MyBean.class);
         bean.doBusiness();
         //关闭容器，触发销毁阶段
-        context.close();
+//        context.close();
     }
 
 

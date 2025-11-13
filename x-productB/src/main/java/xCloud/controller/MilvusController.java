@@ -7,12 +7,15 @@ import io.milvus.v2.service.collection.request.DropCollectionReq;
 import io.milvus.v2.service.collection.request.HasCollectionReq;
 import io.milvus.v2.service.collection.response.ListCollectionsResp;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,9 +25,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 import xCloud.entity.Result;
+import xCloud.entity.TextVectorLog;
 import xCloud.entity.VectorEntity;
-import xCloud.entity.dto.StockAllDTO;
-import xCloud.entity.dto.StockRuleDTO;
 import xCloud.entity.request.DropCollectionRequest;
 import xCloud.entity.request.MilvusRequest;
 import xCloud.entity.request.MilvusSearchReq;
@@ -33,7 +35,6 @@ import xCloud.tools.CodeX;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
 /**
@@ -100,6 +101,12 @@ public class MilvusController {
      */
     @PostMapping("/milvus/insertVector")
     @Operation(summary = "1 插入 Milvus 数据")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "创建成功",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = TextVectorLog.class))),
+
+    })
     public Result<Object> insertVector(@Valid @RequestBody MilvusRequest request) {
         return embedding2Service.insertVector(CodeX.nextId(), request.getText());
     }

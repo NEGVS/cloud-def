@@ -32,11 +32,13 @@ spring:
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     driver-class-name: org.postgresql.Driver  # PostgreSQL 驱动
-    url: jdbc:postgresql://localhost:5432/postgres?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=UTC
-    # PostgreSQL URL（本地示例；远程用 101.35.226.226）
-    username: andy_mac
+    url: jdbc:postgresql://db.mlbypadufgwqslopkqwy.supabase.co:5432/postgres?sslmode=require
+    username: postgres
+    password: ANDY@345&kl;'
+    #    url: jdbc:postgresql://localhost:5432/postgres?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=UTC
+    #    username: andy_mac
 #    password: hy123456
-#    password: admin123  # 替换为您的密码
+
     druid:
       initial-size: 5
       min-idle: 5
@@ -95,3 +97,8 @@ logging:
     org.springframework.web: DEBUG
     #  配置mybatis-plus日志必须
     com.baomidou.mybatisplus: DEBUG
+
+# Activiti / Flowable / Activiti7 可能有不同配置项。下面是 Activiti 7 的示例属性，可根据 starter 变更。
+activiti:
+  database-schema-update: true
+  history-level: full

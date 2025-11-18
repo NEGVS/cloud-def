@@ -1,6 +1,14 @@
-com.ruoyi.demi.stock.stockB.entity.StockAlert
-com.ruoyi.demi.stock.stockB.entity.StockAnalysis
+-- WARNING: This schema is for context only and is not meant to be run.
+-- Table order and constraints may not be valid for execution.
 
-
-
-
+CREATE TABLE public.orders (
+  id bigint NOT NULL DEFAULT nextval('orders_id_seq'::regclass),
+  order_no character varying NOT NULL UNIQUE,
+  user_id bigint NOT NULL,
+  amount numeric NOT NULL,
+  status character varying DEFAULT 'PENDING'::character varying,
+  version integer DEFAULT 1,
+  created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+  updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT orders_pkey PRIMARY KEY (id)
+);

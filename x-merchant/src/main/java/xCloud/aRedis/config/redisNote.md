@@ -56,6 +56,7 @@ public class RedisConfig {
 ### 使用效果
 
 ```java
+
 @Autowired
 private RedisTemplate<String, Object> redisTemplate;
 

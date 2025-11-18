@@ -17,6 +17,17 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
     <dependencies>
+
+        <!-- Activiti spring boot starter (use stable available version)注：
+        Activiti 7 的 starter 版本随时间有变，若使用 Activiti 6（更常见的企业版本），替换依赖为 org.activiti:activiti-spring-boot-starter-basic:6.x.x
+        或使用 org.activiti:activiti-spring-boot-starter。 -->
+        <!-- https://mvnrepository.com/artifact/org.activiti/activiti-spring-boot-starter -->
+        <dependency>
+            <groupId>org.activiti</groupId>
+            <artifactId>activiti-spring-boot-starter</artifactId>
+            <version>7.1.0.M6</version>
+        </dependency>
+
         <dependency>
             <groupId>org.springframework.kafka</groupId>
             <artifactId>spring-kafka</artifactId>

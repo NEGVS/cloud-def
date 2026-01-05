@@ -11,14 +11,25 @@ import java.util.Set;
  * @ClassName proceXML
  */
 public class proceXML {
+    private static final String BASE_File_PATH = "/Users/andy_mac/Documents/CodeSpace/andyProject0/demi_vue_boot/ruoyi-system/src/main/resources/mapper/andy";
+
     public static void main(String[] args) {
-        String basePath = "/Users/andy_mac/Documents/CodeSpace/andyProject0/demi_vue_boot/ruoyi-system/src/main/java/";;
-        Set<String> set = CodeX.listFiles("/Users/andy_mac/Documents/CodeSpace/andyProject0/demi_vue_boot/ruoyi-system/src/main/java/com/ruoyi/hro/srzp/andyCodeGeneration/mapper");
-        for (String filePath : set) {
-            System.out.println(filePath.replace(basePath, "")
-                    .replace(".java", "")
-                    .replace("/", ".")
-            );
+        //1-替换字符串--独立设置包
+        replaceFileString();
+    }
+
+    public static void replaceFileString() {
+        //1-获取所有文件
+        Set<String> filePaths = CodeX.listFiles(BASE_File_PATH);
+        System.out.println(filePaths);
+
+        System.out.println(filePaths.size());
+
+        for (String filePath : filePaths) {
+            //完成包名替换
+            CodeX.replaceString(filePath, "andy.", "andy..", true);
+
         }
+
     }
 }

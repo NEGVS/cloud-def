@@ -24,6 +24,7 @@ public class XMerchantApplication {
     public static void main(String[] args) {
         System.out.println("Hello world! XMerchantApplication start...");
         SpringApplication.run(XMerchantApplication.class, args);
-        System.out.println("Hello world! XMerchantApplication done...");
+        System.out.println("Hello world! XMerchantApplication done...\tswagger-ui:");
+        System.out.println("http://localhost:8087/doc.html#/home");
     }
 }

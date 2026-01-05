@@ -55,3 +55,6 @@ springdoc:
   swagger-ui:
     enabled: true
 
+supabase:
+  bucket: images # Supabase Storage 的 Bucket 名称，可覆盖默认值 "images"
+  project-ref: mlbypadufgwqslopkqwy # Supabase 项目 ID（project reference），请替换为你的实际项目 ID，例如 "abcd1234efgh5678"

@@ -17,6 +17,12 @@
 
 
     <dependencies>
+<!--        后端验证并使用 AWS SDK 将文件上传到 Supabase（Supabase Storage 支持 S3 协议）。优点：隐藏密钥、添加文件验证/压缩、控制权限。-->
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>s3</artifactId>
+            <version>2.26.0</version> <!-- 检查最新版本 -->
+        </dependency>
         <!-- Redis -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

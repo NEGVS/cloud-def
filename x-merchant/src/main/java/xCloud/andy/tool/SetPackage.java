@@ -20,31 +20,28 @@ import java.util.Set;
 public class SetPackage {
 
 
-    //1-获取该路径下所有文件
-    private static final String BASE_File_PATH = "/Users/andy_mac/Documents/CodeSpace/andyProject0/demi_vue_boot/ruoyi-system/src/main/resources/mapper/demi/stock/stockB";
+    //1-获取该路径下所有文件/Users/andy_mac/Documents/CodeSpace/andyProject0/demi_vue_boot/ruoyi-system/src/main/java/com/ruoyi/andy/domain
+    private static final String BASE_File_PATH = "/Users/andy_mac/Documents/CodeSpace/andyProject0/demi_vue_boot/ruoyi-system/src/main/java/com/ruoyi/andy/service";
 
     //2-【不能修改】Java源文件的基础路径（根据实际项目结构调整）
     // 例如：如果文件完整路径是 /xxx/ruoyi-system/src/main/java/com/xxx/AiRobotVO.java
     // 则基础路径应为 /xxx/ruoyi-system/src/main/java/
-    private static final String BASE_JAVA_PATH = "/Users/andy_mac/Documents/CodeSpace/andyProject0/demi_vue_boot/ruoyi-admin/src/main/java/";
-//    private static final String BASE_JAVA_PATH = "/Users/andy_mac/Documents/CodeSpace/andyProject0/demi_vue_boot/ruoyi-system/src/main/java/";
+//    这里可能需要修改---------
+//    private static final String BASE_JAVA_PATH = "/Users/andy_mac/Documents/CodeSpace/andyProject0/demi_vue_boot/ruoyi-admin/src/main/java/";
+    private static final String BASE_JAVA_PATH = "/Users/andy_mac/Documents/CodeSpace/andyProject0/demi_vue_boot/ruoyi-system/src/main/java/";
 
     public static void main(String[] args) {
-        replaceFileString();
+
+
+        System.out.println("开始处理文件.getEntityPackages..");
 //        getEntityPackages();
-        //运行 生成包导入
-//        generatePackage();
+        //运行 生成包导入,,,只需要运行这一个文件即可。
+        System.out.println("运行 生成包导入..");
+        generatePackage();
     }
 
-    public static void replaceFileString() {
-        //1-获取所有文件
-        Set<String> filePaths = CodeX.listFiles(BASE_File_PATH);
-        System.out.println(filePaths);
-        System.out.println(filePaths.size());
-        for (String filePath : filePaths) {
-            CodeX.replaceString(filePath, "ruoyi.demi.stock.stockB", "xCloud.system", true);
-        }
-    }
+
+
     public static void getEntityPackages() {
         //1-获取所有文件
         Set<String> filePaths = CodeX.listFiles(BASE_File_PATH);
@@ -60,13 +57,16 @@ public class SetPackage {
                  */
                 List<String> lines = Files.readAllLines(Paths.get(filePath), StandardCharsets.UTF_8);
                 if (!lines.isEmpty()) {
+                    //获取包名
                     lines_final.add(lines.get(0).split(" ")[1].replace(";", ".") + CodeX.getFileNameA(filePath));
                 }
             } catch (IOException e) {
                 System.err.println("处理文件时发生错误: " + filePath);
             }
         }
+        System.out.println("1 lines_final:");
         System.out.println(JSONUtil.toJsonStr(lines_final));
+        System.out.println("2 lines_final.forEach:");
         lines_final.forEach(System.out::println);
     }
 
@@ -117,7 +117,7 @@ public class SetPackage {
 
                         // 写回文件
                         Files.write(Paths.get(filePath), lines, StandardCharsets.UTF_8);
-                        System.out.println("已添加包声明: " + packageStatement + " 到文件: " + filePath);
+                        System.out.println("已添加包声明:  " + packageStatement + "  到文件: " + filePath);
                     } else {
                         System.out.println("无法生成包名，跳过文件: " + filePath);
                     }

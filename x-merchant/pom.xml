@@ -21,7 +21,8 @@
         <dependency>
             <groupId>software.amazon.awssdk</groupId>
             <artifactId>s3</artifactId>
-            <version>2.26.0</version> <!-- 检查最新版本 -->
+            <version>2.26.1</version> <!-- 检查最新版本 -->
+            <!-- 替换为最新，查 https://github.com/aws/aws-sdk-java-v2/releases -->
         </dependency>
         <!-- Redis -->
         <dependency>
@@ -32,6 +33,11 @@
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
             <version>4.5.14</version>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba.nacos</groupId>
+            <artifactId>nacos-client</artifactId>
+            <scope>test</scope>
         </dependency>
 
 

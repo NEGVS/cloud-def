@@ -12,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.services.s3.model.PutObjectResponse;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -57,12 +58,25 @@ public class UploadController {
                     .contentType(file.getContentType())
                     .build();
 
-            s3Client.putObject(putRequest, RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
+            log.info("Uploading file: {}", key);
+            log.info("Uploaded fileName: {}", fileName);
+            log.info("Uploaded fileSize: {}", file.getSize());
+            log.info("Uploaded fileContentType: {}", file.getContentType());
+            log.info("Uploaded fileContentLength: {}", file.getBytes().length);
+            PutObjectResponse putObjectResponse = s3Client.putObject(putRequest, RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
+//            log.info("Uploaded fileETag: {}", putObjectResponse.eTag());
+//            log.info("Uploaded fileExpiration: {}", putObjectResponse.expiration());
+//            log.info("Uploaded fileVersionId: {}", putObjectResponse.versionId());
+//            log.info("Uploaded fileServerSideEncryption: {}", putObjectResponse.serverSideEncryption());
+//            log.info("Uploaded fileSSECustomerAlgorithm: {}", putObjectResponse.sseCustomerAlgorithm());
+//            log.info("Uploaded fileSSECustomerKeyMD5: {}", putObjectResponse.sseCustomerKeyMD5());
+//            log.info("Uploaded fileSSEKMSKeyId: {}", putObjectResponse.ssekmsKeyId());
 
             // 生成 public URL（如果 bucket 是 public）
             String publicUrl = String.format("https://%s.supabase.co/storage/v1/object/public/%s/%s",
                     projectRef, bucketName, key);
 
+            log.info("Generated public URL: {}", publicUrl);
             Map<String, String> response = new HashMap<>();
             response.put("url", publicUrl);
 

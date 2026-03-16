@@ -782,7 +782,7 @@ order-service/
   <packaging>jar</packaging>
 
   <properties>
-    <java.version>17</java.version>
+    <java.version>21</java.version>
     <spring.boot.version>3.2.0</spring.boot.version>
   </properties>
 

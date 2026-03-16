@@ -792,7 +792,7 @@ message UserResponse {
   <artifactId>grpc-demo</artifactId>
   <version>1.0-SNAPSHOT</version>
   <properties>
-    <java.version>17</java.version>
+    <java.version>21</java.version>
     <grpc.version>1.60.1</grpc.version>
     <protobuf.version>3.25.3</protobuf.version>
   </properties>

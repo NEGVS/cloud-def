@@ -102,6 +102,15 @@ public class AliChatUtil {
 //        }
 //    }
 
+
+    /**
+     * 使用 DashScope API 进行流式文本生成 使用默认apikey、模型
+     */
+    public static Flux<String> streamChatToFrontend(String prompt) {
+        log.info("==使用默认apikey、模型-开始调用DashScope API进行流式文本生成");
+        return streamChatToFrontend(null, prompt, null);
+    }
+
     /**
      * 使用 DashScope API 进行流式文本生成，并支持流式返回给前端。
      *
@@ -111,6 +120,7 @@ public class AliChatUtil {
      * @return Flux<String> 流式响应，每个元素为内容片段（最后一个元素包含用量信息，如果适用）
      */
     public static Flux<String> streamChatToFrontend(String apiKey, String prompt, String model) {
+        log.info("==1-使用 DashScope API 进行流式文本生成，并支持流式返回给前端。");
         if (apiKey == null || apiKey.isEmpty()) {
             apiKey = System.getenv("DASHSCOPE_API_KEY");
             if (apiKey == null || apiKey.isEmpty()) {
@@ -132,6 +142,7 @@ public class AliChatUtil {
                 .resultFormat(GenerationParam.ResultFormat.MESSAGE)
                 .incrementalOutput(true) // 开启增量输出，流式返回
                 .build();
+        log.info("==2-使用 DashScope API 进行流式文本生成，并支持流式返回给前端。");
 
         try {
             Flowable<GenerationResult> resultFlowable = gen.streamCall(param);
@@ -142,10 +153,15 @@ public class AliChatUtil {
                     .subscribeOn(Schedulers.boundedElastic())
                     // 计算线程用于处理响应（如 embedding 结果计算、聚合）
                     .publishOn(Schedulers.parallel());
+            log.info("==3-使用 DashScope API 进行流式文本生成，并支持流式返回给前端。");
+
             return resultFlux
                     .map(message -> {
+                        log.info("==3.1-使用 DashScope API 进行流式文本生成，并支持流式返回给前端。");
+
                         String content = message.getOutput().getChoices().getFirst().getMessage().getContent();
                         String finishReason = message.getOutput().getChoices().getFirst().getFinishReason();
+                        log.info("==4-使用 DashScope API 进行流式文本生成，并支持流式返回给前端。");
 
                         if (finishReason != null && !"null".equals(finishReason)) {
                             // 最后一个 chunk，附加用量信息
@@ -154,6 +170,8 @@ public class AliChatUtil {
                                     "输出 Tokens：" + message.getUsage().getOutputTokens() + "\n" +
                                     "总 Tokens：" + message.getUsage().getTotalTokens();
                             // + usageInfo
+                            log.info("==4-使用 DashScope API 进行流式文本生成，usageInfo{}。", usageInfo);
+
                             return content;
                         }
                         return content;

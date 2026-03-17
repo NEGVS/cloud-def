@@ -1,7 +1,8 @@
 LangChain4j 放在productB项目中
 
 LangChain4j+springcloud+milvus
-----
+
+
 Spring Boot starter for declarative AI Services
 LangChain4j provides a Spring Boot starter for auto-configuring AI Services, RAG, Tools etc.
 

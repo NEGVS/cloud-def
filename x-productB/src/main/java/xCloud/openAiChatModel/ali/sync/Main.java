@@ -1,7 +1,7 @@
 package xCloud.openAiChatModel.ali.sync;
 
-/**
- * @Description 文本对话，同步回答，设定角色
+/*
+ * @Description 文本对话，同步回答，设定角色 测试使用
  * @Author Andy Fan
  * @Date 2025/11/6 10:20
  * @ClassName Main
@@ -37,6 +37,7 @@ public class Main {
             System.out.println("正在请求模型，请稍等...");
             ChatCompletion chatCompletion = client.chat().completions().create(params);
             String content = chatCompletion.choices().get(0).message().content().orElse("未返回有效内容");
+            System.out.println("---content");
             System.out.println(content);
             // 如需查看完整响应，请取消下列注释
             // System.out.println(chatCompletion);

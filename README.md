@@ -4,7 +4,13 @@ System.out.println("Hello world! OrderApplication start...");
 SpringApplication.run(OrderApplication.class, args);
 System.out.println("Hello world! OrderApplication done...");
 —— OpenAI API Key ————————————————————————————————————
+==========NOTE=======
 
+[1] 代码一定写完整备注
+
+[2] 只要是入参数，就必须先判断null。
+
+===========NOTE======
 发现refs/heads/kafka违反了存储库规则。 Repository rule violations found for refs/heads/kafka.
 Push cannot contain secrets，推送不能包含秘密
 
@@ -34,7 +40,7 @@ springCloud
 ├── config-service 配置模块
 ├── order-service 订单模块
 ├── user-service 用户模块
-├── product-service 商品模块 
+├── product-service 商品模块
 ├── productB-service 商品模块
 └── merchant-service 商户模块
 
@@ -42,8 +48,8 @@ springCloud
 ├── payment-service 支付模块
 ├── config-service 配置模块
 ├── order-service 订单模块
-├── user-service 用户模块   rabbitMQ
-├── product-service 商品模块  kafka,es,redis
+├── user-service 用户模块 rabbitMQ
+├── product-service 商品模块 kafka,es,redis
 ├── productB-service 商品模块 ，使用nacos,LangChain4j,milvus,PostgreSQL
 ├── x-PgSQL Pg模块 ，使用kafka,PostgreSQL,supabase
 └── merchant-service 商户模块
@@ -60,7 +66,7 @@ springCloud
 
 9- kafka ✅ product 模块
 10- seata
-11-grpc  order模块，进行中...
+11-grpc order模块，进行中...
 
 
 

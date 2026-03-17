@@ -1,11 +1,20 @@
 package xCloud.openAiChatModel.ali.stream;
 
+import cn.hutool.core.util.ObjUtil;
+import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.json.JSONUtil;
 import com.alibaba.dashscope.aigc.generation.Generation;
 import com.alibaba.dashscope.aigc.generation.GenerationParam;
 import com.alibaba.dashscope.aigc.generation.GenerationResult;
 import com.alibaba.dashscope.common.Message;
 import com.alibaba.dashscope.common.Role;
+import com.esotericsoftware.minlog.Log;
+import com.openai.client.OpenAIClient;
+import com.openai.client.okhttp.OpenAIOkHttpClient;
+import com.openai.models.chat.completions.ChatCompletion;
+import com.openai.models.chat.completions.ChatCompletionCreateParams;
 import io.reactivex.Flowable;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import reactor.adapter.rxjava.RxJava2Adapter;
 import reactor.core.publisher.Flux;
@@ -19,10 +28,11 @@ import java.util.Arrays;
  * @Date 2025/11/11 15:18
  * @ClassName AliChatUtil
  */
+@Slf4j
 @Component
 public class AliChatUtil {
 
-    /**
+    /*
      * 使用 DashScope API 进行流式文本生成。
      *
      * @param prompt 用户提示词
@@ -57,17 +67,17 @@ public class AliChatUtil {
 //                    .subscribe(
 //                            // onNext: 处理每个响应片段
 //                            message -> {
-//                                String content = message.getOutput().getChoices().get(0).getMessage().getContent();
-//                                String finishReason = message.getOutput().getChoices().get(0).getFinishReason();
+//                                String content = message.getOutput().getChoices().getFirst().getMessage().getContent();
+//                                String finishReason = message.getOutput().getChoices().getFirst().getFinishReason();
 //                                // 输出内容
 //                                System.out.print(content);
 //                                fullContent.append(content);
 //                                // 当 finishReason 不为 null 时，表示是最后一个 chunk，输出用量信息
 //                                if (finishReason != null && !"null".equals(finishReason)) {
-//                                    System.out.println("\n--- 请求用量 ---");
-//                                    System.out.println("输入 Tokens：" + message.getUsage().getInputTokens());
-//                                    System.out.println("输出 Tokens：" + message.getUsage().getOutputTokens());
-//                                    System.out.println("总 Tokens：" + message.getUsage().getTotalTokens());
+//                                    log.info("\n--- 请求用量 ---");
+//                                    log.info("输入 Tokens：" + message.getUsage().getInputTokens());
+//                                    log.info("输出 Tokens：" + message.getUsage().getOutputTokens());
+//                                    log.info("总 Tokens：" + message.getUsage().getTotalTokens());
 //                                }
 //                                System.out.flush(); // 立即刷新输出
 //                            },
@@ -78,14 +88,14 @@ public class AliChatUtil {
 //                            },
 //                            // onComplete: 完成回调
 //                            () -> {
-//                                System.out.println(); // 换行
-//                                // System.out.println("完整响应: " + fullContent.toString());
+//                                log.info(); // 换行
+//                                // log.info("完整响应: " + fullContent.toString());
 //                                latch.countDown();
 //                            }
 //                    );
 //            // 主线程等待异步任务完成
 //            latch.await();
-//            System.out.println("程序执行完成");
+//            log.info("程序执行完成");
 //        } catch (Exception e) {
 //            System.err.println("请求异常: " + e.getMessage());
 //            e.printStackTrace();
@@ -134,8 +144,8 @@ public class AliChatUtil {
                     .publishOn(Schedulers.parallel());
             return resultFlux
                     .map(message -> {
-                        String content = message.getOutput().getChoices().get(0).getMessage().getContent();
-                        String finishReason = message.getOutput().getChoices().get(0).getFinishReason();
+                        String content = message.getOutput().getChoices().getFirst().getMessage().getContent();
+                        String finishReason = message.getOutput().getChoices().getFirst().getFinishReason();
 
                         if (finishReason != null && !"null".equals(finishReason)) {
                             // 最后一个 chunk，附加用量信息
@@ -149,10 +159,54 @@ public class AliChatUtil {
                         return content;
                     });
 //                    .doOnNext(chunk -> System.out.print(chunk)) // 可选：同时打印到控制台用于调试
-//                    .doOnComplete(() -> System.out.println("\n程序执行完成")); // 可选：完成时打印
+//                    .doOnComplete(() -> log.info("\n程序执行完成")); // 可选：完成时打印
 
         } catch (Exception e) {
             return Flux.error(e);
         }
+    }
+
+    /**
+     * 1-文本对话，同步回答，设定角色
+     */
+    public String chat(String userMessage, String systemMessage) {
+        try {
+            if (ObjectUtil.isEmpty(systemMessage)) {
+                systemMessage = "You are a helpful assistant.";
+            }
+            if (ObjectUtil.isEmpty(userMessage)) {
+                return "";
+            }
+            OpenAIClient client = OpenAIOkHttpClient.builder()
+                    // 新加坡和北京地域的API Key不同。获取API Key：https://help.aliyun.com/zh/model-studio/get-api-key
+                    // 若没有配置环境变量，请用阿里云百炼API Key将下行替换为.apiKey("sk-xxx")
+                    .apiKey(System.getenv("DASHSCOPE_API_KEY"))
+                    // 以下是北京地域base_url，如果使用新加坡地域的模型，需要将base_url替换为：https://dashscope-intl.aliyuncs.com/compatible-mode/v1
+                    .baseUrl("https://dashscope.aliyuncs.com/compatible-mode/v1")
+                    .build();
+
+            // 创建 ChatCompletion 参数
+            ChatCompletionCreateParams params = ChatCompletionCreateParams.builder()
+                    .model("qwen-plus")  // 指定模型
+                    .addSystemMessage(systemMessage) // 添加系统消息，设置角色，描述角色
+                    .addUserMessage(userMessage) //  添加用户消息
+                    .build();
+
+            // 发送请求并获取响应
+            log.info("正在请求模型，请稍等...");
+            ChatCompletion chatCompletion = client.chat().completions().create(params);
+            String content = chatCompletion.choices().getFirst().message().content().orElse("未返回有效内容");
+            log.info("---content----\n");
+            log.info(content);
+            log.info("\n");
+
+            // 如需查看完整响应，请取消下列注释
+            // log.info(chatCompletion);
+            return content;
+        } catch (Exception e) {
+            log.info("错误信息：" + e.getMessage());
+            log.info("请参考文档：https://help.aliyun.com/zh/model-studio/developer-reference/error-code");
+        }
+        return "";
     }
 }

@@ -1,7 +1,7 @@
 package xCloud.openAiChatModel.ali.async;
 
-/**
- * @Description 文本对话，异步回答
+/*
+ * @Description 文本对话，异步回答 测试使用
  * @Author Andy Fan
  * @Date 2025/11/6 10:16
  * @ClassName Main

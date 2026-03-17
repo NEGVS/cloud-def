@@ -21,6 +21,7 @@ public class RecruitmentVectorService {
 
     @Autowired
     private VectorStore vectorStore;
+
     @Autowired
     private EmbeddingModel embeddingModel;
 

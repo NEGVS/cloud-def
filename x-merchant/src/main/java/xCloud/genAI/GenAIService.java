@@ -22,6 +22,12 @@ public class GenAIService {
         this.restTemplate = restTemplate;
     }
 
+    /**
+     * 使用restTemplate调用python获取 生成内容
+     *
+     * @param prompt prompt
+     * @return 生成的内容
+     */
     public String generateContent(String prompt) {
 //        set header
         HttpHeaders httpHeaders = new HttpHeaders();

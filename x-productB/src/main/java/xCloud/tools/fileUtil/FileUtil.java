@@ -8,7 +8,10 @@ package xCloud.tools.fileUtil;
  */
 public class FileUtil {
     public static void main(String[] args) {
-        System.out.println(getApiKeyFromEnvironment());
+        System.out.println("---1");
+        System.out.println(System.getenv("OPENAI_API_KEY"));
+        System.out.println(System.getenv("OPENAI_API_KEY_A"));
+        System.out.println("---2");
     }
 
     /**

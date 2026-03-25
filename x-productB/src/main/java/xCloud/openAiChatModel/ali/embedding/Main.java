@@ -37,6 +37,10 @@ import java.util.Collections;
 import java.util.List;
 
 public class Main {
+//    public final static String model = "text-embedding-v4";
+    public final static String model = "multimodal-embedding-v1";
+    public final static String apiKey = System.getenv("DASHSCOPE_API_KEY");
+
     /**
      * 若使用新加坡地域的模型，请取消以下注释
      * static {
@@ -49,15 +53,14 @@ public class Main {
         AliEmbeddingUtil aliEmbeddingUtil = new AliEmbeddingUtil();
 
 
-
-
         // 手动从环境变量获取并设置 API Key
-        String apiKey = System.getenv("DASHSCOPE_API_KEY");
+
         System.out.println(apiKey);
 
         if (apiKey == null || apiKey.isEmpty()) {
             throw new RuntimeException("环境变量 DASHSCOPE_API_KEY 未设置");
         }
+        System.out.println("----apiKey");
         System.out.println(apiKey);
 
         String inputTexts = "衣服的质量杠杠的";
@@ -65,7 +68,7 @@ public class Main {
             // 构建请求参数
             TextEmbeddingParam param = TextEmbeddingParam
                     .builder()
-                    .model("text-embedding-v4")
+                    .model(model)
                     // 输入文本
                     .texts(Collections.singleton(inputTexts))
                     .build();
@@ -80,11 +83,15 @@ public class Main {
             String requestId = result.getRequestId();
             TextEmbeddingUsage usage = result.getUsage();
             Integer totalTokens = usage.getTotalTokens();
+
             System.out.println("请求ID：" + requestId);
             System.out.println("总 Tokens：" + totalTokens);
+
             TextEmbeddingOutput output = result.getOutput();
             List<TextEmbeddingResultItem> embeddings = output.getEmbeddings();
+
             System.out.println("向量数量：" + embeddings.size());
+
             for (TextEmbeddingResultItem embedding : embeddings) {
                 Integer textIndex = embedding.getTextIndex();
                 List<Double> embeddingVector = embedding.getEmbedding();
@@ -94,7 +101,7 @@ public class Main {
             }
 
 
-        } catch (NoApiKeyException e) {
+        } catch (Exception e) {
             // 捕获并处理API Key未设置的异常
             System.err.println("调用 API 时发生异常: " + e.getMessage());
             System.err.println("请检查您的 API Key 是否已正确配置。");

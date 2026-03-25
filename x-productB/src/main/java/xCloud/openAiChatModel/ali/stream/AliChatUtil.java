@@ -23,7 +23,7 @@ import reactor.core.scheduler.Schedulers;
 import java.util.Arrays;
 
 /**
- * @Description
+ * @Description 使用的是阿里云百炼
  * @Author Andy Fan
  * @Date 2025/11/11 15:18
  * @ClassName AliChatUtil

@@ -126,3 +126,6 @@ baichuan:
   api:
     url: https://api.baichuan-ai.com/v1/embeddings
     key: ${BAICHUAN_API_KEY}
+hdbscan:
+  service:
+    url: http://localhost:5000   # 生产环境可以换成配置中心或环境变量

@@ -16,3 +16,5 @@ x-productB
 4-把检索结果发给llm
 中间如何判断是否需要发送岗位？
 5-llm返回结果给用户
+
+用户输入 → IntentClassifier → 求职问题 → HDBSCAN聚类 → Milvus检索 → LLM生成回复

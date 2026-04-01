@@ -6,6 +6,9 @@ import org.springframework.stereotype.Service;
 import xCloud.openAiChatModel.intent.Intent;
 import xCloud.openAiChatModel.intent.IntentClassifier;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * @Description 招聘服务
  * @Author Andy Fan
@@ -20,17 +23,45 @@ public class RecruitmentService {
     @Autowired
     private ChatModel chatModel;
 
+    @Autowired
+    private RecruitmentQueryService queryService;
+
     /**
      * 招聘服务,处理用户问题
      */
     public String handleUserQuery(String userQuery) {
         Intent intent = intentClassifier.classify(userQuery);
         if (intent == Intent.RECRUITMENT) {
-//            return processRecruitmentQuery(query); // 走向量检索+生成流程
-            return "走向量检索+生成流程";
+            return processRecruitmentQuery(userQuery);
         } else {
-            // 直接用大模型回答
             return chatModel.chat(userQuery);
         }
+    }
+
+    private String processRecruitmentQuery(String query) {
+        List<Map<String, Object>> jobs = queryService.searchJobs(query);
+
+        if (jobs.isEmpty() || !shouldReturnJobs(jobs)) {
+            return chatModel.chat(query);
+        }
+
+        String prompt = buildPrompt(query, jobs);
+        return chatModel.chat(prompt);
+    }
+
+    private boolean shouldReturnJobs(List<Map<String, Object>> jobs) {
+        return jobs.stream().anyMatch(job ->
+            (float) job.getOrDefault("score", 0f) > 0.75f);
+    }
+
+    private String buildPrompt(String query, List<Map<String, Object>> jobs) {
+        StringBuilder sb = new StringBuilder("用户问题: ").append(query).append("\n\n匹配职位:\n");
+        for (int i = 0; i < jobs.size(); i++) {
+            Map<String, Object> job = jobs.get(i);
+            sb.append(i + 1).append(". ").append(job.get("title")).append("\n")
+              .append(job.get("desc")).append("\n\n");
+        }
+        sb.append("请根据以上职位信息回复用户。");
+        return sb.toString();
     }
 }

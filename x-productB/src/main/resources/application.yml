@@ -1,138 +1,15 @@
-server:
-  port: 8083
 spring:
-  #  数据库配置
-  datasource:
-    type: com.alibaba.druid.pool.DruidDataSource
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://115.190.21.58:3306/andy_database?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
-    username: root
-    password: hy123456
-    druid:
-      initial-size: 5
-      min-idle: 5
-      max-active: 20
-      max-wait: 60000
-      test-on-borrow: true
-      test-on-return: false
-      test-while-idle: true
-      #是否启用 Druid 的监控统计页面（StatViewServlet）。【访问 http://localhost:8080/druid】如 Spring Boot 3.x 需要额外配置「启动类加：@ServletComponentScan // 启用 Servlet 组件扫描（Druid 的 StatViewServlet 需要）」
-      filters: stat,wall,slf4j # 启用 SQL 统计功能、防火墙、日志
-      filter:
-        stat:
-          enabled: true
-          slow-sql-millis: 1000 # 慢 SQL 阈值（毫秒）
-        wall:
-          enabled: true
-      stat-view-servlet:
-        enabled: true
-        url-pattern: /druid/*
-        login-username: andy
-        login-password: andy
-        # 关闭登录验证（不推荐生产环境使用）
-        allow: 127.0.0.1  # 允许的 IP（空表示允许所有）
-#        deny: 192.168.1.100 # 拒绝的 IP
-#    sql:
-#      init:
-#        mode: always # always: 每次应用启动时都执行指定的 SQL 脚本（schema.sql 和 data.sql），即使数据库已经存在。  never: 不执行任何初始化脚本/embedded: 仅对嵌入式数据库（如 H2）执行脚本。
-#        schema-locations: classpath:schema.sql
-#        data-locations: classpath:data.sql
-#SQL 初始化功能，用于在应用启动时自动执行 SQL 脚本以初始化数据库结构和数据
+  application:
+    name: recruitment-system
 
-# mybatis-plus 配置
-mybatis-plus:
-  mapper-locations: classpath*:/mapper/**/*.xml
-  type-aliases-package: xCloud.entity
-  #  配置mybatis-plus日志必须1
-  configuration:
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
-#    MyBatis-Plus 默认启用下划线转驼峰命名
-    map-underscore-to-camel-case: false
+llm:
+  api:
+    url: https://api.openai.com/v1/chat/completions
 
-# 日志配置log---INFO---DEBUG
-#logging.level.xCloud.openAiChatModel.orchestrator.RagClient=INFO
-logging:
-  level:
-    # nacos日志，查找Nacos连接或配置加载的错误信息
-    com.alibaba.nacos: INFO
-    #    org.springframework.cloud.alibaba.nacos: INFO
-    org.springframework.cloud: INFO
-    io.grpc: INFO
-    org.springframework.web: INFO
-    #  配置mybatis-plus日志必须2
-    com.baomidou.mybatisplus: INFO
+embedding:
+  api:
+    url: https://api.openai.com/v1/embeddings
 
-
-#        spring:
-#  datasource:
-#    type: com.alibaba.druid.pool.DruidDataSource
-#    url: jdbc:mysql://localhost:3306/yourdb?useSSL=false&serverTimezone=UTC&characterEncoding=UTF-8
-#    driver-class-name: com.mysql.cj.jdbc.Driver
-#    username: root
-#    password: yourpassword
-#    druid:
-#      initial-size: 5
-#      min-idle: 5
-#      max-active: 20
-#      max-wait: 60000
-#      test-on-borrow: true
-#      test-on-return: false
-#      test-while-idle: true
-#      stat-view-servlet:
-#        enabled: true
-#        url-pattern: /druid/*
-#        login-username: admin
-#        login-password: admin
-#  sql:
-#    init:
-#      mode: always
-#      schema-locations: classpath:schema.sql
-#      data-locations: classpath:data.sql
-#
-#langchain4j配置 2
-langchain4j:
-  open-ai:
-    chat-model:
-      api-key: ${OPENAI_API_KEY}
-      model-name: gpt-4o
-      log-requests: true
-      log-responses: true
-
-#
-# application.properties 或启动参数
-#JAVA_OPTS"-Xlog:library=off"
-#rag
-rag:
-  url: http://localhost:8080/api/v1/rag
 milvus:
-  uri: http://localhost:19530 # Milvus URI（新 V2 使用 URI）
-  token: root:Milvus  # 默认 token，生产环境替换
   host: localhost
-  port: 19530   # Docker 默认端口
-#  LLM--，语言模型、向量模型，分别是两个不同的模型，但是key是可以共用的
-openai:
-  api-key: ${OPENAI_API_KEY}
-  #使用了 ${OPENAI_API_KEY} 语法，会从系统环境变量中读取值.密钥不能在项目里写出来，需要配置在系统环境变量中
-  model: text-embedding-3-small # 或者 text-embedding-3-large（按需）
-#  阿里百炼平台，千问大模型
-ali:
-  api-key: ${DASHSCOPE_API_KEY}
-  chat_model_name: qwen-plus
-  embedding_model_name: text-embedding-v4
-  baseUrl: https://dashscope.aliyuncs.com/compatible-mode/v1
-# Milvus vector dimension (和模型输出维度一致)
-vector:
-  dim: 1024
-  collection: andy_vectorsV2
-deepSeek:
-  api:
-    url: https://api.deepseek.com
-    key: ${DEEPSEEK_API_KEY}
-# 百川
-baichuan:
-  api:
-    url: https://api.baichuan-ai.com/v1/embeddings
-    key: ${BAICHUAN_API_KEY}
-hdbscan:
-  service:
-    url: http://localhost:5000   # 生产环境可以换成配置中心或环境变量
+  port: 19530

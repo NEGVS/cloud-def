@@ -4,7 +4,10 @@ import com.alibaba.dashscope.embeddings.TextEmbedding;
 import com.alibaba.dashscope.embeddings.TextEmbeddingParam;
 import com.alibaba.dashscope.embeddings.TextEmbeddingResult;
 import com.alibaba.dashscope.exception.NoApiKeyException;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import xCloud.entity.constant.AliConstant;
 import xCloud.entity.dto.VectorDTO;
 
 import java.util.Collections;
@@ -16,25 +19,21 @@ import java.util.List;
  * @Date 2025/11/7 13:49
  * @ClassName AliEmbeddingUtil
  */
+@Slf4j
 @Component
 public class AliEmbeddingUtil {
+
     /**
      * 文本 转 向量
      *
      * @param inputTexts 文本
      */
     public List<Double> embeddingB(String inputTexts) {
-        // 手动从环境变量获取并设置 API Key
-        String apiKey = System.getenv("DASHSCOPE_API_KEY");
-
-        if (apiKey == null || apiKey.isEmpty()) {
-            throw new RuntimeException("环境变量 DASHSCOPE_API_KEY 未设置");
-        }
 
         try {// 构建请求参数
             TextEmbeddingParam param = TextEmbeddingParam
                     .builder()
-                    .model("text-embedding-v4")
+                    .model(AliConstant.EMBEDDING_MODEL_NAME)
                     .texts(Collections.singleton(inputTexts))// 输入文本
                     .build();
 
@@ -44,8 +43,8 @@ public class AliEmbeddingUtil {
             return result.getOutput().getEmbeddings().get(0).getEmbedding();
         } catch (NoApiKeyException e) {
             // 捕获并处理API Key未设置的异常
-            System.err.println("调用 API 时发生异常: " + e.getMessage());
-            System.err.println("请检查您的 API Key 是否已正确配置。");
+            log.info("调用 API 时发生异常: " + e.getMessage());
+            log.info("请检查您的 API Key 是否已正确配置。");
         }
         return null;
 
@@ -57,18 +56,11 @@ public class AliEmbeddingUtil {
      * @param inputTexts 文本
      */
     public VectorDTO embedding(String inputTexts) {
-        // 手动从环境变量获取并设置 API Key
-        String apiKey = System.getenv("DASHSCOPE_API_KEY");
-
-        if (apiKey == null || apiKey.isEmpty()) {
-            throw new RuntimeException("环境变量 DASHSCOPE_API_KEY 未设置");
-        }
-
         try {
             // 构建请求参数
             TextEmbeddingParam param = TextEmbeddingParam
                     .builder()
-                    .model("text-embedding-v4")
+                    .model(AliConstant.EMBEDDING_MODEL_NAME)
                     .texts(Collections.singleton(inputTexts))// 输入文本
                     .build();
 
@@ -82,8 +74,8 @@ public class AliEmbeddingUtil {
             return vectorDTO;
         } catch (NoApiKeyException e) {
             // 捕获并处理API Key未设置的异常
-            System.err.println("调用 API 时发生异常: " + e.getMessage());
-            System.err.println("请检查您的 API Key 是否已正确配置。");
+            log.info("调用 API 时发生异常: " + e.getMessage());
+            log.info("请检查您的 API Key 是否已正确配置。");
         }
         return null;
 

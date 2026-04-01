@@ -11,6 +11,9 @@ System.out.println("Hello world! OrderApplication done...");
 [2] 只要是入参数，就必须先判断null。
 
 ===========NOTE======
+好了终于把输入法搞好了，llm模型目前使用的是 阿里云的，
+1.1 语言模型，qwen3.5plus，
+1.2 向量模型，embedding-text-v4，
 发现refs/heads/kafka违反了存储库规则。 Repository rule violations found for refs/heads/kafka.
 Push cannot contain secrets，推送不能包含秘密
 

@@ -30,16 +30,12 @@ import com.alibaba.dashscope.embeddings.TextEmbeddingParam;
 import com.alibaba.dashscope.embeddings.TextEmbeddingResult;
 import com.alibaba.dashscope.embeddings.TextEmbeddingResultItem;
 import com.alibaba.dashscope.embeddings.TextEmbeddingUsage;
-import com.alibaba.dashscope.exception.NoApiKeyException;
-import com.alibaba.dashscope.utils.Constants;
+import xCloud.entity.constant.AliConstant;
 
 import java.util.Collections;
 import java.util.List;
 
 public class Main {
-//    public final static String model = "text-embedding-v4";
-    public final static String model = "multimodal-embedding-v1";
-    public final static String apiKey = System.getenv("DASHSCOPE_API_KEY");
 
     /**
      * 若使用新加坡地域的模型，请取消以下注释
@@ -48,27 +44,12 @@ public class Main {
      * }
      */
     public static void main(String[] args) {
-
-
-        AliEmbeddingUtil aliEmbeddingUtil = new AliEmbeddingUtil();
-
-
-        // 手动从环境变量获取并设置 API Key
-
-        System.out.println(apiKey);
-
-        if (apiKey == null || apiKey.isEmpty()) {
-            throw new RuntimeException("环境变量 DASHSCOPE_API_KEY 未设置");
-        }
-        System.out.println("----apiKey");
-        System.out.println(apiKey);
-
         String inputTexts = "衣服的质量杠杠的";
         try {
             // 构建请求参数
             TextEmbeddingParam param = TextEmbeddingParam
                     .builder()
-                    .model(model)
+                    .model(AliConstant.EMBEDDING_MODEL_NAME)
                     // 输入文本
                     .texts(Collections.singleton(inputTexts))
                     .build();

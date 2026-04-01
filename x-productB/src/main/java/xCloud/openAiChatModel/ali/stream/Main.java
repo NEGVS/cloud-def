@@ -6,6 +6,7 @@ package xCloud.openAiChatModel.ali.stream;
  * @Date 2025/11/6 10:27
  * @ClassName Main
  */
+
 import com.alibaba.dashscope.aigc.generation.Generation;
 import com.alibaba.dashscope.aigc.generation.GenerationParam;
 import com.alibaba.dashscope.aigc.generation.GenerationResult;
@@ -13,22 +14,16 @@ import com.alibaba.dashscope.common.Message;
 import com.alibaba.dashscope.common.Role;
 import io.reactivex.Flowable;
 import io.reactivex.schedulers.Schedulers;
+import org.springframework.beans.factory.annotation.Value;
+import xCloud.entity.constant.AliConstant;
 
 import java.util.Arrays;
 import java.util.concurrent.CountDownLatch;
 
 public class Main {
-    // 若使用新加坡地域的模型，请释放下列注释
-    // static {
-    //     Constants.baseHttpApiUrl="https://dashscope-intl.aliyuncs.com/api/v1";
-    // }
+
     public static void main(String[] args) {
-        // 1. 获取 API Key
-        String apiKey = System.getenv("DASHSCOPE_API_KEY");
-        if (apiKey == null || apiKey.isEmpty()) {
-            System.err.println("请设置环境变量 DASHSCOPE_API_KEY");
-            return;
-        }
+
 
         // 2. 初始化 Generation 实例
         Generation gen = new Generation();
@@ -36,8 +31,8 @@ public class Main {
 
         // 3. 构建请求参数
         GenerationParam param = GenerationParam.builder()
-                .apiKey(apiKey)
-                .model("qwen-plus")
+                .apiKey(AliConstant.API_KEY)
+                .model(AliConstant.CHAT_MODEL_NAME)
                 .messages(Arrays.asList(
                         Message.builder()
                                 .role(Role.USER.getValue())

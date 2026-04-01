@@ -13,21 +13,25 @@ import com.openai.client.OpenAIClient;
 import com.openai.client.okhttp.OpenAIOkHttpClient;
 import com.openai.models.chat.completions.ChatCompletion;
 import com.openai.models.chat.completions.ChatCompletionCreateParams;
+import org.springframework.beans.factory.annotation.Value;
+import xCloud.entity.constant.AliConstant;
 
 public class Main {
+
+
     public static void main(String[] args) {
         try {
             OpenAIClient client = OpenAIOkHttpClient.builder()
                     // 新加坡和北京地域的API Key不同。获取API Key：https://help.aliyun.com/zh/model-studio/get-api-key
                     // 若没有配置环境变量，请用阿里云百炼API Key将下行替换为.apiKey("sk-xxx")
-                    .apiKey(System.getenv("DASHSCOPE_API_KEY"))
+                    .apiKey(AliConstant.API_KEY)
                     // 以下是北京地域base_url，如果使用新加坡地域的模型，需要将base_url替换为：https://dashscope-intl.aliyuncs.com/compatible-mode/v1
-                    .baseUrl("https://dashscope.aliyuncs.com/compatible-mode/v1")
+                    .baseUrl(AliConstant.BASE_URL)
                     .build();
 
             // 创建 ChatCompletion 参数
             ChatCompletionCreateParams params = ChatCompletionCreateParams.builder()
-                    .model("qwen-plus")  // 指定模型
+                    .model(AliConstant.CHAT_MODEL_NAME)  // 指定模型
                     .addSystemMessage("You are a helpful assistant.")
                     .addUserMessage("你是谁？马云是谁？")
                     .build();

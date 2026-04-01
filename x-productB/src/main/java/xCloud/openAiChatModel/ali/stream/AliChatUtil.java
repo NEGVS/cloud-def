@@ -1,14 +1,11 @@
 package xCloud.openAiChatModel.ali.stream;
 
-import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.ObjectUtil;
-import cn.hutool.json.JSONUtil;
 import com.alibaba.dashscope.aigc.generation.Generation;
 import com.alibaba.dashscope.aigc.generation.GenerationParam;
 import com.alibaba.dashscope.aigc.generation.GenerationResult;
 import com.alibaba.dashscope.common.Message;
 import com.alibaba.dashscope.common.Role;
-import com.esotericsoftware.minlog.Log;
 import com.openai.client.OpenAIClient;
 import com.openai.client.okhttp.OpenAIOkHttpClient;
 import com.openai.models.chat.completions.ChatCompletion;
@@ -19,6 +16,7 @@ import org.springframework.stereotype.Component;
 import reactor.adapter.rxjava.RxJava2Adapter;
 import reactor.core.publisher.Flux;
 import reactor.core.scheduler.Schedulers;
+import xCloud.entity.constant.AliConstant;
 
 import java.util.Arrays;
 
@@ -39,7 +37,7 @@ public class AliChatUtil {
      * @param model  模型名称，默认为 "qwen-plus"
      */
 //    public static void streamChat(String prompt, String model) {
-//        String apiKey = System.getenv("DASHSCOPE_API_KEY");
+//        String apiKey = aliApiKey;
 //
 //        Generation gen = new Generation();
 //        CountDownLatch latch = new CountDownLatch(1);
@@ -114,25 +112,20 @@ public class AliChatUtil {
     /**
      * 使用 DashScope API 进行流式文本生成，并支持流式返回给前端。
      *
-     * @param apiKey API 密钥（如果为 null，则从环境变量 DASHSCOPE_API_KEY 获取）
+     * @param apiKey API 密钥
      * @param prompt 用户提示词
      * @param model  模型名称，默认为 "qwen-plus"
      * @return Flux<String> 流式响应，每个元素为内容片段（最后一个元素包含用量信息，如果适用）
      */
     public static Flux<String> streamChatToFrontend(String apiKey, String prompt, String model) {
         log.info("==1-使用 DashScope API 进行流式文本生成，并支持流式返回给前端。");
-        if (apiKey == null || apiKey.isEmpty()) {
-            apiKey = System.getenv("DASHSCOPE_API_KEY");
-            if (apiKey == null || apiKey.isEmpty()) {
-                return Flux.error(new RuntimeException("请设置环境变量 DASHSCOPE_API_KEY"));
-            }
-        }
+
 
         Generation gen = new Generation();
 
         GenerationParam param = GenerationParam.builder()
                 .apiKey(apiKey)
-                .model(model != null ? model : "qwen-plus")
+                .model(model != null ? model : AliConstant.CHAT_MODEL_NAME)
                 .messages(Arrays.asList(
                         Message.builder()
                                 .role(Role.USER.getValue())
@@ -198,14 +191,14 @@ public class AliChatUtil {
             OpenAIClient client = OpenAIOkHttpClient.builder()
                     // 新加坡和北京地域的API Key不同。获取API Key：https://help.aliyun.com/zh/model-studio/get-api-key
                     // 若没有配置环境变量，请用阿里云百炼API Key将下行替换为.apiKey("sk-xxx")
-                    .apiKey(System.getenv("DASHSCOPE_API_KEY"))
+                    .apiKey(AliConstant.API_KEY)
                     // 以下是北京地域base_url，如果使用新加坡地域的模型，需要将base_url替换为：https://dashscope-intl.aliyuncs.com/compatible-mode/v1
-                    .baseUrl("https://dashscope.aliyuncs.com/compatible-mode/v1")
+                    .baseUrl(AliConstant.BASE_URL)
                     .build();
 
             // 创建 ChatCompletion 参数
             ChatCompletionCreateParams params = ChatCompletionCreateParams.builder()
-                    .model("qwen-plus")  // 指定模型
+                    .model(AliConstant.CHAT_MODEL_NAME)  // 指定模型
                     .addSystemMessage(systemMessage) // 添加系统消息，设置角色，描述角色
                     .addUserMessage(userMessage) //  添加用户消息
                     .build();

@@ -1,7 +1,7 @@
 package xCloud.config;
 
 /**
- * @Description
+ * @Description MilvusConfig 相关
  * @Author Andy Fan
  * @Date 2025/10/10 10:43
  * @ClassName MilvusConfig

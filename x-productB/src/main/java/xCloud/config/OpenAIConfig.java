@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * @Description
+ * @Description OpenAIConfig
  * @Author Andy Fan
  * @Date 2025/10/17 10:54
  * @ClassName OpenAIConfig

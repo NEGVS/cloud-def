@@ -5,7 +5,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.function.client.WebClient;
 
 /**
- * @Description
+ * @Description 远程调用相关，可以写多个client
  * @Author Andy Fan
  * @Date 2025/10/20 13:51
  * @ClassName WebClientConfig

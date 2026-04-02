@@ -5,13 +5,13 @@ import io.swagger.v3.oas.annotations.info.Info;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.Environment;
 import xCloud.tools.springX.MyBean;
 
@@ -33,28 +33,30 @@ public class XProductBApplication {
     @Value("${server.port}")
     public String port;
 
+    @Value("${server.servlet.context-path:}")
+    private String contextPath;
+
+    @Autowired
+    private Environment env;
+
+    @Autowired
+    private MyBean myBean;
+
     @PostConstruct
     public void init() {
         System.out.println("当前端口为：" + port);
+        log.info("x-product-B 启动完成...");
+        log.info("\n--api--");
+        log.info("\nAPI文档地址: http://localhost:{}{}/doc.html", port, contextPath);
+        log.info("\n--nacos URL");
+        log.info("\nhttp://localhost:8848/nacos");
+        System.out.println("---------------获取并使用Bean");
+        myBean.doBusiness();
     }
 
     public static void main(String[] args) {
         System.out.println("x-product-B start...");
-        ConfigurableApplicationContext context = SpringApplication.run(XProductBApplication.class, args);
-        log.info("x-product-B 启动完成...");
-        Environment env = context.getEnvironment();
-        String actualPort = env.getProperty("server.port");
-        String contextPath = env.getProperty("server.servlet.context-path", "");
-        log.info("\n--api--");
-        log.info("\nAPI文档地址: http://localhost:{}{}/doc.html", actualPort, contextPath);
-        log.info("\n--nacos URL");
-        log.info("\nhttp://localhost:8848/nacos");
-        //获取并使用Bean
-        System.out.println("---------------获取并使用Bean");
-        MyBean bean = context.getBean(MyBean.class);
-        bean.doBusiness();
-        //关闭容器，触发销毁阶段
-//        context.close();
+        SpringApplication.run(XProductBApplication.class, args);
     }
 
 

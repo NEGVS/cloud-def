@@ -9,6 +9,7 @@ package xCloud.config;
 
 import io.milvus.v2.client.ConnectConfig;
 import io.milvus.v2.client.MilvusClientV2;
+import jakarta.annotation.PreDestroy;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,6 +29,7 @@ public class MilvusConfig {
     @Value("${milvus.token}")
     private String token;
 
+    private MilvusClientV2 milvusClientV2;
 //    @Bean
 //    public MilvusServiceClient milvusClient() {
 //        ConnectParam connectParam = ConnectParam.newBuilder()
@@ -38,7 +40,7 @@ public class MilvusConfig {
 //        return new MilvusServiceClient(connectParam);
 //    }
 
-//    --------v2----------
+    //    --------v2----------
     @Bean
     public MilvusClientV2 milvusClientV2() {
         ConnectConfig connectConfig = ConnectConfig.builder()
@@ -48,5 +50,20 @@ public class MilvusConfig {
 //                .username("root")
                 .build();
         return new MilvusClientV2(connectConfig);
+    }
+
+    // ======================
+    // 关键：优雅关闭 Milvus
+    // ======================
+    @PreDestroy
+    public void closeMilvus() {
+        try {
+            if (milvusClientV2 != null) {
+                milvusClientV2.close();
+                System.out.println("✅ Milvus 客户端已优雅关闭");
+            }
+        } catch (Exception e) {
+            System.err.println("⚠️ Milvus 关闭时出现异常：" + e.getMessage());
+        }
     }
 }

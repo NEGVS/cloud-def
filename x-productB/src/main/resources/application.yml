@@ -1,6 +1,11 @@
 server:
   port: 8083
 spring:
+  task:
+    execution:
+      shutdown:
+        await-termination: true
+        await-termination-period: 10s
   #  数据库配置
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
@@ -97,6 +102,9 @@ langchain4j:
       model-name: gpt-4o
       log-requests: true
       log-responses: true
+    embedding-model:
+      api-key: ${OPENAI_API_KEY}
+      model-name: text-embedding-3-small
 
 #
 # application.properties 或启动参数
@@ -135,4 +143,7 @@ baichuan:
     key: ${BAICHUAN_API_KEY}
 hdbscan:
   service:
-    url: http://localhost:5000   # 生产环境可以换成配置中心或环境变量
+    url: http://localhost:8001
+llm:
+  api:
+    url: https://api.deepseek.com/v1/chat/completions

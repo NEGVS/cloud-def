@@ -16,6 +16,7 @@ import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -49,9 +50,11 @@ import java.util.Random;
 public class MilvusController {
 
 
+    @Lazy
     @Resource
     private MilvusClientV2 milvusClientV2;
 
+    @Lazy
     @Resource
     private Embedding2Service embedding2Service;
 

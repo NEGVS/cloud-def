@@ -1,6 +1,5 @@
 package xCloud.openAiChatModel.service;
 
-import com.openai.models.vectorstores.VectorStore;
 import dev.langchain4j.data.embedding.Embedding;
 import dev.langchain4j.model.embedding.EmbeddingModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,9 +17,6 @@ import java.util.stream.Collectors;
  */
 @Service
 public class RecruitmentVectorService {
-
-    @Autowired
-    private VectorStore vectorStore;
 
     @Autowired
     private EmbeddingModel embeddingModel;

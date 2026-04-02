@@ -13,6 +13,7 @@ import jakarta.annotation.PreDestroy;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 
 @Configuration
 public class MilvusConfig {
@@ -42,6 +43,7 @@ public class MilvusConfig {
 
     //    --------v2----------
     @Bean
+    @Lazy
     public MilvusClientV2 milvusClientV2() {
         ConnectConfig connectConfig = ConnectConfig.builder()
                 .uri(milvusUri)

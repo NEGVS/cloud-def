@@ -1,12 +1,5 @@
 server:
   port: 8083
-# 线程池配置（动态可调，不填则使用默认值：core=CPU*2, max=CPU*4）
-thread-pool:
-  core-size: 8          # 核心线程数
-  max-size: 16          # 最大线程数
-  keep-alive-seconds: 60 # 空闲线程存活时间（秒）
-  queue-capacity: 1000  # 任务队列容量
-  thread-name-prefix: xCloud-async-  # 线程名前缀，便于日志追踪
 spring:
   task:
     execution:

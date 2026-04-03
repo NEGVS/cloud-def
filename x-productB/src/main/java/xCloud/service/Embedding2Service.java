@@ -20,10 +20,13 @@ import io.milvus.v2.service.vector.response.QueryResp;
 import io.milvus.v2.service.vector.response.SearchResp;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.concurrent.ThreadPoolExecutor;
 import xCloud.entity.Result;
 import xCloud.entity.TextVectorLog;
 import xCloud.entity.dto.VectorDTO;
@@ -46,6 +49,11 @@ import java.util.Optional;
 @Service
 @Slf4j
 public class Embedding2Service {
+
+    /** 通用异步线程池，用于日志写入等非关键 IO 操作 */
+    @Resource
+    @Qualifier("taskExecutor")
+    private ThreadPoolExecutor taskExecutor;
 
     /** Milvus V2 客户端，懒加载避免启动时连接超时阻断 */
     @Lazy
@@ -173,16 +181,24 @@ public class Embedding2Service {
                     .data(Collections.singletonList(row))
                     .build());
 
-            // 4. 记录日志到 MySQL
-            TextVectorLog logEntry = new TextVectorLog();
-            logEntry.setId(id);
-            logEntry.setText(text);
-            logEntry.setVector(JSON.toJSONString(vector));
-            logEntry.setCreate_time(LocalDateTime.now());
-            logEntry.setSource("insertVector");
-            logEntry.setRemark("System");
-            int rows = textVectorLogMapper.insert(logEntry);
-            log.info("向量日志写入{}, id={}", rows > 0 ? "成功" : "失败", id);
+            // 4. 异步写入日志到 MySQL（不阻塞主流程）
+            final long finalId = id;
+            final List<Double> finalVector = vector;
+            taskExecutor.execute(() -> {
+                try {
+                    TextVectorLog logEntry = new TextVectorLog();
+                    logEntry.setId(finalId);
+                    logEntry.setText(text);
+                    logEntry.setVector(JSON.toJSONString(finalVector));
+                    logEntry.setCreate_time(LocalDateTime.now());
+                    logEntry.setSource("insertVector");
+                    logEntry.setRemark("System");
+                    int rows = textVectorLogMapper.insert(logEntry);
+                    log.info("向量日志异步写入{}, id={}", rows > 0 ? "成功" : "失败", finalId);
+                } catch (Exception ex) {
+                    log.error("向量日志异步写入失败, id={}: {}", finalId, ex.getMessage(), ex);
+                }
+            });
 
             // 5. 返回结果
             if (resp.getInsertCnt() == 1) {

@@ -1,266 +1,186 @@
 package xCloud.controller;
 
-
 import io.milvus.v2.client.MilvusClientV2;
 import io.milvus.v2.service.collection.CollectionInfo;
 import io.milvus.v2.service.collection.request.DropCollectionReq;
 import io.milvus.v2.service.collection.request.HasCollectionReq;
 import io.milvus.v2.service.collection.response.ListCollectionsResp;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-import reactor.core.publisher.Mono;
+import org.springframework.web.bind.annotation.*;
 import xCloud.entity.Result;
-import xCloud.entity.TextVectorLog;
-import xCloud.entity.VectorEntity;
 import xCloud.entity.request.DropCollectionRequest;
 import xCloud.entity.request.MilvusRequest;
 import xCloud.entity.request.MilvusSearchReq;
 import xCloud.service.Embedding2Service;
-import xCloud.tools.CodeX;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 /**
- * @Description
+ * @Description Milvus 向量数据库管理接口
+ *              包含 Collection 管理、向量插入、向量搜索、条件查询等功能
  * @Author Andy Fan
  * @Date 2025/10/10 10:44
- * @ClassName MilvusTestController
  */
 @Slf4j
-@Tag(name = "Milvus Test", description = "Milvus 测试接口")
+@Tag(name = "Milvus", description = "Milvus 向量数据库接口")
 @RestController
+@RequestMapping("/milvus")
 public class MilvusController {
 
-
+    /** Milvus V2 客户端，懒加载避免启动时连接超时 */
     @Lazy
     @Resource
     private MilvusClientV2 milvusClientV2;
 
+    /** 向量 Embedding + 搜索业务逻辑 */
     @Lazy
     @Resource
     private Embedding2Service embedding2Service;
 
+    /** Collection 名称，从配置读取 */
     @Value("${vector.collection}")
     private String collectionName;
 
+    // ================================
+    // 0. 连接 & Collection 管理
+    // ================================
+
     /**
-     * 0-测试 Milvus 连接
-     *
-     * @return String
+     * 测试 Milvus 连接，并检查目标 Collection 是否存在
      */
-    @Operation(summary = "0 测试 Milvus 连接")
-    @GetMapping("/test/milvus")
+    @Operation(summary = "测试 Milvus 连接")
+    @GetMapping("/test")
     public String testMilvus() {
         try {
-            // 测试是否能连接到 Milvus
-            boolean connected = milvusClientV2 != null;
-            // 检查一个不存在的 Collection
             boolean has = milvusClientV2.hasCollection(
                     HasCollectionReq.builder()
                             .collectionName(collectionName)
                             .build()
             ).booleanValue();
-
-            return "Milvus 连接成功！客户端可用: " + connected + ", Collection存在: " + has;
+            return "Milvus 连接成功！Collection [" + collectionName + "] 存在: " + has;
         } catch (Exception e) {
             return "Milvus 连接失败: " + e.getMessage();
         }
     }
 
     /**
-     * 0-创建 Milvus 1024 Collection
-     *
-     * @return String
+     * 创建 Collection（含 Schema、向量索引、加载到内存）
+     * 已存在时 Milvus 会抛异常，接口层返回失败信息
      */
-    @PostMapping("/create-collection")
-    @Operation(summary = "0 创建 Milvus 1024 Collection")
+    @Operation(summary = "创建 Collection")
+    @PostMapping("/collection/create")
     public Result<String> createCollection() {
-        embedding2Service.createCollection();
-        return Result.success("Collection 创建成功");
+        String result = embedding2Service.createCollection();
+        return result.contains("失败") ? Result.error(result) : Result.success(result);
     }
 
     /**
-     * 1-插入 Milvus 数据
+     * 删除指定 Collection（不可逆，请谨慎调用）
      *
-     * @return String
+     * @param request 包含要删除的 Collection 名称
      */
-    @PostMapping("/milvus/insertVector")
-    @Operation(summary = "1 插入 Milvus 数据")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "创建成功",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = TextVectorLog.class))),
-
-    })
-    public Result<Object> insertVector(@Valid @RequestBody MilvusRequest request) {
-        return embedding2Service.insertVector(CodeX.nextId(), request.getText());
-    }
-//如果必须保持同步返回（不推荐，高并发下退化
-//    public Result<String> insertData() {
-//        List<Double> vectors = embedding2Service.getEmbedding("樊迎宾").block();  // 阻塞获取（仅测试/低并发用）
-//        // ... 其余逻辑同上
-//        List<Long> longs = insertVectors(entities);
-//        return Result.success(longs.toString());
-//    }
-
-    /**
-     * 1-1-异步 插入 Milvus 数据
-     *
-     * @return String
-     */
-    @GetMapping("/milvus/insertAsync")
-    @Operation(summary = "1-1 Async 插入 Milvus 数据")
-    @PostMapping("/insert")
-    public Mono<Result<String>> insertAsync() {
-        embedding2Service.insertVector(CodeX.nextId(), "");
-        return Mono.just(Result.success("插入成功"));
-    }
-
-    /**
-     * 1.2-插入 Milvus 数据
-     *
-     * @return List<Long>
-     */
-    @PostMapping("/insert")
-    @Operation(summary = "1-2 插入 Milvus 数据[随机]")
-    public List<Long> insertVectors() {
-        // 生成示例数据
-        List<VectorEntity> entities = new ArrayList<>();
-        Random random = new Random();
-
-        for (long i = 1; i <= 10; i++) {
-            VectorEntity entity = new VectorEntity();
-            entity.setId(i);
-            // 生成随机向量
-            float[] vector = new float[128];
-            for (int j = 0; j < 128; j++) {
-                vector[j] = random.nextFloat();
-            }
-            entity.setVector(vector);
-
-            entities.add(entity);
-        }
-        embedding2Service.insertVectors(null, null);
-        return List.of(CodeX.nextId());
-    }
-
-    /**
-     * 2 删除 Milvus Collection
-     *
-     * @return ResponseEntity<Void>
-     */
-    @DeleteMapping("/drop-collection")
-    @Operation(summary = "2 删除 Milvus Collection")
+    @Operation(summary = "删除 Collection")
+    @DeleteMapping("/collection/drop")
     public Result<Object> dropCollection(@Valid @RequestBody DropCollectionRequest request) {
         try {
-            milvusClientV2.dropCollection(DropCollectionReq.builder().collectionName(request.getName()).build());
+            milvusClientV2.dropCollection(
+                    DropCollectionReq.builder().collectionName(request.getName()).build()
+            );
+            log.info("Collection [{}] 删除成功", request.getName());
             return Result.success("Collection 删除成功");
         } catch (Exception e) {
-            log.error("Failed to drop Milvus collection: {}", e.getMessage(), e);
-            return Result.error("Collection 删除失败 " + e.getMessage());
+            log.error("Collection [{}] 删除失败: {}", request.getName(), e.getMessage(), e);
+            return Result.error("Collection 删除失败: " + e.getMessage());
         }
     }
 
     /**
-     * 4-搜索 Milvus 数据
-     *
-     * @return String
+     * 查询所有 Collection 名称列表
      */
-    @PostMapping("/milvus/search")
-    @Operation(summary = "4 搜索 Milvus 数据")
-    public Result<Object> search(@Valid @RequestBody MilvusSearchReq request) {
-        return Result.success(embedding2Service.search(request.getText(), 5));
-    }
-
-    /**
-     * 4-1 搜索 Milvus 数据
-     *
-     * @return List<Long>
-     */
-    @GetMapping("/search")
-    @Operation(summary = "4-1 搜索 Milvus 数据")
-    public ResponseEntity<Object> searchVectors() {
-        // 生成随机查询向量
-        Random random = new Random();
-        float[] queryVector = new float[128];
-        for (int i = 0; i < 128; i++) {
-            queryVector[i] = random.nextFloat();
-        }
-
-        // 搜索Top5相似向量
-        return ResponseEntity.ok(embedding2Service.search("queryVector", 5));
-    }
-
-    /**
-     * 4-2 查询 Milvus Collection 名称列表
-     *
-     * @return Result<List < String>>
-     */
-    @PostMapping("/collection-names")
-    @Operation(summary = "4-2 查询 Milvus Collection 名称列表")
+    @Operation(summary = "查询所有 Collection 名称")
+    @GetMapping("/collection/list")
     public Result<List<String>> getCollectionNames() {
         try {
-            ListCollectionsResp listCollectionsResp = milvusClientV2.listCollections();
-            List<CollectionInfo> collectionInfos = listCollectionsResp.getCollectionInfos();
-            List<String> names = collectionInfos.stream()
+            ListCollectionsResp resp = milvusClientV2.listCollections();
+            List<String> names = resp.getCollectionInfos().stream()
                     .map(CollectionInfo::getCollectionName)
                     .toList();
-
             return Result.success(names);
         } catch (Exception e) {
-            log.error("Failed to get Milvus collection names: {}", e.getMessage(), e);
-            return Result.error("Failed to retrieve collection names");
+            log.error("查询 Collection 列表失败: {}", e.getMessage(), e);
+            return Result.error("查询失败: " + e.getMessage());
         }
     }
 
+    // ================================
+    // 1. 插入
+    // ================================
+
     /**
-     * 4-3 query
+     * 插入单条文本向量
+     * <p>
+     * 文本经 Embedding 模型转为向量后写入 Milvus，同步记录日志到 MySQL。
      *
-     * @return Result<Object>
+     * @param request 包含待插入的文本内容
      */
-    @GetMapping("/queryBigger")
-    @Operation(summary = "4-3 queryBigger")
+    @Operation(summary = "插入单条文本向量")
+    @PostMapping("/vector/insert")
+    public Result<Object> insertVector(@Valid @RequestBody MilvusRequest request) {
+        return embedding2Service.insertVector(request.getText());
+    }
+
+    // ================================
+    // 4. 搜索 & 查询
+    // ================================
+
+    /**
+     * 向量相似度搜索（Top5）
+     * <p>
+     * 将查询文本转为向量，在 Milvus 中检索最相似的 5 条记录。
+     *
+     * @param request 包含查询文本
+     */
+    @Operation(summary = "向量相似度搜索 Top5")
+    @PostMapping("/vector/search")
+    public Result<Object> search(@Valid @RequestBody MilvusSearchReq request) {
+        return embedding2Service.search(request.getText(), 5);
+    }
+
+    /**
+     * 查询 id 大于指定值的记录
+     *
+     * @param id 基准 ID
+     */
+    @Operation(summary = "查询 id > 指定值的记录")
+    @GetMapping("/query/bigger")
     public Result<Object> queryBigger(@RequestParam("id") Long id) {
         try {
             return embedding2Service.queryBigger(id);
         } catch (Exception e) {
-            log.error("Failed queryBigger Milvus collection: {}", e.getMessage(), e);
-            return Result.error("Failed to queryBigger collection");
+            log.error("queryBigger 失败: {}", e.getMessage(), e);
+            return Result.error("查询失败: " + e.getMessage());
         }
     }
 
     /**
-     * 4-4 queryEqual
+     * 查询 id 等于指定值的记录
      *
-     * @return Result<Object>
+     * @param id 目标 ID
      */
-    @GetMapping("/queryEqual")
-    @Operation(summary = "4-4 queryEqual")
+    @Operation(summary = "查询 id == 指定值的记录")
+    @GetMapping("/query/equal")
     public Result<Object> queryEqual(@RequestParam("id") Long id) {
         try {
             return embedding2Service.queryEqual(id);
         } catch (Exception e) {
-            log.error("Failed queryEqual Milvus collection: {}", e.getMessage(), e);
-            return Result.error("Failed to queryEqual collection");
+            log.error("queryEqual 失败: {}", e.getMessage(), e);
+            return Result.error("查询失败: " + e.getMessage());
         }
     }
-
 }

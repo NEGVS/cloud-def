@@ -2,7 +2,6 @@ package xCloud.service;
 
 import com.alibaba.fastjson.JSON;
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import io.milvus.v2.client.MilvusClientV2;
 import io.milvus.v2.common.DataType;
@@ -20,7 +19,6 @@ import io.milvus.v2.service.vector.response.InsertResp;
 import io.milvus.v2.service.vector.response.QueryResp;
 import io.milvus.v2.service.vector.response.SearchResp;
 import jakarta.annotation.Resource;
-
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
@@ -41,32 +39,48 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * @Description 适配 milvus V2.0
+ * @Description Milvus 向量数据库操作 Service，适配 Milvus SDK V2
  * @Author Andy Fan
  * @Date 2025/11/10 16:16
- * @ClassName Embedding2Service
  */
 @Service
 @Slf4j
 public class Embedding2Service {
 
+    /** Milvus V2 客户端，懒加载避免启动时连接超时阻断 */
     @Lazy
     @Resource
     private MilvusClientV2 milvusClientV2;
+
+    /** 向量日志 Mapper，用于记录插入的文本和向量 */
     @Resource
     private TextVectorLogMapper textVectorLogMapper;
 
+    /** 阿里云 DashScope Embedding 工具类 */
     @Resource
     private AliEmbeddingUtil aliEmbeddingUtil;
 
+    /** 向量维度，从配置读取（需与 Embedding 模型输出维度一致） */
     @Value("${vector.dim}")
     private Integer dim;
 
+    /** Milvus Collection 名称，从配置读取 */
     @Value("${vector.collection}")
     private String collectionName;
 
+    // ================================
+    // 0. Collection 管理
+    // ================================
+
     /**
-     * 创建集合（createCollection）
+     * 创建 Collection（含 Schema、索引、加载到内存）
+     * <p>
+     * Schema 结构：
+     * - id：INT64，主键，非自增
+     * - vector：FLOAT_VECTOR，维度由配置决定
+     * - text：VARCHAR，存储原始文本（可选，用于回显）
+     *
+     * @return 创建结果描述
      */
     public String createCollection() {
 
@@ -82,246 +96,239 @@ public class Embedding2Service {
                 .description("主键 ID")
                 .build());
 
-        // 添加 embedding 字段（FLOAT_VECTOR，1536 维）
+        // 向量字段：vector（FLOAT_VECTOR）
         collectionSchema.addField(AddFieldReq.builder()
                 .fieldName("vector")
                 .dataType(DataType.FloatVector)
                 .dimension(dim)
-                .description("文本嵌入向量")
+                .description("文本 Embedding 向量")
                 .build());
 
-        // 创建集合 Req
+        // 创建 Collection
         CreateCollectionReq createReq = CreateCollectionReq.builder()
                 .collectionName(collectionName)
                 .collectionSchema(collectionSchema)
                 .build();
 
-        // 执行创建,在 Milvus Java SDK（v2.x 版本）中，milvusClientV2.createCollection(createReq) 方法的返回类型为 void，即成功时不返回任何值。如果创建失败，它会抛出 MilvusClientException（或其子类）异常。因此，要判断创建是否成功，最直接的方式是捕获异常：
         try {
             milvusClientV2.createCollection(createReq);
-            log.info("Collection 创建成功！");
+            log.info("Collection [{}] 创建成功", collectionName);
         } catch (MilvusClientException e) {
-            log.info("Collection 创建失败: " + e.getMessage());
+            log.error("Collection [{}] 创建失败: {}", collectionName, e.getMessage(), e);
             return "Collection 创建失败: " + e.getMessage();
         }
-        // 创建索引（L2 度量在此指定）
+
+        // 创建向量索引（AUTOINDEX + L2 距离）
         IndexParam indexParam = IndexParam.builder()
-                .fieldName("vector")  // 字段名在此指定
-                .indexName("idx")
-                .indexType(IndexParam.IndexType.AUTOINDEX)  // 或 IndexType.IVF_FLAT 等
+                .fieldName("vector")
+                .indexName("idx_vector")
+                .indexType(IndexParam.IndexType.AUTOINDEX)
                 .metricType(IndexParam.MetricType.L2)
-//                cosine
-//                .extraParams(Map.of("M", "16", "nlist", "128"))  // 具体索引参数（针对 IVF_FLAT 等；AUTOINDEX 可能无需或不同）
                 .build();
 
-        CreateIndexReq indexReq = CreateIndexReq.builder()
+        milvusClientV2.createIndex(CreateIndexReq.builder()
                 .collectionName(collectionName)
                 .indexParams(Collections.singletonList(indexParam))
-                .build();
-        milvusClientV2.createIndex(indexReq);
+                .build());
 
-        // 加载集合到内存
-        LoadCollectionReq loadCollectionReq = LoadCollectionReq.builder()
+        // 加载 Collection 到内存，使其可被搜索
+        milvusClientV2.loadCollection(LoadCollectionReq.builder()
                 .collectionName(collectionName)
-                .build();
-        milvusClientV2.loadCollection(loadCollectionReq);
+                .build());
+
+        log.info("Collection [{}] 索引创建并加载完成", collectionName);
         return "集合创建成功";
     }
 
+    // ================================
+    // 1. 插入
+    // ================================
+
     /**
-     * 插入单个向量（insertVector）
+     * 插入单条文本向量
+     * <p>
+     * 流程：文本 → Embedding → 写入 Milvus + 记录日志到 MySQL
      *
-     * @param id   ID
-     * @param text 在 Milvus 向量数据库的上下文中（基于之前的对话），insertVector(Long id, String text) 方法中的 id 参数的作用是作为主键（Primary Key），用于唯一标识插入的向量实体。具体来说：
-     *             作用详解
-     *             <p>
-     *             唯一标识实体：Milvus 集合（Collection）通常定义一个主键字段（默认名为 "id" 或自定义），id 参数的值会填充到这个主键字段中，确保每个插入的向量实体（如嵌入的文本向量）具有唯一的 ID，便于后续查询、删除或更新。
-     *             插入流程：
-     *             id：作为实体的唯一标识符（Long 类型，支持整数主键）。
-     *             text：可能是原始文本，会在插入前通过嵌入模型（如 BERT）转换为向量（vector），然后与 id 一起插入集合。
-     *             <p>
-     *             为什么需要 ID：
-     *             Milvus 不自动生成 ID（除非配置为自增），所以手动提供 id 可以避免冲突，并支持精确检索（如 getById(id)）。
-     *             如果集合已启用主键，插入时必须提供；否则会报错（e.g., "Primary key is required"）。
+     * @param text 原始文本（不可为空）
+     * @return 插入结果
      */
     @Transactional(rollbackFor = Exception.class)
-    public Result<Object> insertVector(Long id, String text) {
+    public Result<Object> insertVector(String text) {
         try {
+            // 1. 文本转向量
             VectorDTO embedding = aliEmbeddingUtil.embedding(text);
-            id = CodeX.nextId();
             List<Double> vector = embedding.getVector();
-            // 构建 JSON 数据
-            JsonObject row = new JsonObject();
+
+            // 2. 生成唯一 ID
+            long id = CodeX.nextId();
+
+            // 3. 构建插入数据
             Gson gson = new Gson();
-            row.add("vector", gson.toJsonTree(vector));
+            JsonObject row = new JsonObject();
             row.addProperty("id", id);
-            InsertReq insertReq = InsertReq.builder()
+            row.add("vector", gson.toJsonTree(vector));
+
+            InsertResp resp = milvusClientV2.insert(InsertReq.builder()
                     .collectionName(collectionName)
                     .data(Collections.singletonList(row))
-                    .build();
-            InsertResp resp = milvusClientV2.insert(insertReq);
-            log.info("插入ID: " + id);
-            //log
-            TextVectorLog textVectorLog = new TextVectorLog();
-            textVectorLog.setId(id);
-            textVectorLog.setText(text);
-            textVectorLog.setVector(JSON.toJSONString(vector));
-            textVectorLog.setCreate_time(LocalDateTime.now());
-            textVectorLog.setSource("insertVector");
-            textVectorLog.setRemark("System");
-            int insert = textVectorLogMapper.insert(textVectorLog);
-            if (insert > 0) {
-                log.info("textVectorLog日志插入成功");
-            } else {
-                log.info("textVectorLog日志插入失败");
-            }
+                    .build());
 
+            // 4. 记录日志到 MySQL
+            TextVectorLog logEntry = new TextVectorLog();
+            logEntry.setId(id);
+            logEntry.setText(text);
+            logEntry.setVector(JSON.toJSONString(vector));
+            logEntry.setCreate_time(LocalDateTime.now());
+            logEntry.setSource("insertVector");
+            logEntry.setRemark("System");
+            int rows = textVectorLogMapper.insert(logEntry);
+            log.info("向量日志写入{}, id={}", rows > 0 ? "成功" : "失败", id);
+
+            // 5. 返回结果
             if (resp.getInsertCnt() == 1) {
-                log.info("插入成功，ID: " + id);
+                log.info("向量插入 Milvus 成功, id={}", id);
                 return Result.success(resp);
-            } else {
-                return Result.error("插入失败");
             }
+            return Result.error("向量插入 Milvus 失败");
+
         } catch (Exception e) {
-            log.error("插入失败: " + e.getMessage() + e);
+            log.error("insertVector 失败: {}", e.getMessage(), e);
             return Result.error("插入失败: " + e.getMessage());
         }
     }
 
     /**
-     * 批量插入向量（insertVectors）
+     * 批量插入文本向量
+     * <p>
+     * 每条文本单独调用 Embedding 接口转为向量后批量写入 Milvus，ID 由雪花算法生成。
      *
-     * @param ids   2
-     * @param texts 2
+     * @param texts 文本列表（不可为空）
      */
-    public void insertVectors(List<Long> ids, List<String> texts) {
-        if (ids.size() != texts.size()) {
-            throw new IllegalArgumentException("ID 和文本列表大小不匹配");
+    public void insertVectors(List<String> texts) {
+        if (texts == null || texts.isEmpty()) {
+            throw new IllegalArgumentException("文本列表不能为空");
         }
-        Gson gson = new Gson();
-        JsonArray rows = new JsonArray();
-        JsonObject row = new JsonObject();
 
-        for (int i = 0; i < ids.size(); i++) {
-            VectorDTO embedding = aliEmbeddingUtil.embedding(texts.get(i));
+        Gson gson = new Gson();
+        List<JsonObject> rows = new ArrayList<>();
+
+        // 逐条转向量，构建插入数据
+        for (String text : texts) {
+            VectorDTO embedding = aliEmbeddingUtil.embedding(text);
             List<Double> vector = embedding.getVector();
 
-
-//            JsonArray embeddingArray = new JsonArray();
-//            for (Double d : vector) {
-//                embeddingArray.add(new JsonPrimitive(d));
-//            }
-            row.add("vector", gson.toJsonTree(vector));
-//            row.addProperty("id", new JsonPrimitive(ids.get(i)));
+            JsonObject row = new JsonObject();
             row.addProperty("id", CodeX.nextId());
+            row.add("vector", gson.toJsonTree(vector));
             rows.add(row);
         }
 
-        InsertReq insertReq = InsertReq.builder()
+        InsertResp resp = milvusClientV2.insert(InsertReq.builder()
                 .collectionName(collectionName)
-                .data(Collections.singletonList(row))
-                .build();
+                .data(rows)
+                .build());
 
-        InsertResp resp = milvusClientV2.insert(insertReq);
-        if (resp.getInsertCnt() != 0) {
-            throw new RuntimeException("批量插入失败: " + resp.getInsertCnt());
+        // 插入成功时 insertCnt == 实际插入条数
+        if (resp.getInsertCnt() != texts.size()) {
+            throw new RuntimeException("批量插入不完整，期望=" + texts.size() + "，实际=" + resp.getInsertCnt());
         }
-        System.out.println("批量插入成功，共 " + resp.getInsertCnt() + " 条");
+        log.info("批量插入成功，共 {} 条", resp.getInsertCnt());
     }
 
+    // ================================
+    // 4. 搜索 / 查询
+    // ================================
+
     /**
-     * 向量搜索（search）
+     * 向量相似度搜索
+     * <p>
+     * 将查询文本转为向量后，在 Milvus 中检索最相似的 topK 条记录，
+     * 并回查 MySQL 日志表补充原始文本内容。
      *
-     * @param queryText queryText
-     * @param topK      topK
-     * @return List<Map < String, Object>>
+     * @param queryText 查询文本
+     * @param topK      返回最相似结果数量
+     * @return 结果列表，每条包含 id、distance、content、primaryKey
      */
     public Result<Object> search(String queryText, int topK) {
+        // 1. 查询文本转向量
         VectorDTO embedding = aliEmbeddingUtil.embedding(queryText);
         List<Double> queryVector = embedding.getVector();
 
-        // 转换为 FloatVec（新 V2 需要）
+        // 2. Double[] → float[]（Milvus FloatVec 需要 float[]）
         float[] queryArray = new float[queryVector.size()];
         for (int i = 0; i < queryVector.size(); i++) {
             queryArray[i] = queryVector.get(i).floatValue();
         }
-        FloatVec floatVec = new FloatVec(queryArray);
 
-        SearchReq searchReq = SearchReq.builder()
+        // 3. 执行搜索
+        SearchResp resp = milvusClientV2.search(SearchReq.builder()
                 .collectionName(collectionName)
-                .data(List.of(floatVec))  // 单个查询向量
+                .data(List.of(new FloatVec(queryArray)))
                 .topK(topK)
-//                .filter("id < 100")  // 可添加过滤表达式，如 "id > 10"
-                .outputFields(Collections.singletonList("*"))  // 返回字段
-//                .withMetricType()
-                .build();
+                .outputFields(Collections.singletonList("*"))
+                .build());
 
-        SearchResp resp = milvusClientV2.search(searchReq);
-        // 解析结果
+        // 4. 解析结果，回查 MySQL 补充文本内容
         List<Map<String, Object>> results = new ArrayList<>();
-        List<List<SearchResp.SearchResult>> searchResults = resp.getSearchResults();
-        for (List<SearchResp.SearchResult> searchResult : searchResults) {
-            for (SearchResp.SearchResult result : searchResult) {
-                System.out.printf("ID: %d, Score: %f, %s\n", (long) result.getId(), result.getScore(), result.getEntity().toString());
-                TextVectorLog textVectorLog = textVectorLogMapper.selectById((Long) result.getId());
-                Map<String, Object> item = Map.of(
+        for (List<SearchResp.SearchResult> group : resp.getSearchResults()) {
+            for (SearchResp.SearchResult result : group) {
+                log.info("搜索结果 id={}, score={}", result.getId(), result.getScore());
+                TextVectorLog logEntry = textVectorLogMapper.selectById((Long) result.getId());
+                results.add(Map.of(
                         "id", result.getId(),
                         "distance", result.getScore(),
-//                        "entity", result.getEntity(),
-                        "content", Optional.ofNullable(textVectorLog).map(TextVectorLog::getText).orElse(""),
+                        "content", Optional.ofNullable(logEntry).map(TextVectorLog::getText).orElse(""),
                         "primaryKey", result.getPrimaryKey()
-                );
-                results.add(item);
+                ));
             }
         }
-//        Map<String, Object> stringObjectMap = results.get(results.size() - 1);
-//        stringObjectMap.get()
-
         return Result.success(results);
     }
 
-
     /**
-     * 查询（query）
+     * 条件查询（内部通用方法）
+     *
+     * @param id     查询的 ID 值
+     * @param symbol 比较符，如 " > " 或 " == "
+     * @return 满足条件的 id 列表
      */
-    public Result<Object> query(Long id, String symbol) {
+    private Result<Object> query(Long id, String symbol) {
         try {
-            QueryReq queryReq = QueryReq.builder()
+            QueryResp queryResp = milvusClientV2.query(QueryReq.builder()
                     .collectionName(collectionName)
                     .filter("id" + symbol + id)
-                    .build();
-            QueryResp queryResp = milvusClientV2.query(queryReq);
+                    .build());
+
             if (queryResp == null || queryResp.getQueryResults().isEmpty()) {
-                return Result.error("数据不存在");
+                return Result.error("未查询到数据");
             }
-            long sessionTs = queryResp.getSessionTs();
-            System.out.println("sessionTs: " + sessionTs);
+
             List<Long> ids = new ArrayList<>();
             for (QueryResp.QueryResult result : queryResp.getQueryResults()) {
-                System.out.println(result.getEntity().get("id"));
-                Long sss = (Long) result.getEntity().get("id");
-                ids.add(sss);
-                System.out.println(result.getEntity().get("vector"));
+                ids.add((Long) result.getEntity().get("id"));
             }
+            log.info("query 结果数量: {}", ids.size());
             return Result.success(ids);
+
         } catch (Exception e) {
-            log.error("query失败: " + e.getMessage() + e);
-            return Result.error("query失败: " + e.getMessage());
+            log.error("query 失败: {}", e.getMessage(), e);
+            return Result.error("query 失败: " + e.getMessage());
         }
     }
 
     /**
-     * 查询（query）, 大于
+     * 查询 id 大于指定值的记录
      *
-     * @param id
-     * @return
+     * @param id 基准 ID
      */
     public Result<Object> queryBigger(Long id) {
         return query(id, " > ");
     }
 
     /**
-     * 查询（query）, 等于
+     * 查询 id 等于指定值的记录
+     *
+     * @param id 目标 ID
      */
     public Result<Object> queryEqual(Long id) {
         return query(id, " == ");

@@ -4,6 +4,22 @@
 
 主要目的：根据用户的输入，进行回复或者返回最匹配的职位信息
 
+
+
+{"title":"我想和你交换电话","info":"您是否同意?","agreeBtn":"同意","refuseBtn":"不同意","agreeResultWords":"已同意","refuseResultWords":"未同意","msgType":"","msgId":"2","callback":"","jobId":"50001006"}
+
+
+
+INSERT INTO srzp_application.ai_robot (user_id, name, account, robot_wecom_account, avatar) VALUES (58655, '陈佳宁', '13162091125', 'LiWuYou', '');
+INSERT INTO srzp_application.ai_robot (user_id, name, account, robot_wecom_account, avatar) VALUES (57868, '陆小鹿', '13338629982', 'luxiaolu', '');
+INSERT INTO srzp_application.ai_robot (user_id, name, account, robot_wecom_account, avatar) VALUES (847964, '张俊伟', '18321447952', '18321447952', '');
+
+
+{"info":"我已留下微信，你可以加我微信聊","leftBtnType":"","rightBtnType":"","centerBtnType":"addWechat","isSendRealPhone":"0","callRealPhone":"","desc":"发送了【微信号】","senderUserId":"847855"}
+{"headInfo":"好的收到！感谢你留下联系方式并报名我们的岗位，我会尽快处理，如果合适的话会立即联系你~","footInfo":"平台消息可能查看不及时，你可以直接打我电话联系我哦","desc":"【自动回复消息】"}
+
+
+
 目前大部份代码写在了x-productB，                                                                                                                                      
 1-把pdf文档，向量化                                                                                                                                                   
 写方法实现                                                                                                                                                            

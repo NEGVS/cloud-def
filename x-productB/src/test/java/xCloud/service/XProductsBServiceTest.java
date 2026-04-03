@@ -31,9 +31,76 @@ class XProductsBServiceTest {
 
 
     // ================================================================
-    // Embedding2Service 测试
+    // Milvus 向量数据库 - 批量插入 + 搜索测试
     // 前提：Milvus 已启动（localhost:19530），Collection 已创建
     // ================================================================
+
+    /** 模拟招聘场景的岗位描述数据，用于批量写入向量库 */
+    private static final List<String> JOB_TEXTS = List.of(
+            "Java 高级工程师，熟悉 Spring Boot、Spring Cloud 微服务架构，有 Milvus 向量数据库使用经验",
+            "Python 数据工程师，擅长 Pandas、NumPy，熟悉机器学习模型训练与部署",
+            "前端开发工程师，精通 Vue3、TypeScript、Webpack，有大型 SPA 项目经验",
+            "算法工程师，深度学习方向，熟悉 PyTorch、BERT、GPT 等模型微调",
+            "DevOps 工程师，熟悉 Docker、Kubernetes、CI/CD 流水线，有 AWS 云运维经验",
+            "产品经理，负责 B 端 SaaS 产品规划，具备需求分析和原型设计能力",
+            "大数据开发工程师，熟悉 Flink、Spark、Kafka，有实时数仓建设经验",
+            "iOS 开发工程师，精通 Swift、Objective-C，有 App Store 上架经验",
+            "安全工程师，熟悉渗透测试、漏洞挖掘，有 CTF 参赛经验",
+            "后端工程师，熟悉 Go 语言，有高并发服务设计经验，了解 gRPC 和 Protobuf",
+            "测试开发工程师，熟悉自动化测试框架 Selenium、JUnit，有性能测试经验",
+            "推荐算法工程师，熟悉协同过滤、向量召回，有千万级用户推荐系统经验",
+            "区块链开发工程师，熟悉以太坊、Solidity 智能合约开发",
+            "嵌入式工程师，熟悉 C/C++、RTOS，有 ARM 架构开发经验",
+            "数据库管理员 DBA，精通 MySQL 调优、主从复制、分库分表方案"
+    );
+
+    /**
+     * V-1 批量插入岗位数据到向量库
+     * 将 15 条招聘岗位描述批量转为向量后写入 Milvus
+     */
+    @Test
+    @Order(10)
+    @DisplayName("V-1 批量插入岗位向量数据")
+    void testBatchInsertJobs() throws InterruptedException {
+        log.info("========== 开始批量插入，共 {} 条 ==========", JOB_TEXTS.size());
+        assertDoesNotThrow(() -> embedding2Service.insertVectors(JOB_TEXTS),
+                "批量插入不应抛出异常");
+        // 等待异步日志写入 MySQL 完成
+        Thread.sleep(3000);
+        log.info("========== 批量插入完成 ==========");
+    }
+
+    /**
+     * V-2 搜索关键词，验证向量相似度召回效果
+     * 针对不同方向的关键词，逐一搜索并打印 Top3 结果
+     */
+    @Test
+    @Order(11)
+    @DisplayName("V-2 关键词向量搜索召回测试")
+    void testSearchByKeywords() {
+        List<String> keywords = List.of(
+                "Java 后端开发",
+                "人工智能 深度学习",
+                "前端 Vue React",
+                "数据分析 Python",
+                "云原生 容器化部署",
+                "推荐系统 算法"
+        );
+
+        for (String keyword : keywords) {
+            log.info("\n---------- 搜索关键词: 「{}」 ----------", keyword);
+            Result<Object> result = embedding2Service.search(keyword, 3);
+            assertNotNull(result, "搜索结果不应为 null");
+
+            if (result.getData() instanceof List<?> list) {
+                log.info("Top{} 召回结果:", list.size());
+                for (int i = 0; i < list.size(); i++) {
+                    log.info("  [{}] {}", i + 1, list.get(i));
+                }
+            }
+        }
+        log.info("========== 搜索完成 ==========");
+    }
 
     /**
      * 0-1 创建 Collection

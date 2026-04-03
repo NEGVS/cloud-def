@@ -227,16 +227,28 @@ public class Embedding2Service {
 
         Gson gson = new Gson();
         List<JsonObject> rows = new ArrayList<>();
+        // 同时收集日志数据，Milvus 写入后异步落库
+        List<TextVectorLog> logEntries = new ArrayList<>();
 
         // 逐条转向量，构建插入数据
         for (String text : texts) {
             VectorDTO embedding = aliEmbeddingUtil.embedding(text);
             List<Double> vector = embedding.getVector();
+            long id = CodeX.nextId();
 
             JsonObject row = new JsonObject();
-            row.addProperty("id", CodeX.nextId());
+            row.addProperty("id", id);
             row.add("vector", gson.toJsonTree(vector));
             rows.add(row);
+
+            TextVectorLog logEntry = new TextVectorLog();
+            logEntry.setId(id);
+            logEntry.setText(text);
+            logEntry.setVector(JSON.toJSONString(vector));
+            logEntry.setCreate_time(LocalDateTime.now());
+            logEntry.setSource("insertVectors");
+            logEntry.setRemark("System");
+            logEntries.add(logEntry);
         }
 
         InsertResp resp = milvusClientV2.insert(InsertReq.builder()
@@ -249,6 +261,16 @@ public class Embedding2Service {
             throw new RuntimeException("批量插入不完整，期望=" + texts.size() + "，实际=" + resp.getInsertCnt());
         }
         log.info("批量插入成功，共 {} 条", resp.getInsertCnt());
+
+        // 异步批量写入日志到 MySQL
+        taskExecutor.execute(() -> {
+            try {
+                textVectorLogMapper.insertBatch(logEntries);
+                log.info("批量向量日志异步写入成功，共 {} 条", logEntries.size());
+            } catch (Exception ex) {
+                log.error("批量向量日志异步写入失败: {}", ex.getMessage(), ex);
+            }
+        });
     }
 
     // ================================

@@ -1,6 +1,22 @@
 server:
   port: 8083
+# dynamic-tp 动态线程池配置
+# 运行中可在 Nacos 配置中心修改以下参数，实时生效无需重启
 spring:
+  dynamic:
+    tp:
+      enabled: true
+      # 监控指标采集间隔（秒）
+      monitor-interval: 5
+      executors:
+        - thread-pool-name: taskExecutor
+          # 以下参数可在 Nacos 中覆盖，实现运行时热更新
+
+          notify-enabled:  true
+          notify-items:
+            - threshold: 80  # 队列使用率超过 80% 触发告警
+              type: log  # 告警方式：log（打印日志），可扩展为 dingTalk/weCom
+
   task:
     execution:
       shutdown:

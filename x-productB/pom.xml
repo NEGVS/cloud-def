@@ -17,6 +17,23 @@
 
     <dependencies>
 
+        <!-- dynamic-tp：动态线程池，支持运行时伸缩 + Nacos 配置中心 -->
+        <dependency>
+            <groupId>org.dromara.dynamictp</groupId>
+            <artifactId>dynamic-tp-spring-boot-starter-common</artifactId>
+            <version>1.1.8</version>
+        </dependency>
+        <dependency>
+            <groupId>org.dromara.dynamictp</groupId>
+            <artifactId>dynamic-tp-adapter-common</artifactId>
+            <version>1.1.8</version>
+        </dependency>
+        <dependency>
+            <groupId>org.dromara.dynamictp</groupId>
+            <artifactId>dynamic-tp-spring-cloud-starter-nacos</artifactId>
+            <version>1.1.8</version>
+        </dependency>
+
 <!--        RxJava2Adapter 在依赖 reactor-adapter 里：-->
         <dependency>
             <groupId>io.projectreactor.addons</groupId>

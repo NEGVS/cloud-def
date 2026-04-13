@@ -8,7 +8,7 @@ import xCloud.openAiChatModel.orchestrator.request.RagRequest;
 import xCloud.openAiChatModel.orchestrator.response.RagResponse;
 
 //@Component // 关键注解，让Spring自动扫描并创建Bean
-@FeignClient(name = "rag-service", url = "${rag.url}")
+@FeignClient(name = "rag-service", url = "http://localhost:8080/api/v1/rag")
 public interface RagClient {
 
     @PostMapping("/chat")

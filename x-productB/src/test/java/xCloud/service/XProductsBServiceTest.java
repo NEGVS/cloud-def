@@ -15,7 +15,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -35,7 +34,9 @@ class XProductsBServiceTest {
     // 前提：Milvus 已启动（localhost:19530），Collection 已创建
     // ================================================================
 
-    /** 模拟招聘场景的岗位描述数据，用于批量写入向量库 */
+    /**
+     * 模拟招聘场景的岗位描述数据，用于批量写入向量库
+     */
     private static final List<String> JOB_TEXTS = List.of(
             "Java 高级工程师，熟悉 Spring Boot、Spring Cloud 微服务架构，有 Milvus 向量数据库使用经验",
             "Python 数据工程师，擅长 Pandas、NumPy，熟悉机器学习模型训练与部署",
@@ -73,6 +74,11 @@ class XProductsBServiceTest {
     /**
      * V-2 搜索关键词，验证向量相似度召回效果
      * 针对不同方向的关键词，逐一搜索并打印 Top3 结果
+     * <p>
+     * //                "人工智能 深度学习",
+     * //                "前端 Vue React",
+     * //                "数据分析 Python",
+     * //                "云原生 容器化部署",
      */
     @Test
     @Order(11)
@@ -80,10 +86,6 @@ class XProductsBServiceTest {
     void testSearchByKeywords() {
         List<String> keywords = List.of(
                 "Java 后端开发",
-                "人工智能 深度学习",
-                "前端 Vue React",
-                "数据分析 Python",
-                "云原生 容器化部署",
                 "推荐系统 算法"
         );
 
@@ -93,7 +95,9 @@ class XProductsBServiceTest {
             assertNotNull(result, "搜索结果不应为 null");
 
             if (result.getData() instanceof List<?> list) {
-                log.info("Top{} 召回结果:", list.size());
+                log.info("-----------");
+                log.info("Top{} 召回结果:\n", list.size());
+                log.info("-----------");
                 for (int i = 0; i < list.size(); i++) {
                     log.info("  [{}] {}", i + 1, list.get(i));
                 }
@@ -224,13 +228,9 @@ class XProductsBServiceTest {
     // 原有测试
     // ================================================================
 
-    @Test
-    void tesst() {
-        System.out.println("test");
-    }
 
     @Test
-    void test112d22() {
+    void productsBService2() {
         QueryWrapper<XProductsB> queryWrapper = new QueryWrapper<>();
 //        queryWrapper.eq("merchant_id", 1);
         List<XProductsB> list = productsBService.list(queryWrapper);
@@ -247,7 +247,7 @@ class XProductsBServiceTest {
     }
 
     @Test
-    void tes071d2() {
+    void update2() {
         QueryWrapper<XProductsB> queryWrapper = new QueryWrapper<>();
 //        queryWrapper.eq("merchant_id", 2);
         List<XProductsB> list = productsBService.list(queryWrapper);
@@ -288,7 +288,7 @@ class XProductsBServiceTest {
     }
 
     @Test
-    void tes07s11() {
+    void remove2() {
         try {
             CodeX codeX = new CodeX();
             QueryWrapper<XProductsB> queryWrapper = new QueryWrapper<>();

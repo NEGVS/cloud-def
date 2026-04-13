@@ -5,18 +5,24 @@
 在我的mac电脑上。不在docker
 启动命令
 sh /Users/andy_mac/Documents/CodeSpace/andy_softWare/nacos/bin/startup.sh -m standalone
+
 查看启动日志
 tail -f /Users/andy_mac/Documents/CodeSpace/andy_softWare/nacos/logs/start.out
-url
+
+## URL
 http://localhost:8848/nacos
 注意事项：默认显示的命名空间是public，命名空间ID为空。需要选择自定义的命名空间。
 
 你这个启动命令**能用，但不算“生产级/工程级”**，我帮你优化成：
 👉 **更稳（不炸）+ 更省资源 + 可扩展（后面接Spring Boot）**
+## 当前配置
+命名空间：andyNameSpace
+server:
+    port: 8084
 
 ---
 
-# 🚀 一、你当前命令的问题
+# 一、你当前命令的问题
 
 ```bash
 docker run -d \
@@ -236,69 +242,7 @@ Milvus（向量库）
 -------------------------
 # ---1-服务器nacos
 Nacos Server API 3.0.1
-,`--.'`|  ' :                       ,---.               Running in stand alone mode, All function modules
-|   :  :  | |                      '   ,'\   .--.--.    Port: 8848
-:   |   \ | :  ,--.--.     ,---.  /   /   | /  /    '   Pid: 1
-|   : '  '; | /       \   /     \.   ; ,. :|  :  /`./
-'   ' ;.    ;.--.  .-. | /    / ''   | |: :|  :  ;_
-|   | | \   | \__\/: . ..    ' / '   | .; : \  \    `.      https://nacos.io
-'   : |  ; .' ," .--.; |'   ; :__|   :    |  `----.   \
-|   | '`--'  /  /  ,.  |'   | '.'|\   \  /  /  /`--'  /
-'   : |     ;  :   .'   \   :    : `----'  '--'.     /
-;   |.'     |  ,     .-./\   \  /            `--'---'
-'---'        `--`---'     `----'
 
-2025-06-26 13:51:13,256 INFO Nacos Server API is starting...
-
-2025-06-26 13:51:13,942 WARN Bean 'nacosWebBeanPostProcessorConfiguration' of type [com.alibaba.nacos.server.NacosWebBeanPostProcessorConfiguration$$SpringCGLIB$$0] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). The currently created BeanPostProcessor [nacosDuplicateSpringBeanPostProcessor] is declared through a non-static factory method on that class; consider declaring it as static instead.
-
-2025-06-26 13:51:14,257 INFO Nacos Server API is starting...
-
-2025-06-26 13:51:14,275 INFO Tomcat initialized with port 8848 (http)
-
-2025-06-26 13:51:14,339 INFO Root WebApplicationContext: initialization completed in 2074 ms
-
-2025-06-26 13:51:14,861 INFO Adding welcome page: class path resource [static/index.html]
-
-2025-06-26 13:51:15,271 INFO Nacos Server API is starting...
-
-2025-06-26 13:51:15,520 INFO Exposing 1 endpoint beneath base path '/actuator'
-
-2025-06-26 13:51:15,587 INFO Tomcat started on port 8848 (http) with context path '/nacos'
-
-2025-06-26 13:51:15,609 INFO Nacos Server API started successfully in 3415 ms
-
-
-         ,--.
-       ,--.'|
-   ,--,:  : |                                           Nacos Console 3.0.1
-,`--.'`|  ' :                       ,---.               Running in stand alone mode, All function modules
-|   :  :  | |                      '   ,'\   .--.--.    Port: 8080
-:   |   \ | :  ,--.--.     ,---.  /   /   | /  /    '   Pid: 1
-|   : '  '; | /       \   /     \.   ; ,. :|  :  /`./   Console: http://ebc25af009e8:8080/index.html
-'   ' ;.    ;.--.  .-. | /    / ''   | |: :|  :  ;_
-|   | | \   | \__\/: . ..    ' / '   | .; : \  \    `.      https://nacos.io
-'   : |  ; .' ," .--.; |'   ; :__|   :    |  `----.   \
-|   | '`--'  /  /  ,.  |'   | '.'|\   \  /  /  /`--'  /
-'   : |     ;  :   .'   \   :    : `----'  '--'.     /
-;   |.'     |  ,     .-./\   \  /            `--'---'
-'---'        `--`---'     `----'
-
-2025-06-26 13:51:16,194 WARN Bean 'nacosConsoleBeanPostProcessorConfiguration' of type [com.alibaba.nacos.console.config.NacosConsoleBeanPostProcessorConfiguration$$SpringCGLIB$$0] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). The currently created BeanPostProcessor [nacosDuplicateSpringBeanPostProcessor] is declared through a non-static factory method on that class; consider declaring it as static instead.
-
-2025-06-26 13:51:16,296 INFO Tomcat initialized with port 8080 (http)
-
-2025-06-26 13:51:16,301 INFO Root WebApplicationContext: initialization completed in 643 ms
-
-2025-06-26 13:51:16,507 INFO Adding welcome page: class path resource [static/index.html]
-
-2025-06-26 13:51:16,654 INFO Nacos Console is starting...
-
-2025-06-26 13:51:16,881 INFO Exposing 1 endpoint beneath base path '/actuator'
-
-2025-06-26 13:51:16,911 INFO Tomcat started on port 8080 (http) with context path '/'
-
-2025-06-26 13:51:16,920 INFO Nacos Console started successfully in 1301 ms
 ，为什么最后nacos启动port变成了8080，中文回答？
 
 Nacos 3.0 最主要的能力就是作为MCP Registry，支持了MCP服务的注册，管理，和发现的能力。

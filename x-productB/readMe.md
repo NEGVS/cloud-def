@@ -40,3 +40,86 @@ INSERT INTO srzp_application.ai_robot (user_id, name, account, robot_wecom_accou
 8 └─ 求职相关 → HDBSCAN聚类 → 向量检索 → LLM生成回复(含职位)
 
 调用python使用FastApi,webclient,分别支持，一次性回答，和流失回答。已经存在的代码就在基础上修改完善，没有的再新建。要求：快速，无误，优化完善流程，使用先进技术
+
+
+
+完成清单
+
+新建文件（共 11 个）
+
+service/recruitment/
+├── PdfChunkService.java           PDF 上传 + 智能切分 + 向量化存储                                                            
+├── HybridRagService.java          多路召回（向量 + 关键词 + RRF 融合）                                                        
+├── RerankService.java             二次排序（DashScope gte-rerank）                                                            
+├── ContextCompressService.java    上下文压缩（LLM 提取关键片段）                                                              
+├── ConversationMemoryService.java 多轮对话记忆（滑动窗口，10轮）                                                              
+└── tool/                                                                                                                      
+├── AgentTool.java             工具接口                                                                                    
+├── RagTool.java               文档检索工具                                                                                
+├── SqlQueryTool.java          数据库查询工具                                                                              
+└── ExternalApiTool.java       外部业务 API 工具                                                                           
+RecruitmentAgentService.java       ★ Agent 主服务
+
+entity/recruitment/                                                                                                              
+└── DocumentChunk.java             文档块实体
+
+mapper/
+└── DocumentChunkMapper.java       关键词检索 Mapper
+
+controller/
+└── RecruitmentAgentController.java HTTP 接口
+                                                                                                                                   
+---
+核心能力对照
+
+┌───────────────────────┬────────────────────────────────────────────────────────────────────────────────────┐
+│         需求          │                                        实现                                        │                   
+├───────────────────────┼────────────────────────────────────────────────────────────────────────────────────┤
+│ PDF 上传 + 最优切分   │ PdfChunkService — Recursive Character Splitter（段落→句子→字符，含 100字 Overlap） │
+├───────────────────────┼────────────────────────────────────────────────────────────────────────────────────┤
+│ 多路召回 Hybrid RAG   │ HybridRagService — Milvus 向量检索 + MySQL 关键词检索 + RRF 融合                   │                   
+├───────────────────────┼────────────────────────────────────────────────────────────────────────────────────┤                   
+│ Re-ranking 二次排序   │ RerankService — DashScope gte-rerank API                                           │                   
+├───────────────────────┼────────────────────────────────────────────────────────────────────────────────────┤                   
+│ 上下文压缩            │ ContextCompressService — Qwen LLM 提取相关片段                                     │
+├───────────────────────┼────────────────────────────────────────────────────────────────────────────────────┤                   
+│ 多轮对话记忆          │ ConversationMemoryService — 滑动窗口，按 sessionId 隔离                            │
+├───────────────────────┼────────────────────────────────────────────────────────────────────────────────────┤                   
+│ 流式输出              │ RecruitmentAgentService.chat() → Flux<String> SSE                                  │
+├───────────────────────┼────────────────────────────────────────────────────────────────────────────────────┤                   
+│ 自动工具选择          │ ReAct 循环解析 Action: tool_name 自动路由                                          │
+├───────────────────────┼────────────────────────────────────────────────────────────────────────────────────┤                   
+│ 多步推理 Multi-step   │ ReAct Thought→Action→Observation 最多 6 步                                         │
+├───────────────────────┼────────────────────────────────────────────────────────────────────────────────────┤                   
+│ Tool 组合 RAG+SQL+API │ RagTool / SqlQueryTool / ExternalApiTool 三路并用                                  │
+├───────────────────────┼────────────────────────────────────────────────────────────────────────────────────┤                   
+│ 失败重试              │ 工具执行 & LLM 调用各有最多 2 次重试                                               │
+├───────────────────────┼────────────────────────────────────────────────────────────────────────────────────┤                   
+│ Plan-and-Execute      │ Agent 先 makePlan() 出步骤列表，再按计划 executeReAct()                            │
+└───────────────────────┴────────────────────────────────────────────────────────────────────────────────────┘
+                                                            
+---                                                                                                                              
+需要手动做一件事（建表）
+
+在 MySQL 执行：
+CREATE TABLE recruitment_chunk (                                                                                                 
+id           BIGINT       PRIMARY KEY,                  
+content      TEXT         NOT NULL,                                                                                            
+source       VARCHAR(500) NOT NULL,                     
+doc_type     VARCHAR(100) NOT NULL,                                                                                            
+chunk_index  INT          NOT NULL,
+page_num     INT          NOT NULL DEFAULT 0,                                                                                  
+create_time  DATETIME     NOT NULL                                                                                             
+);
+
+然后调用一次初始化接口创建 Milvus Collection：                                                                                   
+POST /recruitment/collection/init
+
+之后就可以正常上传 PDF 和对话了：
+# 上传岗位 PDF
+POST /recruitment/upload?docType=job_info   (multipart file)
+
+# 流式对话
+GET  /recruitment/chat?sessionId=u001&query=Java工程师有哪些要求
+
+✻ Worked for 2m 11s                             

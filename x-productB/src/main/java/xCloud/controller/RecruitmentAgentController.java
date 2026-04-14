@@ -10,6 +10,8 @@ import xCloud.service.recruitment.ConversationMemoryService;
 import xCloud.service.recruitment.PdfChunkService;
 import xCloud.service.recruitment.RecruitmentAgentService;
 
+import java.util.concurrent.CompletableFuture;
+
 /**
  * 智能招聘 Agent HTTP 接口
  *
@@ -36,22 +38,43 @@ public class RecruitmentAgentController {
     }
 
     /**
-     * 上传 PDF 并向量化入库
+     * 异步上传 PDF（立即返回任务 ID，后台处理）
+     * 适合大文件 / 高并发场景，避免请求超时
      *
      * @param file    PDF 文件
-     * @param docType 文档类型：company_doc（公司内部文档）/ job_info（岗位信息）
+     * @param docType 文档类型：company_doc / job_info
+     */
+    @PostMapping(value = "/upload/async", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public Result<Object> uploadPdfAsync(
+            @RequestParam("file") MultipartFile file,
+            @RequestParam(value = "docType", defaultValue = "company_doc") String docType) {
+        try {
+            CompletableFuture<int[]> future = pdfChunkService.uploadPdfAsync(file, docType);
+            // 注册回调，任务完成后打印日志（不阻塞响应）
+            future.thenAccept(r -> log.info("异步上传完成，入库 {} 块，跳过 {} 块", r[0], r[1]))
+                  .exceptionally(e -> { log.error("异步上传失败: {}", e.getMessage()); return null; });
+            return Result.success("已提交后台处理，文件: " + file.getOriginalFilename());
+        } catch (IllegalArgumentException e) {
+            return Result.error(e.getMessage());
+        } catch (Exception e) {
+            log.error("异步上传提交失败: {}", e.getMessage(), e);
+            return Result.error("提交失败: " + e.getMessage());
+        }
+    }
+
+    /**
+     * 同步上传 PDF（阻塞直到完成，适合小文件）
+     *
+     * @param file    PDF 文件
+     * @param docType 文档类型：company_doc / job_info
      */
     @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public Result<Object> uploadPdf(
             @RequestParam("file") MultipartFile file,
             @RequestParam(value = "docType", defaultValue = "company_doc") String docType) {
         try {
-            if (file.isEmpty()) return Result.error("文件不能为空");
-            if (!file.getOriginalFilename().toLowerCase().endsWith(".pdf")) {
-                return Result.error("仅支持 PDF 文件");
-            }
-            int count = pdfChunkService.uploadPdf(file, docType);
-            return Result.success("上传成功，共切分 " + count + " 个文档块");
+            int[] result = pdfChunkService.uploadPdf(file, docType);
+            return Result.success("上传成功，入库 " + result[0] + " 块，跳过(Embedding失败) " + result[1] + " 块");
         } catch (Exception e) {
             log.error("PDF 上传失败: {}", e.getMessage(), e);
             return Result.error("上传失败: " + e.getMessage());

@@ -5,13 +5,14 @@ import com.alibaba.dashscope.embeddings.TextEmbeddingParam;
 import com.alibaba.dashscope.embeddings.TextEmbeddingResult;
 import com.alibaba.dashscope.exception.NoApiKeyException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import xCloud.entity.constant.AliConstant;
 import xCloud.entity.dto.VectorDTO;
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @Description AliEmbedding
@@ -24,61 +25,69 @@ import java.util.List;
 public class AliEmbeddingUtil {
 
     /**
-     * 文本 转 向量
+     * 单条文本转向量
      *
      * @param inputTexts 文本
+     * @return 向量；失败返回 null
      */
     public List<Double> embeddingB(String inputTexts) {
-
-        try {// 构建请求参数
-            TextEmbeddingParam param = TextEmbeddingParam
-                    .builder()
+        try {
+            TextEmbeddingParam param = TextEmbeddingParam.builder()
                     .model(AliConstant.EMBEDDING_MODEL_NAME)
-                    .texts(Collections.singleton(inputTexts))// 输入文本
+                    .texts(Collections.singleton(inputTexts))
                     .build();
-
-            // 创建模型实例并调用
-            TextEmbedding textEmbedding = new TextEmbedding();
-            TextEmbeddingResult result = textEmbedding.call(param);
+            TextEmbeddingResult result = new TextEmbedding().call(param);
             return result.getOutput().getEmbeddings().get(0).getEmbedding();
         } catch (NoApiKeyException e) {
-            // 捕获并处理API Key未设置的异常
-            log.info("调用 API 时发生异常: " + e.getMessage());
-            log.info("请检查您的 API Key 是否已正确配置。");
+            log.error("Embedding 调用失败，请检查 API Key: {}", e.getMessage());
+            return null;
         }
-        return null;
-
     }
 
     /**
-     * 文本 转 向量
+     * 批量文本转向量（DashScope 单次最多 25 条）
+     * 返回列表顺序与入参顺序一致
+     *
+     * @param texts 文本列表（调用方保证 size ≤ 25）
+     * @return 向量列表，与入参顺序对应；失败返回 null
+     */
+    public List<List<Double>> embeddingBatch(List<String> texts) {
+        try {
+            TextEmbeddingParam param = TextEmbeddingParam.builder()
+                    .model(AliConstant.EMBEDDING_MODEL_NAME)
+                    .texts(texts)
+                    .build();
+            TextEmbeddingResult result = new TextEmbedding().call(param);
+            return result.getOutput().getEmbeddings().stream()
+                    .sorted(Comparator.comparingInt(e -> e.getTextIndex()))
+                    .map(e -> e.getEmbedding())
+                    .collect(Collectors.toList());
+        } catch (NoApiKeyException e) {
+            log.error("批量 Embedding 失败: {}", e.getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * 单条文本转向量（返回 VectorDTO，含 requestId）
      *
      * @param inputTexts 文本
+     * @return VectorDTO；失败返回 null
      */
     public VectorDTO embedding(String inputTexts) {
         try {
-            // 构建请求参数
-            TextEmbeddingParam param = TextEmbeddingParam
-                    .builder()
+            TextEmbeddingParam param = TextEmbeddingParam.builder()
                     .model(AliConstant.EMBEDDING_MODEL_NAME)
-                    .texts(Collections.singleton(inputTexts))// 输入文本
+                    .texts(Collections.singleton(inputTexts))
                     .build();
-
-            // 创建模型实例并调用
-            TextEmbedding textEmbedding = new TextEmbedding();
-            TextEmbeddingResult result = textEmbedding.call(param);
-
+            TextEmbeddingResult result = new TextEmbedding().call(param);
             VectorDTO vectorDTO = new VectorDTO();
             vectorDTO.setId(result.getRequestId());
             vectorDTO.setVector(result.getOutput().getEmbeddings().get(0).getEmbedding());
             return vectorDTO;
         } catch (NoApiKeyException e) {
-            // 捕获并处理API Key未设置的异常
-            log.info("调用 API 时发生异常: " + e.getMessage());
-            log.info("请检查您的 API Key 是否已正确配置。");
+            log.error("Embedding 调用失败，请检查 API Key: {}", e.getMessage());
+            return null;
         }
-        return null;
-
     }
-
 }

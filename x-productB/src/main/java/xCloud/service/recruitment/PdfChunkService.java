@@ -19,9 +19,11 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import xCloud.entity.TextVectorLog;
 import xCloud.entity.recruitment.DocumentChunk;
 import xCloud.mapper.DocumentChunkMapper;
 import xCloud.openAiChatModel.ali.embedding.AliEmbeddingUtil;
+import xCloud.service.VectorLogService;
 import xCloud.tools.CodeX;
 
 import java.io.InputStream;
@@ -89,6 +91,9 @@ public class PdfChunkService {
 
     @Resource
     private DocumentChunkMapper documentChunkMapper;
+
+    @Resource
+    private VectorLogService vectorLogService;
 
     @Resource
     @Qualifier("taskExecutor")
@@ -327,7 +332,7 @@ public class PdfChunkService {
     }
 
     /**
-     * 对一批 chunks 调用批量 Embedding API，构建 Milvus 行和 MySQL 行
+     * 对一批 chunks 调用批量 Embedding API，构建 Milvus 行和 MySQL 行，并异步写向量日志
      *
      * @param batch 一批文档块（size ≤ EMBED_BATCH）
      * @return 该批次的处理结果
@@ -346,6 +351,9 @@ public class PdfChunkService {
             return result;
         }
 
+        // 收集本批次的向量日志，embedBatch 结束后统一异步写入
+        List<TextVectorLog> logBatch = new ArrayList<>(batch.size());
+
         for (int i = 0; i < batch.size(); i++) {
             DocumentChunk chunk = batch.get(i);
             List<Double> vector = (i < vectors.size()) ? vectors.get(i) : null;
@@ -355,6 +363,7 @@ public class PdfChunkService {
                 continue;
             }
 
+            // ── 构建 Milvus 行 ──────────────────────────────────────
             JsonObject row = new JsonObject();
             row.addProperty("id", chunk.getId());
             JsonArray arr = new JsonArray();
@@ -367,7 +376,22 @@ public class PdfChunkService {
             row.addProperty("page_num", chunk.getPageNum());
             result.milvusRows.add(row);
             result.mysqlRows.add(chunk);
+
+            // ── 构建向量日志（与 Milvus id 对应，向量序列化为 JSON 字符串）──
+            logBatch.add(VectorLogService.buildLog(
+                    chunk.getId(),
+                    chunk.getContent(),
+                    arr.toString(),          // 向量 JSON，如 "[0.12, -0.34, ...]"
+                    chunk.getSource(),
+                    "docType=" + chunk.getDocType() + ",chunkIndex=" + chunk.getChunkIndex()
+            ));
         }
+
+        // 异步批量写入 text_vector_log，不阻塞 Embedding 主流程
+        if (!logBatch.isEmpty()) {
+            vectorLogService.asyncLogBatch(logBatch);
+        }
+
         return result;
     }
 

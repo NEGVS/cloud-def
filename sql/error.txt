@@ -1,0 +1,24 @@
+2026-04-15T20:07:51.692+08:00 ERROR 22352 --- [x-productB] [ xCloud-async-3] x.service.recruitment.PdfChunkService    : MySQL 批量写入失败，Milvus 已写入但 MySQL 缺失，需人工核查:
+### Error updating database.  Cause: java.sql.SQLSyntaxErrorException: Table 'andy_database.recruitment_chunk' doesn't exist
+### The error may exist in xCloud/mapper/DocumentChunkMapper.java (best guess)
+### The error may involve xCloud.mapper.DocumentChunkMapper.insertBatch-Inline
+### The error occurred while setting parameters
+### SQL: INSERT INTO recruitment_chunk (id, content, source, doc_type, chunk_index, page_num, create_time) VALUES   (?, ?, ?, ?, ?, ?, ?) , (?, ?, ?, ?, ?, ?, ?) , (?, ?, ?, ?, ?, ?, ?) , (?, ?, ?, ?, ?, ?, ?) , (?, ?, ?, ?, ?, ?, ?) , (?, ?, ?, ?, ?, ?, ?) , (?, ?, ?, ?, ?, ?, ?)
+### Cause: java.sql.SQLSyntaxErrorException: Table 'andy_database.recruitment_chunk' doesn't exist
+; bad SQL grammar []
+
+org.springframework.jdbc.BadSqlGrammarException:
+
+---
+test | 11:24:44.284 | http-nio-19203-exec-8 | ERROR | c.x.j.e.e.XRLExceptionHandler | 系统异常, uri: /api/v1/rongCloud/getImUserInfo
+org.springframework.jdbc.BadSqlGrammarException:
+### Error querying database.  Cause: java.sql.SQLSyntaxErrorException: Unknown column 'unique_key' in 'field list'
+### The error may exist in com/xrl/java/mappers/application/BehaviorOrderMapper.java (best guess)
+### The error may involve com.xrl.java.mappers.application.BehaviorOrderMapper.selectByExample-Inline
+### The error occurred while setting parameters
+### SQL:
+
+SELECT  id,orders_sn,business_user_id,user_id,user_name,user_mobile,job_id,job_nature,is_business_launch,talk_status,behavior_status,behavior_scene,delivery_time,invitation_time,interview_time,interview_status,interview_address,tip,delivery_status,call_time,exchange_mobile_status,exchange_mobile_time,exchange_wechat_status,exchange_wechat_time,talk_time_new,reply_time_new,job_category_id,company_id,job_city_id,b_view_time,is_history_order,prop_source,unique_key,is_visible,created_at,base_created_at,updated_at,deleted_at  FROM behavior_order  WHERE (       (  deleted_at is null )                    and      (  user_id = ?                                                and business_user_id in               (                 ?               ,                 ?               ,                 ?               ,                 ?               ,                 ?               ,                 ?               ) ) ) order by created_at DESC;
+### Cause: java.sql.SQLSyntaxErrorException: Unknown column 'unique_key' in 'field list'
+; bad SQL grammar []; nested exception is java.sql.SQLSyntaxErrorException: Unknown column 'unique_key' in 'field list'
+        at org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator.doTranslate(SQLErrorCodeSQLExceptionTranslator.java:239)

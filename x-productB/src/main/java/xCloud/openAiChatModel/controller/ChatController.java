@@ -33,18 +33,15 @@ import java.util.Optional;
  * <p>
  * langchain4j.open-ai.streaming-chat-model.api-key=${OPENAI_API_KEY}
  */
-@Tag(name = "chatController Management", description = "APIs for managing chatControllers")
+@Tag(name = "OPEN AI chat Controller Management", description = "APIs for managing chatControllers")
 @RequestMapping("/chatController")
 @RestController
-//@RequiredArgsConstructor
 public class ChatController {
 
     @Resource
     private RagClient ragClient;
-    //    private final JobService jobService; // MyBatis-Plus
     @Resource
     private ToolExecutor toolExecutor;
-
     @Resource
     private ChatModel chatModel;
 

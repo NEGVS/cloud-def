@@ -9,6 +9,7 @@ import org.junit.jupiter.api.*;
 import org.springframework.boot.test.context.SpringBootTest;
 import xCloud.entity.Result;
 import xCloud.entity.XProductsB;
+import xCloud.openAiChatModel.ali.stream.AliChatUtil;
 import xCloud.tools.CodeX;
 
 import java.math.BigDecimal;
@@ -27,6 +28,58 @@ class XProductsBServiceTest {
 
     @Resource
     Embedding2Service embedding2Service;
+
+    @Resource
+    AliChatUtil aliChatUtil;
+
+
+    // ================================================================
+    // AliChatUtil 同步对话测试
+    // ================================================================
+
+    /**
+     * AI-1 同步对话 - 默认角色
+     * 预期：返回非空字符串
+     */
+    @Test
+    @Order(20)
+    @DisplayName("AI-1 aliChatUtil.chat 默认角色同步对话")
+    void testAliChatDefault() {
+        String prompt = "用一句话介绍 Spring Boot";
+        String result = aliChatUtil.chat(prompt, null);
+        log.info("AI-1 回答: {}", result);
+        assertNotNull(result, "返回结果不应为 null");
+        assertFalse(result.isBlank(), "返回结果不应为空字符串");
+    }
+
+    /**
+     * AI-2 同步对话 - 自定义系统角色
+     * 预期：模型以指定角色身份回答，返回非空字符串
+     */
+    @Test
+    @Order(21)
+    @DisplayName("AI-2 aliChatUtil.chat 自定义系统角色")
+    void testAliChatWithSystemMessage() {
+        String prompt = "你擅长什么？";
+        String systemMessage = "你是一个专业的 Java 架构师，只回答 Java 相关问题。";
+        String result = aliChatUtil.chat(prompt, systemMessage);
+        log.info("AI-2 回答: {}", result);
+        assertNotNull(result, "返回结果不应为 null");
+        assertFalse(result.isBlank(), "返回结果不应为空字符串");
+    }
+
+    /**
+     * AI-3 同步对话 - prompt 为空时应返回空字符串（不抛异常）
+     */
+    @Test
+    @Order(22)
+    @DisplayName("AI-3 aliChatUtil.chat prompt 为空应返回空字符串")
+    void testAliChatEmptyPrompt() {
+        String result = aliChatUtil.chat("", null);
+        log.info("AI-3 空 prompt 结果: [{}]", result);
+        assertNotNull(result);
+        assertTrue(result.isEmpty(), "空 prompt 应返回空字符串");
+    }
 
 
     // ================================================================

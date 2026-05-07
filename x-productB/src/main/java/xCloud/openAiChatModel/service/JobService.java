@@ -9,6 +9,7 @@ import io.milvus.v2.service.vector.request.InsertReq;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -17,6 +18,7 @@ import java.util.*;
 @Service
 public class JobService {
 
+    @Lazy
     @Autowired
     private MilvusClientV2 milvusClient;
 

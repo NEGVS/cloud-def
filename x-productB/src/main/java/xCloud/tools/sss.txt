@@ -14,3 +14,6 @@ prod-1 xrl.srzp.application.service]# cat -n xrl.srzp.application.service-2026-0
 14259934	### The error occurred while setting parameters
 14259935	### SQL: INSERT INTO im_user_msg  ( id,from_im_uid,to_im_uid,from_uid,to_uid,from_role,to_role,object_name,content,im_content,msg_uid,uid_str,push_time,source,channel_type,is_read,recovered,code,conduct,created_at,updated_at,deleted_at,im_uid_str ) VALUES( ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,? )
 
+根据/Users/andy_mac/Documents/CodeSpace/cloud-def/x-productB/src/main/java/xCloud/openAiChatModel/ali/sync/Main.java
+在
+AliChatController 新增一个接口，实现同步回答

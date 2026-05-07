@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,10 +26,34 @@ import xCloud.openAiChatModel.ali.stream.AliChatUtil;
  * @ClassName AliChatController
  */
 @Slf4j
-@Tag(name = "AliChatController", description = "阿里大模型流式对话接口（SSE）")
+@Tag(name = "AliChatController", description = "阿里大模型对话接口（SSE流式 + 同步）")
 @RestController
 @RequestMapping("ali")
 public class AliChatController {
+
+    @Autowired
+    private AliChatUtil aliChatUtil;
+
+    /**
+     * 阿里大模型同步对话接口
+     */
+    @Operation(summary = "阿里大模型同步对话",
+            description = "调用阿里大模型进行同步对话，等待模型完整回复后一次性返回结果",
+            parameters = {
+                    @Parameter(name = "prompt", description = "用户提问内容", required = true,
+                            example = "Java和Python有什么区别？", schema = @Schema(type = "string")),
+                    @Parameter(name = "systemMessage", description = "系统角色设定，不传则使用默认角色",
+                            required = false, example = "你是一个专业的Java开发工程师", schema = @Schema(type = "string"))
+            })
+    @GetMapping("/chat/sync")
+    public String syncChat(@RequestParam String prompt,
+                           @RequestParam(required = false) String systemMessage) {
+        if (prompt == null || prompt.trim().isEmpty()) {
+            log.error("syncChat 参数 prompt 为空");
+            return "参数错误：prompt 不能为空";
+        }
+        return aliChatUtil.chat(prompt, systemMessage);
+    }
 
     /**
      * 阿里大模型流式对话接口

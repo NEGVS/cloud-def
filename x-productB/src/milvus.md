@@ -1,8 +1,22 @@
 # Embedding
+1-百川智能
 https://platform.baichuan-ai.com/docs/text-Embedding
 sess...e52c
 为向量字段设置索引参数
 为了加速语义搜索，必须为向量字段创建索引。索引可以大大提高大规模向量数据的检索效率。
+
+⏺ 根本原因很清晰：
+
+DEADLINE_EXCEEDED: deadline exceeded after 9.983006875s
+
+Milvus 连接超时，导致 milvusClientV2 Bean 创建失败，进而级联导致整个应用启动失败。
+
+Read 1 file (ctrl+o to expand)
+
+⏺ 根本原因很清晰：
+
+Milvus 连接超时 — MilvusClientV2 在启动时尝试连接 Milvus，10秒后超时失败，导致整个 Spring 容器初始化失败。
+
 ```java
   import io.milvus.v2.common.IndexParam;
   import java.util.*;

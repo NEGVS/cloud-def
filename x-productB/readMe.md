@@ -1,3 +1,78 @@
+# x-productB 技术栈总览
+
+## 核心框架
+| 层次 | 技术 | 版本 |
+|------|------|------|
+| 基础框架 | Spring Boot | 3.2.9 |
+| 服务注册/配置 | Spring Cloud Alibaba Nacos | 2023.0.1.0 |
+| 服务调用 | Spring Cloud OpenFeign | 4.1.3 |
+| 响应式 | Spring WebFlux / Reactor | 3.6.9 |
+| 动态线程池 | DynamicTP | 1.1.8 |
+
+## 数据存储
+| 组件 | 用途 | 版本 |
+|------|------|------|
+| MySQL 8.0 + Druid | 关系型数据库，关键词检索、文档块存储 | 1.2.20 |
+| MyBatis-Plus | ORM | 3.5.5 |
+| Milvus | 向量数据库，语义检索 | SDK 2.6.6 |
+| Redis + Redisson | 缓存、分布式锁 | 3.27.2 |
+
+## AI / LLM
+| 组件 | 用途 |
+|------|------|
+| 阿里云 DashScope (qwen-plus) | 主力 LLM，对话生成、上下文压缩 |
+| 阿里云 text-embedding-v4 | 向量化（1024维） |
+| DashScope gte-rerank | 二次排序（Rerank） |
+| DeepSeek API | 备用 LLM |
+| LangChain4j 1.4.0 | AI 应用框架，RAG 流程编排 |
+| OpenAI Java SDK 4.3.0 | OpenAI 兼容接口调用 |
+| DJL HuggingFace Tokenizers | 本地 Token 处理 |
+
+## RAG 架构
+```
+用户输入
+  ↓
+意图识别（Python FastAPI / LLM）
+  ├─ 非求职 → LLM 直接对话
+  └─ 求职相关
+       ↓
+     HDBSCAN 聚类（Python, 端口8001）→ 职位分类ID
+       ↓
+     Hybrid RAG 多路召回
+       ├─ Milvus 向量检索（语义相似度）
+       └─ MySQL BM25 关键词检索
+       ↓ RRF 融合排序
+     Rerank 二次排序（gte-rerank）
+       ↓
+     上下文压缩（LLM 提取关键片段）
+       ↓
+     LLM 生成回复（流式 SSE / 非流式）
+```
+
+## Python 微服务（FastAPI）
+| 服务 | 端口 | 功能 |
+|------|------|------|
+| intent_service.py | 8000 | 意图识别 |
+| cluster_service.py | 8001 | HDBSCAN 聚类 |
+
+## PDF 处理
+- Apache PDFBox 2.0.30
+- Recursive Character Splitter（段落→句子→字符，100字 Overlap）
+- 并行 Embedding（25条/批，CompletableFuture 异步）
+
+## 工程能力
+| 能力 | 实现 |
+|------|------|
+| 多轮对话记忆 | 滑动窗口10轮，按 sessionId 隔离 |
+| 流式输出 | SSE（Flux\<String\>） |
+| ReAct Agent | Thought→Action→Observation，最多6步，含重试 |
+| 高并发 PDF 上传 | 同步/异步双接口，Embedding 批量并行 |
+| 端口自动清理 | 启动前 kill 占用进程（ApplicationEnvironmentPreparedEvent）|
+| 接口文档 | Knife4j + SpringDoc OpenAPI 3 (doc.html) |
+| SQL 监控 | Druid StatViewServlet (/druid) |
+
+---
+
 完成智能招聘系统
 主要代码我写在了x-productB，请继续优化，完善整个项目。
 这是一个智能招聘系统，请帮我实现，这是我的大概思路，不对的你尽管修改。

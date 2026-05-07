@@ -1,3 +1,7 @@
+当前已经有的技术栈
+chat_model_name: qwen-plus
+embedding_model_name: text-embedding-v4
+
 
 # 我想做一个企业智能问答的客服，如何做？
 

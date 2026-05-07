@@ -123,12 +123,12 @@ logging:
 langchain4j:
   open-ai:
     chat-model:
-      api-key: ${OPENAI_API_KEY}
+      api-key: ${OPENAI_API_KEY:placeholder}
       model-name: gpt-4o
       log-requests: true
       log-responses: true
     embedding-model:
-      api-key: ${OPENAI_API_KEY}
+      api-key: ${OPENAI_API_KEY:placeholder}
       model-name: text-embedding-3-small
 
 #
@@ -144,12 +144,13 @@ milvus:
   port: 19530   # Docker 默认端口
 #  LLM--，语言模型、向量模型，分别是两个不同的模型，但是key是可以共用的
 openai:
-  api-key: ${OPENAI_API_KEY}
+  api-key: ${OPENAI_API_KEY:placeholder}
   #使用了 ${OPENAI_API_KEY} 语法，会从系统环境变量中读取值.密钥不能在项目里写出来，需要配置在系统环境变量中
   model: text-embedding-3-small # 或者 text-embedding-3-large（按需）
 #  阿里百炼平台，千问大模型
+#https://bailian.console.aliyun.com/cn-beijing/?spm=5176.29619931.J_SEsSjsNv72yRuRFS2VknO.2.1e7c10d7gavlfX&tab=model#/api-key
 ali:
-  api-key: ${DASHSCOPE_API_KEY}
+  api-key: ${DASHSCOPE_API_KEY:placeholder}
   chat_model_name: qwen-plus
   embedding_model_name: text-embedding-v4
   baseUrl: https://dashscope.aliyuncs.com/compatible-mode/v1
@@ -160,12 +161,12 @@ vector:
 deepSeek:
   api:
     url: https://api.deepseek.com
-    key: ${DEEPSEEK_API_KEY}
+    key: ${DEEPSEEK_API_KEY:placeholder}
 # 百川
 baichuan:
   api:
     url: https://api.baichuan-ai.com/v1/embeddings
-    key: ${BAICHUAN_API_KEY}
+    key: ${BAICHUAN_API_KEY:placeholder}
 hdbscan:
   service:
     url: http://localhost:8001

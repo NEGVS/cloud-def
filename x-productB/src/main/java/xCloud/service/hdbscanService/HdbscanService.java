@@ -3,6 +3,7 @@ package xCloud.service.hdbscanService;
 import io.milvus.v2.client.MilvusClientV2;
 import jakarta.annotation.Resource;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Lazy;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
@@ -24,6 +25,7 @@ import java.util.List;
 public class HdbscanService {
 
     private final WebClient webClient;
+    @Lazy
     @Resource
     private MilvusClientV2 milvusClient;
 

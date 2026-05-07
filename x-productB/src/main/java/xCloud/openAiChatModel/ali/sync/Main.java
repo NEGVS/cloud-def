@@ -21,6 +21,11 @@ public class Main {
 
     public static void main(String[] args) {
         try {
+
+            System.out.println("----");
+            System.out.println(AliConstant.API_KEY);
+            System.out.println(AliConstant.BASE_URL);
+            System.out.println(AliConstant.CHAT_MODEL_NAME);
             OpenAIClient client = OpenAIOkHttpClient.builder()
                     // 新加坡和北京地域的API Key不同。获取API Key：https://help.aliyun.com/zh/model-studio/get-api-key
                     // 若没有配置环境变量，请用阿里云百炼API Key将下行替换为.apiKey("sk-xxx")

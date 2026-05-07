@@ -9,11 +9,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.event.ApplicationEnvironmentPreparedEvent;
 import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
+import org.springframework.context.ApplicationListener;
 import org.springframework.core.env.Environment;
 import xCloud.tools.springX.MyBean;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 
 @OpenAPIDefinition(
         info = @Info(
@@ -56,7 +61,29 @@ public class XProductBApplication {
 
     public static void main(String[] args) {
         System.out.println("x-product-B start...");
-        SpringApplication.run(XProductBApplication.class, args);
+        SpringApplication app = new SpringApplication(XProductBApplication.class);
+        app.addListeners((ApplicationListener<ApplicationEnvironmentPreparedEvent>) event -> {
+            String portStr = event.getEnvironment().getProperty("server.port", "8083");
+            killProcessOnPort(Integer.parseInt(portStr));
+        });
+        app.run(args);
+    }
+
+    private static void killProcessOnPort(int port) {
+        try {
+            Process findProcess = Runtime.getRuntime().exec(new String[]{"lsof", "-ti", "tcp:" + port});
+            BufferedReader reader = new BufferedReader(new InputStreamReader(findProcess.getInputStream()));
+            String pid;
+            while ((pid = reader.readLine()) != null) {
+                pid = pid.trim();
+                if (!pid.isEmpty()) {
+                    Runtime.getRuntime().exec(new String[]{"kill", "-9", pid});
+                    System.out.println("已 kill 占用端口 " + port + " 的进程 PID: " + pid);
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("端口检测异常: " + e.getMessage());
+        }
     }
 
 

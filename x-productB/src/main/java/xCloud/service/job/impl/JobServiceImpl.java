@@ -20,7 +20,7 @@ import java.time.LocalDateTime;
  * 岗位主表 ServiceImpl
  */
 @Slf4j
-@Service
+@Service("jobCrudService")
 public class JobServiceImpl extends ServiceImpl<JobMapper, Job> implements JobService {
 
     @Resource

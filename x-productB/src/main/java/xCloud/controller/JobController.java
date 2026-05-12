@@ -4,8 +4,9 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.*;
 import xCloud.entity.Result;
 import xCloud.entity.job.Job;
@@ -23,7 +24,8 @@ import xCloud.service.job.JobService;
 @RequestMapping("/job")
 public class JobController {
 
-    @Resource
+    @Autowired
+    @Qualifier("jobCrudService")
     private JobService jobService;
 
     // ======================== 查询 ========================

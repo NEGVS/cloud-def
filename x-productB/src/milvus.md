@@ -1,6 +1,13 @@
 # Embedding
 1-百川智能
 https://platform.baichuan-ai.com/docs/text-Embedding
+
+
+# 文档向量化
+2-pdf向量化，
+1-所有入库的向量，都会在【text_vector_log】记录对应的文本和向量
+
+
 sess...e52c
 为向量字段设置索引参数
 为了加速语义搜索，必须为向量字段创建索引。索引可以大大提高大规模向量数据的检索效率。

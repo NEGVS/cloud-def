@@ -78,30 +78,38 @@ public class RecruitmentAgentService {
      * @return SSE 流
      */
     public Flux<String> chat(String sessionId, String userQuery) {
-        Sinks.Many<String> sink = Sinks.many().unicast().onBackpressureBuffer();
+        // 用 multicast 支持多订阅者（如断连重连、框架内部多次 subscribe）
+        // unicast 只允许一个订阅者，第二次 subscribe 会抛 IllegalStateException
+        Sinks.Many<String> sink = Sinks.many().multicast().onBackpressureBuffer();
 
         // 异步执行 Agent 循环，结果推入 sink
         Thread.ofVirtual().start(() -> {
             try {
+                // 先快照历史，再加入本轮消息，避免用户问题在历史和问题字段里重复出现
+                String historySnapshot = memoryService.buildHistoryText(sessionId);
                 memoryService.addMessage(sessionId, "user", userQuery);
 
                 // 1. Plan 阶段
-                sink.tryEmitNext("[PLAN]\n");
-                List<String> plan = makePlan(userQuery, sessionId);
-                plan.forEach(step -> sink.tryEmitNext("• " + step + "\n"));
-                sink.tryEmitNext("\n[EXECUTING]\n");
+                log.info("1. Plan 阶段");
+                emit(sink, "[PLAN]\n");
+                List<String> plan = makePlan(userQuery, historySnapshot);
+                plan.forEach(step -> emit(sink, "• " + step + "\n"));
+                emit(sink, "\n[EXECUTING]\n");
 
                 // 2. ReAct 执行阶段
-                String finalAnswer = executeReAct(userQuery, sessionId, plan, sink);
+                log.info("2. ReAct 执行阶段");
+                String finalAnswer = executeReAct(userQuery, historySnapshot, plan, sink);
 
                 // 3. 记忆 & 流式输出最终答案
+                log.info("3. 记忆 & 流式输出最终答案");
                 memoryService.addMessage(sessionId, "assistant", finalAnswer);
-                sink.tryEmitNext("\n[ANSWER]\n");
+                emit(sink, "\n[ANSWER]\n");
                 streamAnswer(finalAnswer, sink);
 
             } catch (Exception e) {
                 log.error("Agent 执行异常: {}", e.getMessage(), e);
-                sink.tryEmitNext("\n[ERROR] " + e.getMessage());
+                // getMessage() 可能为 null（如 NullPointerException），用 toString() 兜底
+                emit(sink, "\n[ERROR] " + (e.getMessage() != null ? e.getMessage() : e.toString()));
             } finally {
                 sink.tryEmitComplete();
             }
@@ -110,12 +118,19 @@ public class RecruitmentAgentService {
         return sink.asFlux();
     }
 
+    /** 统一推送入口，记录推送失败日志，防止数据静默丢失 */
+    private void emit(Sinks.Many<String> sink, String value) {
+        Sinks.EmitResult result = sink.tryEmitNext(value);
+        if (result.isFailure()) {
+            log.warn("SSE 推送失败: {} | value='{}'", result, value);
+        }
+    }
+
     // ─────────────────────────────────────────────
     // Plan 阶段
     // ─────────────────────────────────────────────
 
-    private List<String> makePlan(String userQuery, String sessionId) {
-        String historyText = memoryService.buildHistoryText(sessionId);
+    private List<String> makePlan(String userQuery, String historyText) {
         String toolDesc = buildToolDescriptions();
 
         String prompt = "你是一个智能招聘助手。请为以下用户问题制定一个简洁的执行计划（2-4个步骤）。\n\n" +
@@ -143,23 +158,24 @@ public class RecruitmentAgentService {
     // ReAct 执行阶段
     // ─────────────────────────────────────────────
 
-    private String executeReAct(String userQuery, String sessionId,
+    private String executeReAct(String userQuery, String historyText,
                                  List<String> plan, Sinks.Many<String> sink) {
-        String historyText = memoryService.buildHistoryText(sessionId);
         String toolDesc = buildToolDescriptions();
         String planText = java.util.stream.IntStream.range(0, plan.size())
                 .mapToObj(i -> (i + 1) + ". " + plan.get(i))
                 .collect(Collectors.joining("\n"));
 
-        StringBuilder scratchpad = new StringBuilder(); // ReAct 推理轨迹
+        // scratchpad 只保留最近 MAX_SCRATCHPAD_STEPS 步，防止 prompt 无限膨胀
+        Deque<String> scratchpadWindow = new ArrayDeque<>();
         AtomicInteger stepCount = new AtomicInteger(0);
 
         while (stepCount.get() < MAX_STEPS) {
-            String reactPrompt = buildReActPrompt(userQuery, historyText, toolDesc, planText, scratchpad.toString());
+            String scratchpad = String.join("", scratchpadWindow);
+            String reactPrompt = buildReActPrompt(userQuery, historyText, toolDesc, planText, scratchpad);
             String llmOutput = callLLMWithRetry(reactPrompt, 800);
 
             log.debug("ReAct Step {} LLM output:\n{}", stepCount.get(), llmOutput);
-            sink.tryEmitNext("\n[STEP " + (stepCount.incrementAndGet()) + "]\n" + llmOutput + "\n");
+            emit(sink, "\n[STEP " + (stepCount.incrementAndGet()) + "]\n" + llmOutput + "\n");
 
             // 检查是否有 Final Answer
             Matcher finalMatcher = FINAL_ANSWER_PATTERN.matcher(llmOutput);
@@ -173,7 +189,7 @@ public class RecruitmentAgentService {
 
             if (!actionMatcher.find() || !inputMatcher.find()) {
                 // LLM 没有按格式输出，追加提示继续
-                scratchpad.append(llmOutput).append("\nObservation: 请按格式输出 Action 或 Final Answer。\n");
+                addToWindow(scratchpadWindow, llmOutput + "\nObservation: 请按格式输出 Action 或 Final Answer。\n");
                 continue;
             }
 
@@ -184,12 +200,21 @@ public class RecruitmentAgentService {
             String observation = executeTool(toolName, toolInput);
             log.info("Tool [{}] input={}, observation length={}", toolName, toolInput, observation.length());
 
-            scratchpad.append(llmOutput)
-                      .append("\nObservation: ").append(observation).append("\n");
+            addToWindow(scratchpadWindow, llmOutput + "\nObservation: " + observation + "\n");
         }
 
         // 超出最大步数，强制总结
-        return forceSummarize(userQuery, scratchpad.toString());
+        return forceSummarize(userQuery, String.join("", scratchpadWindow));
+    }
+
+    /** 滑动窗口：最多保留最近 MAX_SCRATCHPAD_STEPS 步，防止 prompt 超长 */
+    private static final int MAX_SCRATCHPAD_STEPS = 4;
+
+    private void addToWindow(Deque<String> window, String entry) {
+        window.addLast(entry);
+        while (window.size() > MAX_SCRATCHPAD_STEPS) {
+            window.removeFirst();
+        }
     }
 
     private String executeTool(String toolName, String toolInput) {
@@ -251,15 +276,16 @@ public class RecruitmentAgentService {
     // ─────────────────────────────────────────────
 
     private String callLLMWithRetry(String prompt, int maxTokens) {
+        RuntimeException lastEx = null;
         for (int i = 0; i <= MAX_RETRIES; i++) {
             try {
                 return callLLM(prompt, maxTokens);
-            } catch (Exception e) {
+            } catch (RuntimeException e) {
+                lastEx = e;
                 log.warn("LLM 调用第 {} 次失败: {}", i + 1, e.getMessage());
-                if (i == MAX_RETRIES) throw e;
             }
         }
-        return "";
+        throw lastEx;
     }
 
     private String callLLM(String prompt, int maxTokens) {
@@ -284,39 +310,19 @@ public class RecruitmentAgentService {
     }
 
     /**
-     * 流式输出最终答案（逐字推送，模拟打字效果）
-     * 实际生产中应直接调用 LLM 的 stream=true 接口
+     * 流式输出最终答案。
+     * 直接将 finalAnswer 按句子/标点分块推送，避免对已定稿的答案再次调用 LLM 润色
+     * （二次润色会增加延迟、额外 token 消耗，且可能改变答案含义）。
      */
     private void streamAnswer(String answer, Sinks.Many<String> sink) {
-        webClient.post()
-                .uri(baseUrl + "/chat/completions")
-                .header("Authorization", "Bearer " + apiKey)
-                .header("Content-Type", "application/json")
-                .bodyValue(Map.of(
-                        "model", model,
-                        "messages", List.of(Map.of("role", "user", "content",
-                                "请将以下内容以友好、专业的方式重新表述并输出：\n" + answer)),
-                        "stream", true
-                ))
-                .retrieve()
-                .bodyToFlux(String.class)
-                .filter(chunk -> chunk.startsWith("data:") && !chunk.contains("[DONE]"))
-                .map(chunk -> {
-                    try {
-                        String json = chunk.substring(5).trim();
-                        // 简单解析 delta.content
-                        int idx = json.indexOf("\"content\":\"");
-                        if (idx < 0) return "";
-                        int start = idx + 11;
-                        int end = json.indexOf("\"", start);
-                        return end > start ? json.substring(start, end) : "";
-                    } catch (Exception e) {
-                        return "";
-                    }
-                })
-                .filter(s -> !s.isEmpty())
-                .doOnNext(sink::tryEmitNext)
-                .blockLast();
+        if (answer == null || answer.isBlank()) return;
+        // 按中文句号/问号/感叹号/换行分块，保留分隔符
+        String[] chunks = answer.split("(?<=[。？！\n])");
+        for (String chunk : chunks) {
+            if (!chunk.isBlank()) {
+                emit(sink, chunk);
+            }
+        }
     }
 
 }

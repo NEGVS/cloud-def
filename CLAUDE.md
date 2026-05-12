@@ -2,8 +2,12 @@
 chat_model_name: qwen-plus
 embedding_model_name: text-embedding-v4
 
+# 代码结构与分析
+3-每新写一个接口都要维护到接口文档里./api.md ，主要包括接口是什么，什么意思？入参数是哪个实体，返回参数是哪个实体。
+2-代码必须写完整、正确、高可用，备注清晰明了，提高复用。
+1-完整的CRUD 必须按照 controller，service ，serviceImpl,mapper.java,mapper.xml结构，swagger接口文档。
 
-# 我想做一个企业智能问答的客服，如何做？
+# 我想做一个企业智能问答的客服
 
 ⏺ 这是一个很实际的方向，结合你的技术栈给你说：
 

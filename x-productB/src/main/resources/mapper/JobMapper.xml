@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="xCloud.mapper.job.JobMapper">
+
+    <!-- 基础字段映射 -->
+    <resultMap id="BaseResultMap" type="xCloud.entity.job.Job">
+        <id     property="id"                   column="id"                     jdbcType="INTEGER"/>
+        <result property="name"                 column="name"                   jdbcType="VARCHAR"/>
+        <result property="jobNature"            column="job_nature"             jdbcType="TINYINT"/>
+        <result property="jobType"              column="job_type"               jdbcType="TINYINT"/>
+        <result property="oneCategoryId"        column="one_category_id"        jdbcType="INTEGER"/>
+        <result property="categoryId"           column="category_id"            jdbcType="INTEGER"/>
+        <result property="recruitmentType"      column="recruitment_type"       jdbcType="TINYINT"/>
+        <result property="userId"               column="user_id"                jdbcType="INTEGER"/>
+        <result property="bonusSubsidy"         column="bonus_subsidy"          jdbcType="VARCHAR"/>
+        <result property="socialSecurityFund"   column="social_security_fund"   jdbcType="TINYINT"/>
+        <result property="welfares"             column="welfares"               jdbcType="VARCHAR"/>
+        <result property="accommodation"        column="accommodation"          jdbcType="TINYINT"/>
+        <result property="jobDetail"            column="job_detail"             jdbcType="LONGVARCHAR"/>
+        <result property="ageMin"               column="age_min"                jdbcType="TINYINT"/>
+        <result property="ageMax"               column="age_max"                jdbcType="TINYINT"/>
+        <result property="genderRequire"        column="gender_require"         jdbcType="TINYINT"/>
+        <result property="educationRequire"     column="education_require"      jdbcType="TINYINT"/>
+        <result property="otherRequire"         column="other_require"          jdbcType="VARCHAR"/>
+        <result property="companyId"            column="company_id"             jdbcType="INTEGER"/>
+        <result property="brandId"              column="brand_id"               jdbcType="INTEGER"/>
+        <result property="groupId"              column="group_id"               jdbcType="INTEGER"/>
+        <result property="hireAll"              column="hire_all"               jdbcType="INTEGER"/>
+        <result property="imgIds"               column="img_ids"                jdbcType="VARCHAR"/>
+        <result property="videoId"              column="video_id"               jdbcType="INTEGER"/>
+        <result property="videoImageId"         column="video_image_id"         jdbcType="INTEGER"/>
+        <result property="source"               column="source"                 jdbcType="TINYINT"/>
+        <result property="lastAuditorId"        column="last_auditor_id"        jdbcType="INTEGER"/>
+        <result property="downReason"           column="down_reason"            jdbcType="VARCHAR"/>
+        <result property="disableReason"        column="disable_reason"         jdbcType="VARCHAR"/>
+        <result property="updatedDisableAdminId" column="updated_disable_admin_id" jdbcType="INTEGER"/>
+        <result property="updatedStatusAdminId" column="updated_status_admin_id" jdbcType="INTEGER"/>
+        <result property="updatedStatusUserId"  column="updated_status_user_id" jdbcType="INTEGER"/>
+        <result property="status"               column="status"                 jdbcType="TINYINT"/>
+        <result property="isDisable"            column="is_disable"             jdbcType="TINYINT"/>
+        <result property="isOpenPhone"          column="is_open_phone"          jdbcType="TINYINT"/>
+        <result property="releaseTime"          column="release_time"           jdbcType="TIMESTAMP"/>
+        <result property="auditAt"              column="audit_at"               jdbcType="TIMESTAMP"/>
+        <result property="auditType"            column="audit_type"             jdbcType="TINYINT"/>
+        <result property="auditRemark"          column="audit_remark"           jdbcType="VARCHAR"/>
+        <result property="auditSubmitAt"        column="audit_submit_at"        jdbcType="TIMESTAMP"/>
+        <result property="createdAdminId"       column="created_admin_id"       jdbcType="INTEGER"/>
+        <result property="updatedAdminId"       column="updated_admin_id"       jdbcType="INTEGER"/>
+        <result property="updatedUserId"        column="updated_user_id"        jdbcType="INTEGER"/>
+        <result property="lastJobAuditLogId"    column="last_job_audit_log_id"  jdbcType="INTEGER"/>
+        <result property="jobTag"               column="job_tag"                jdbcType="VARCHAR"/>
+        <result property="isHot"                column="is_hot"                 jdbcType="TINYINT"/>
+        <result property="createdAt"            column="created_at"             jdbcType="TIMESTAMP"/>
+        <result property="updatedAt"            column="updated_at"             jdbcType="TIMESTAMP"/>
+        <result property="deletedAt"            column="deleted_at"             jdbcType="TIMESTAMP"/>
+        <result property="propStatus"           column="prop_status"            jdbcType="SMALLINT"/>
+        <result property="propType"             column="prop_type"              jdbcType="SMALLINT"/>
+        <result property="propStage"            column="prop_stage"             jdbcType="SMALLINT"/>
+        <result property="propOrderId"          column="prop_order_id"          jdbcType="BIGINT"/>
+        <result property="propEffectTime"       column="prop_effect_time"       jdbcType="TIMESTAMP"/>
+        <result property="propReached"          column="prop_reached"           jdbcType="TINYINT"/>
+    </resultMap>
+
+    <!-- 列表查询字段（不含 job_detail 大字段，提升查询性能） -->
+    <resultMap id="VOResultMap" type="xCloud.entity.job.JobVO">
+        <id     property="id"               column="id"/>
+        <result property="name"             column="name"/>
+        <result property="jobNature"        column="job_nature"/>
+        <result property="jobType"          column="job_type"/>
+        <result property="recruitmentType"  column="recruitment_type"/>
+        <result property="oneCategoryId"    column="one_category_id"/>
+        <result property="categoryId"       column="category_id"/>
+        <result property="companyId"        column="company_id"/>
+        <result property="brandId"          column="brand_id"/>
+        <result property="hireAll"          column="hire_all"/>
+        <result property="genderRequire"    column="gender_require"/>
+        <result property="educationRequire" column="education_require"/>
+        <result property="ageMin"           column="age_min"/>
+        <result property="ageMax"           column="age_max"/>
+        <result property="accommodation"    column="accommodation"/>
+        <result property="socialSecurityFund" column="social_security_fund"/>
+        <result property="bonusSubsidy"     column="bonus_subsidy"/>
+        <result property="welfares"         column="welfares"/>
+        <result property="jobTag"           column="job_tag"/>
+        <result property="status"           column="status"/>
+        <result property="isDisable"        column="is_disable"/>
+        <result property="auditType"        column="audit_type"/>
+        <result property="isHot"            column="is_hot"/>
+        <result property="propStatus"       column="prop_status"/>
+        <result property="propType"         column="prop_type"/>
+        <result property="releaseTime"      column="release_time"/>
+        <result property="createdAt"        column="created_at"/>
+        <result property="updatedAt"        column="updated_at"/>
+    </resultMap>
+
+    <!-- 分页查询岗位列表（不含 job_detail） -->
+    <select id="pageJobList" resultMap="VOResultMap">
+        SELECT
+            id, name, job_nature, job_type, recruitment_type,
+            one_category_id, category_id, company_id, brand_id,
+            hire_all, gender_require, education_require, age_min, age_max,
+            accommodation, social_security_fund, bonus_subsidy, welfares,
+            job_tag, status, is_disable, audit_type, is_hot,
+            prop_status, prop_type, release_time, created_at, updated_at
+        FROM job
+        WHERE deleted_at IS NULL
+        <if test="q.name != null and q.name != ''">
+            AND name LIKE CONCAT('%', #{q.name}, '%')
+        </if>
+        <if test="q.jobNature != null">
+            AND job_nature = #{q.jobNature}
+        </if>
+        <if test="q.jobType != null">
+            AND job_type = #{q.jobType}
+        </if>
+        <if test="q.recruitmentType != null">
+            AND recruitment_type = #{q.recruitmentType}
+        </if>
+        <if test="q.oneCategoryId != null">
+            AND one_category_id = #{q.oneCategoryId}
+        </if>
+        <if test="q.categoryId != null">
+            AND category_id = #{q.categoryId}
+        </if>
+        <if test="q.companyId != null">
+            AND company_id = #{q.companyId}
+        </if>
+        <if test="q.status != null">
+            AND status = #{q.status}
+        </if>
+        <if test="q.isDisable != null">
+            AND is_disable = #{q.isDisable}
+        </if>
+        <if test="q.auditType != null">
+            AND audit_type = #{q.auditType}
+        </if>
+        <if test="q.isHot != null">
+            AND is_hot = #{q.isHot}
+        </if>
+        ORDER BY created_at DESC
+    </select>
+
+    <!-- 查询岗位详情（全字段，含 job_detail） -->
+    <select id="getJobDetail" resultMap="BaseResultMap">
+        SELECT * FROM job
+        WHERE id = #{id}
+          AND deleted_at IS NULL
+    </select>
+
+</mapper>

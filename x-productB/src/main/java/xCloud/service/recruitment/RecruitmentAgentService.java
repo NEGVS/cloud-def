@@ -16,28 +16,28 @@ import java.util.stream.Collectors;
 
 /**
  * 智能招聘 Agent（ReAct + Plan-and-Execute）
- *
+ * <p>
  * 优化点：
- *   1. Function Calling 替代正则解析：工具调用结构化返回，彻底消除格式解析失败问题
- *   2. stream=true 直接透传：最终答案实时流式推送，首字延迟从 2-3s 降到 300ms 以内
- *   3. scratchpad 滑动窗口：最多保留最近 4 步，防止 prompt 无限膨胀
- *   4. multicast Sink：支持多订阅者，防止断连重连时抛 IllegalStateException
- *
+ * 1. Function Calling 替代正则解析：工具调用结构化返回，彻底消除格式解析失败问题
+ * 2. stream=true 直接透传：最终答案实时流式推送，首字延迟从 2-3s 降到 300ms 以内
+ * 3. scratchpad 滑动窗口：最多保留最近 4 步，防止 prompt 无限膨胀
+ * 4. multicast Sink：支持多订阅者，防止断连重连时抛 IllegalStateException
+ * <p>
  * 架构：
- *   用户问题
- *     ↓
- *   Plan（制定步骤）
- *     ↓
- *   ReAct 循环（Function Calling → 工具执行 → Observation → ...）
- *     ↓
- *   Final Answer（stream=true 流式透传）
+ * 用户问题
+ * ↓
+ * Plan（制定步骤）
+ * ↓
+ * ReAct 循环（Function Calling → 工具执行 → Observation → ...）
+ * ↓
+ * Final Answer（stream=true 流式透传）
  */
 @Slf4j
 @Service
 public class RecruitmentAgentService {
 
-    private static final int MAX_STEPS          = 6;  // ReAct 最大步数
-    private static final int MAX_RETRIES        = 2;  // 单步最大重试次数
+    private static final int MAX_STEPS = 6;  // ReAct 最大步数
+    private static final int MAX_RETRIES = 2;  // 单步最大重试次数
     private static final int MAX_SCRATCHPAD_STEPS = 4; // scratchpad 滑动窗口大小
 
     @Value("${ali.baseUrl}")
@@ -53,14 +53,16 @@ public class RecruitmentAgentService {
     private final ObjectMapper objectMapper;
     private final ConversationMemoryService memoryService;
 
-    /** 工具 Map：name → AgentTool，由 Spring 自动注入所有 AgentTool 实现 */
+    /**
+     * 工具 Map：name → AgentTool，由 Spring 自动注入所有 AgentTool 实现
+     */
     private final Map<String, AgentTool> toolMap;
 
     public RecruitmentAgentService(WebClient webClient,
                                    ObjectMapper objectMapper,
                                    ConversationMemoryService memoryService,
                                    List<AgentTool> tools) {
-        this.webClient    = webClient;
+        this.webClient = webClient;
         this.objectMapper = objectMapper;
         this.memoryService = memoryService;
         this.toolMap = tools.stream()
@@ -121,6 +123,7 @@ public class RecruitmentAgentService {
     // ─────────────────────────────────────────────
 
     private List<String> makePlan(String userQuery, String historyText) {
+        log.info("[Plan] 开始制定计划 query={}", userQuery);
         String prompt = "你是一个智能招聘助手。请为以下用户问题制定一个简洁的执行计划（2-4个步骤）。\n\n" +
                 "可用工具：\n" + buildToolDescriptions() + "\n\n" +
                 "历史对话：\n" + historyText + "\n\n" +
@@ -135,7 +138,9 @@ public class RecruitmentAgentService {
                 steps.add(trimmed.replaceFirst("^\\d+\\.\\s*", ""));
             }
         }
-        return steps.isEmpty() ? List.of("直接回答用户问题") : steps;
+        List<String> result = steps.isEmpty() ? List.of("直接回答用户问题") : steps;
+        log.info("[Plan] 制定计划完成，共 {} 步: {}", result.size(), result);
+        return result;
     }
 
     // ─────────────────────────────────────────────
@@ -144,14 +149,15 @@ public class RecruitmentAgentService {
 
     /**
      * ReAct 循环，使用 Function Calling 替代正则解析。
-     *
+     * <p>
      * Function Calling 优势：
-     *   - LLM 直接返回结构化 JSON，不依赖文本格式，稳定性从 80% 提到 99%
-     *   - 工具名称和参数由模型保证合法，无需正则兜底
-     *   - 支持并行工具调用（tool_calls 数组）
+     * - LLM 直接返回结构化 JSON，不依赖文本格式，稳定性从 80% 提到 99%
+     * - 工具名称和参数由模型保证合法，无需正则兜底
+     * - 支持并行工具调用（tool_calls 数组）
      */
     private String executeReAct(String userQuery, String historyText,
-                                 List<String> plan, Sinks.Many<String> sink) {
+                                List<String> plan, Sinks.Many<String> sink) {
+        log.info("[ReAct] 开始执行 query={} planSteps={}", userQuery, plan.size());
         String planText = buildPlanText(plan);
 
         // 构建 Function Calling 工具定义列表
@@ -170,7 +176,7 @@ public class RecruitmentAgentService {
                     new ArrayList<>(messageWindow), tools, 800);
 
             String finishReason = (String) llmResult.get("finish_reason");
-            Map<?, ?> message   = (Map<?, ?>) llmResult.get("message");
+            Map<?, ?> message = (Map<?, ?>) llmResult.get("message");
 
             int step = stepCount.incrementAndGet();
             log.debug("[ReAct] Step {} finish_reason={}", step, finishReason);
@@ -198,10 +204,10 @@ public class RecruitmentAgentService {
 
                 // 执行所有工具调用，将结果作为 tool 角色消息追加
                 for (Object tc : toolCalls) {
-                    Map<?, ?> toolCall  = (Map<?, ?>) tc;
-                    String toolCallId   = (String) toolCall.get("id");
-                    Map<?, ?> function  = (Map<?, ?>) toolCall.get("function");
-                    String toolName     = (String) function.get("name");
+                    Map<?, ?> toolCall = (Map<?, ?>) tc;
+                    String toolCallId = (String) toolCall.get("id");
+                    Map<?, ?> function = (Map<?, ?>) toolCall.get("function");
+                    String toolName = (String) function.get("name");
                     String toolArgsJson = (String) function.get("arguments");
 
                     // 从 JSON 参数中提取 input 字段
@@ -239,22 +245,23 @@ public class RecruitmentAgentService {
 
     /**
      * 将 AgentTool 列表转换为 OpenAI Function Calling 格式的 tools 定义。
-     *
+     * <p>
      * 格式：
      * {
-     *   "type": "function",
-     *   "function": {
-     *     "name": "document_search",
-     *     "description": "...",
-     *     "parameters": {
-     *       "type": "object",
-     *       "properties": { "input": { "type": "string", "description": "..." } },
-     *       "required": ["input"]
-     *     }
-     *   }
+     * "type": "function",
+     * "function": {
+     * "name": "document_search",
+     * "description": "...",
+     * "parameters": {
+     * "type": "object",
+     * "properties": { "input": { "type": "string", "description": "..." } },
+     * "required": ["input"]
+     * }
+     * }
      * }
      */
     private List<Map<String, Object>> buildFunctionTools() {
+        log.info("[Tools] 构建 Function Calling 工具定义，共 {} 个工具", toolMap.size());
         List<Map<String, Object>> tools = new ArrayList<>();
         for (AgentTool tool : toolMap.values()) {
             Map<String, Object> properties = new LinkedHashMap<>();
@@ -285,8 +292,9 @@ public class RecruitmentAgentService {
      * 构建初始消息列表：system 指令 + 历史对话 + 当前用户问题
      */
     private List<Map<String, Object>> buildInitialMessages(String userQuery,
-                                                            String historyText,
-                                                            String planText) {
+                                                           String historyText,
+                                                           String planText) {
+        log.info("[Messages] 构建初始消息列表 query={}", userQuery);
         List<Map<String, Object>> messages = new ArrayList<>();
 
         // system 消息：角色定义 + 执行计划
@@ -321,6 +329,7 @@ public class RecruitmentAgentService {
     // ─────────────────────────────────────────────
 
     private String executeTool(String toolName, String toolInput) {
+        log.info("[Tool] 执行工具 name={} input={}", toolName, toolInput);
         AgentTool tool = toolMap.get(toolName);
         if (tool == null) {
             return "工具 [" + toolName + "] 不存在，可用工具: " + String.join(", ", toolMap.keySet());
@@ -342,6 +351,7 @@ public class RecruitmentAgentService {
      * 超出最大步数时，将消息历史喂给 LLM 强制总结
      */
     private String forceSummarize(String userQuery, List<Map<String, Object>> messages) {
+        log.info("[ReAct] 超出最大步数 {}，强制总结 query={}", MAX_STEPS, userQuery);
         messages.add(Map.of("role", "user",
                 "content", "请根据以上工具调用结果，直接回答用户问题：" + userQuery));
         return callLLM(messages, 600);
@@ -353,7 +363,7 @@ public class RecruitmentAgentService {
 
     /**
      * 使用 stream=true 调用 LLM，将 delta.content 实时推入 sink。
-     *
+     * <p>
      * 优势：用户看到第一个字的延迟从 2-3s 降到 300ms 以内。
      * 原理：LLM 每生成一个 token 就通过 SSE 推送，不等待完整响应。
      *
@@ -361,6 +371,7 @@ public class RecruitmentAgentService {
      * @param sink        SSE 推送通道
      */
     private void streamAnswer(String finalAnswer, Sinks.Many<String> sink) {
+        log.info("[Stream] 开始流式输出答案，长度={}", finalAnswer.length());
         if (finalAnswer == null || finalAnswer.isBlank()) return;
 
         try {
@@ -386,9 +397,9 @@ public class RecruitmentAgentService {
                         try {
                             // 解析 SSE data 字段中的 JSON
                             String json = chunk.substring(5).trim();
-                            JsonNode root    = objectMapper.readTree(json);
+                            JsonNode root = objectMapper.readTree(json);
                             JsonNode content = root.path("choices").path(0)
-                                                   .path("delta").path("content");
+                                    .path("delta").path("content");
                             // content 不存在或为 null 时返回空串，由下游 filter 过滤
                             return content.isMissingNode() || content.isNull()
                                     ? "" : content.asText();
@@ -416,6 +427,7 @@ public class RecruitmentAgentService {
      * 降级方案：stream=true 失败时，按标点分块推送原始答案，保证内容不丢失。
      */
     private void fallbackStreamAnswer(String answer, Sinks.Many<String> sink) {
+        log.info("[Stream] 降级为分块推送，答案长度={}", answer.length());
         String[] chunks = answer.split("(?<=[。？！\n])");
         for (String chunk : chunks) {
             if (!chunk.isBlank()) {
@@ -437,9 +449,10 @@ public class RecruitmentAgentService {
      * @return Map 包含 finish_reason 和 message
      */
     private Map<String, Object> callLLMWithTools(List<Map<String, Object>> messages,
-                                                  List<Map<String, Object>> tools,
-                                                  int maxTokens) {
+                                                 List<Map<String, Object>> tools,
+                                                 int maxTokens) {
         RuntimeException lastEx = null;
+        log.info("[LLM] Function Calling 调用 tools={} maxTokens={}", tools.size(), maxTokens);
         for (int i = 0; i <= MAX_RETRIES; i++) {
             try {
                 Map<String, Object> body = new LinkedHashMap<>();
@@ -481,6 +494,7 @@ public class RecruitmentAgentService {
      * 普通 LLM 调用（不带 tools，用于 Plan 和 forceSummarize）
      */
     private String callLLM(String prompt, int maxTokens) {
+        log.info("[LLM] 普通调用 maxTokens={}", maxTokens);
         return callLLM(List.of(Map.of("role", "user", "content", prompt)), maxTokens);
     }
 
@@ -488,6 +502,7 @@ public class RecruitmentAgentService {
      * 普通 LLM 调用（消息列表版本）
      */
     private String callLLM(List<Map<String, Object>> messages, int maxTokens) {
+        log.info("[LLM] 普通调用（消息列表）messages={} maxTokens={}", messages.size(), maxTokens);
         RuntimeException lastEx = null;
         for (int i = 0; i <= MAX_RETRIES; i++) {
             try {
@@ -523,7 +538,9 @@ public class RecruitmentAgentService {
     // 工具方法
     // ─────────────────────────────────────────────
 
-    /** 统一推送入口，记录推送失败日志，防止数据静默丢失 */
+    /**
+     * 统一推送入口，记录推送失败日志，防止数据静默丢失
+     */
     private void emit(Sinks.Many<String> sink, String value) {
         Sinks.EmitResult result = sink.tryEmitNext(value);
         if (result.isFailure()) {
@@ -532,15 +549,21 @@ public class RecruitmentAgentService {
         }
     }
 
-    /** 构建工具描述文本（用于 Plan prompt） */
+    /**
+     * 构建工具描述文本（用于 Plan prompt）
+     */
     private String buildToolDescriptions() {
+        log.debug("[Tools] 构建工具描述文本，共 {} 个工具", toolMap.size());
         return toolMap.values().stream()
                 .map(t -> "- " + t.getName() + ": " + t.getDescription())
                 .collect(Collectors.joining("\n"));
     }
 
-    /** 将 plan 列表转为带序号的文本 */
+    /**
+     * 将 plan 列表转为带序号的文本
+     */
     private String buildPlanText(List<String> plan) {
+        log.debug("[Plan] 构建计划文本，共 {} 步", plan.size());
         return java.util.stream.IntStream.range(0, plan.size())
                 .mapToObj(i -> (i + 1) + ". " + plan.get(i))
                 .collect(Collectors.joining("\n"));
@@ -551,7 +574,8 @@ public class RecruitmentAgentService {
      * 注意：始终保留第一条 system 消息，只滑动后续消息。
      */
     private void addToMessageWindow(Deque<Map<String, Object>> window,
-                                     Map<String, Object> message) {
+                                    Map<String, Object> message) {
+        log.debug("[Window] 添加消息 role={} 当前窗口大小={}", message.get("role"), window.size());
         window.addLast(message);
         // 保留 system 消息（第一条）+ 最近 MAX_SCRATCHPAD_STEPS * 2 条（工具调用成对出现）
         int maxSize = 1 + MAX_SCRATCHPAD_STEPS * 2;

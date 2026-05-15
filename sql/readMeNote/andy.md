@@ -144,3 +144,6 @@ ReAct finalAnswer → 直接 stream 调用 LLM → chunk by chunk 推入 sink
 第四步：stream=true 直接透传           ← 体验提升，改动在 streamAnswer                                                                                                                                    
 第五步：父子 Chunk + HyDE             ← 效果好但需要重建知识库，放最后                                                                                                                                    
                                                                                
+
+
+

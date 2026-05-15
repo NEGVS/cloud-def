@@ -1,24 +1,2 @@
-2026-04-15T20:07:51.692+08:00 ERROR 22352 --- [x-productB] [ xCloud-async-3] x.service.recruitment.PdfChunkService    : MySQL 批量写入失败，Milvus 已写入但 MySQL 缺失，需人工核查:
-### Error updating database.  Cause: java.sql.SQLSyntaxErrorException: Table 'andy_database.recruitment_chunk' doesn't exist
-### The error may exist in xCloud/mapper/DocumentChunkMapper.java (best guess)
-### The error may involve xCloud.mapper.DocumentChunkMapper.insertBatch-Inline
-### The error occurred while setting parameters
-### SQL: INSERT INTO recruitment_chunk (id, content, source, doc_type, chunk_index, page_num, create_time) VALUES   (?, ?, ?, ?, ?, ?, ?) , (?, ?, ?, ?, ?, ?, ?) , (?, ?, ?, ?, ?, ?, ?) , (?, ?, ?, ?, ?, ?, ?) , (?, ?, ?, ?, ?, ?, ?) , (?, ?, ?, ?, ?, ?, ?) , (?, ?, ?, ?, ?, ?, ?)
-### Cause: java.sql.SQLSyntaxErrorException: Table 'andy_database.recruitment_chunk' doesn't exist
-; bad SQL grammar []
-
-org.springframework.jdbc.BadSqlGrammarException:
-
----
-test | 11:24:44.284 | http-nio-19203-exec-8 | ERROR | c.x.j.e.e.XRLExceptionHandler | 系统异常, uri: /api/v1/rongCloud/getImUserInfo
-org.springframework.jdbc.BadSqlGrammarException:
-### Error querying database.  Cause: java.sql.SQLSyntaxErrorException: Unknown column 'unique_key' in 'field list'
-### The error may exist in com/xrl/java/mappers/application/BehaviorOrderMapper.java (best guess)
-### The error may involve com.xrl.java.mappers.application.BehaviorOrderMapper.selectByExample-Inline
-### The error occurred while setting parameters
-### SQL:
-
-SELECT  id,orders_sn,business_user_id,user_id,user_name,user_mobile,job_id,job_nature,is_business_launch,talk_status,behavior_status,behavior_scene,delivery_time,invitation_time,interview_time,interview_status,interview_address,tip,delivery_status,call_time,exchange_mobile_status,exchange_mobile_time,exchange_wechat_status,exchange_wechat_time,talk_time_new,reply_time_new,job_category_id,company_id,job_city_id,b_view_time,is_history_order,prop_source,unique_key,is_visible,created_at,base_created_at,updated_at,deleted_at  FROM behavior_order  WHERE (       (  deleted_at is null )                    and      (  user_id = ?                                                and business_user_id in               (                 ?               ,                 ?               ,                 ?               ,                 ?               ,                 ?               ,                 ?               ) ) ) order by created_at DESC;
-### Cause: java.sql.SQLSyntaxErrorException: Unknown column 'unique_key' in 'field list'
-; bad SQL grammar []; nested exception is java.sql.SQLSyntaxErrorException: Unknown column 'unique_key' in 'field list'
-        at org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator.doTranslate(SQLErrorCodeSQLExceptionTranslator.java:239)
+l | {"id":50000470,"name":"岗位一5啊","userId":845936210,"status":1,"categoryId":55,"welfares":"3","accommodation":0,"jobDetail":"测试岗位","ageMin":18,"ageMax":21,"genderRequire":1,"educationRequire":7,"otherRequire":"","hireAll":9,"imgIds":"13866529,13866530,13867377,13867378,13867379,13867380,13867376","videoId":13871443,"salaryMin":3333,"salaryMax":4444,"baseSalary":0,"payDate":31,"workExperienceRequire":0,"schedule":4,"jobType":2,"supplyProjectId":485,"companyName":"北京都不容易科技有限公司1111111","brandName":"2234545511","storeAddressType":0,"storeName":"","storeAddress":"","interviewAddress":"","supplyProjectName":"新王力项目一","holidaySalary":"111","salaryStructure":"1","heightManMin":0,"heightWomanMin":0,"appearanceRequire":"[{\"checked\":true,\"isDeleted\":false,\"label\":\"纹身要求\",\"value\":\":无纹身，无夸张发色，干净清爽\"},{\"checked\":true,\"isDeleted\":false,\"label\":\"颜值要求\",\"value\":\"1111111\"},{\"checked\":true,\"isDeleted\":false,\"label\":\"发型要求\",\"typeitem\":\"other\",\"typeitemText\":\"其他\",\"value\":\"111\"},{\"checked\":true,\"isDeleted\":false,\"label\":\"发色要求\",\"typeitem\":\"other\",\"typeitemText\":\"其他\",\"value\":\"222\"}]","workingSchedule":"[{\"restTime\":\"1小时\",\"name\":\"中班\",\"startTime\":\"10:00\",\"endTime\":\"14:30\"},{\"restTime\":\"晚上休息一小时\",\"name\":\"晚班\",\"startTime\":\"14:30\",\"endTime\":\"22:00\"}]","companyIntroduction":"企业介绍啊企业介绍啊企业介绍啊企业介绍啊企业介绍啊企业介绍啊企业介绍啊企业介绍啊企业介绍啊企业介绍啊企业介绍啊企业介绍啊企业介绍啊企业介绍啊企业介绍啊企业介绍啊企业介绍啊企业介绍啊企业介绍啊企业介绍啊企业介绍啊企业介绍啊企业介绍啊企业介绍啊企业介绍啊企业介绍啊企业介绍啊企业介绍啊企业介绍啊企业介绍啊企业介绍啊企业介绍啊企业介绍啊企业介绍啊企业介绍啊企业介绍啊企业介绍啊企业介绍啊企业介绍啊企业哈尼完","companyBusinessType":1,"companyChainStatus":1,"companyEmployeeNumType":1,"storeAddresses":[{"storeId":1384,"storeName":"上海11店","storeAddress":"上海市宝山区丹霞山路257弄1-81号","lat":31.36297,"lon":121.364068,"cityId":31000,"cityName":"上海","gap":3},{"storeId":1386,"storeName":"上海13店","storeAddress":"上海市宝山区黄海路1号","lat":31.360146,"lon":121.370285,"cityId":31000,"cityName":"上海","gap":3},{"storeId":1387,"storeName":"上海门店14","storeAddress":"上海市宝山区黄海路2号","lat":31.360146,"lon":121.370285,"cityId":31000,"cityName":"上海","gap":3}],"aiRobotId":48,"aiRobotName":"陈瑜","jobTemplateId":1436,"weekSalaryOpen":1,"weekSalaryDayAmount":250}
+162247  test | 16:17:07.906 | http-nio-19201-exec-10 | INFO  | c.x.j.s.app.impl.JobServiceImpl | =====================

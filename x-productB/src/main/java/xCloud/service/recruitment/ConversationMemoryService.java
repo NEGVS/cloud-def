@@ -65,6 +65,7 @@ public class ConversationMemoryService {
      * @param content   消息内容
      */
     public void addMessage(String sessionId, String role, String content) {
+        log.info("添加一条消息，同步写本地缓存和 Redis");
         LinkedList<Map<String, String>> history = getOrLoadHistory(sessionId);
         history.add(Map.of("role", role, "content", content));
 
@@ -88,6 +89,7 @@ public class ConversationMemoryService {
      * 构建历史对话文本（用于 ReAct Prompt 中的 Memory 部分）
      */
     public String buildHistoryText(String sessionId) {
+        log.info("构建历史对话文本（用于 ReAct Prompt 中的 Memory 部分）");
         List<Map<String, String>> history = getHistory(sessionId);
         if (history.isEmpty()) return "（无历史对话）";
 
@@ -150,6 +152,7 @@ public class ConversationMemoryService {
      * 从 Redis 加载会话历史，失败时返回空列表并标记 Redis 不可用。
      */
     private LinkedList<Map<String, String>> loadFromRedis(String sessionId) {
+        log.info("redisAvailable:{}", redisAvailable);
         if (!redisAvailable) return new LinkedList<>();
         try {
             String json = redisTemplate.opsForValue().get(KEY_PREFIX + sessionId);

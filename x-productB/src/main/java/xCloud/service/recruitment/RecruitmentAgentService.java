@@ -179,7 +179,7 @@ public class RecruitmentAgentService {
             Map<?, ?> message = (Map<?, ?>) llmResult.get("message");
 
             int step = stepCount.incrementAndGet();
-            log.debug("[ReAct] Step {} finish_reason={}", step, finishReason);
+            log.info("[ReAct] Step {} finish_reason={}", step, finishReason);
 
             // ── 情况1：LLM 直接给出最终答案（无工具调用）──────────────
             if ("stop".equals(finishReason)) {
@@ -314,6 +314,8 @@ public class RecruitmentAgentService {
      * 降级：解析失败时直接返回原始 JSON 字符串。
      */
     private String extractToolInput(String argumentsJson) {
+        log.info("从 Function Calling 的 arguments JSON 中提取 input 字段。 argumentsJson={}", argumentsJson);
+
         try {
             JsonNode node = objectMapper.readTree(argumentsJson);
             JsonNode inputNode = node.get("input");
@@ -371,7 +373,7 @@ public class RecruitmentAgentService {
      * @param sink        SSE 推送通道
      */
     private void streamAnswer(String finalAnswer, Sinks.Many<String> sink) {
-        log.info("[Stream] 开始流式输出答案，长度={}", finalAnswer.length());
+        log.info("[Stream] 开始流式输出答案:{}", finalAnswer);
         if (finalAnswer == null || finalAnswer.isBlank()) return;
 
         try {
@@ -404,7 +406,7 @@ public class RecruitmentAgentService {
                             return content.isMissingNode() || content.isNull()
                                     ? "" : content.asText();
                         } catch (Exception e) {
-                            log.debug("[Stream] SSE chunk 解析失败（通常是心跳包）: {}", e.getMessage());
+                            log.info("[Stream] SSE chunk 解析失败（通常是心跳包）: {}", e.getMessage());
                             return "";
                         }
                     })
@@ -542,6 +544,7 @@ public class RecruitmentAgentService {
      * 统一推送入口，记录推送失败日志，防止数据静默丢失
      */
     private void emit(Sinks.Many<String> sink, String value) {
+        log.info("emit 统一推送入口，记录推送失败日志，防止数据静默丢失sink: {},value:{}", sink, value);
         Sinks.EmitResult result = sink.tryEmitNext(value);
         if (result.isFailure()) {
             log.warn("[Sink] 推送失败: {} | value='{}'", result,
@@ -553,7 +556,7 @@ public class RecruitmentAgentService {
      * 构建工具描述文本（用于 Plan prompt）
      */
     private String buildToolDescriptions() {
-        log.debug("[Tools] 构建工具描述文本，共 {} 个工具", toolMap.size());
+        log.info("[Tools] 构建工具描述文本，共 {} 个工具", toolMap.size());
         return toolMap.values().stream()
                 .map(t -> "- " + t.getName() + ": " + t.getDescription())
                 .collect(Collectors.joining("\n"));
@@ -563,7 +566,7 @@ public class RecruitmentAgentService {
      * 将 plan 列表转为带序号的文本
      */
     private String buildPlanText(List<String> plan) {
-        log.debug("[Plan] 构建计划文本，共 {} 步", plan.size());
+        log.info("[Plan] 构建计划文本，共 {} 步", plan.size());
         return java.util.stream.IntStream.range(0, plan.size())
                 .mapToObj(i -> (i + 1) + ". " + plan.get(i))
                 .collect(Collectors.joining("\n"));
@@ -575,7 +578,7 @@ public class RecruitmentAgentService {
      */
     private void addToMessageWindow(Deque<Map<String, Object>> window,
                                     Map<String, Object> message) {
-        log.debug("[Window] 添加消息 role={} 当前窗口大小={}", message.get("role"), window.size());
+        log.info("[Window] 添加消息 role={} 当前窗口大小={}", message.get("role"), window.size());
         window.addLast(message);
         // 保留 system 消息（第一条）+ 最近 MAX_SCRATCHPAD_STEPS * 2 条（工具调用成对出现）
         int maxSize = 1 + MAX_SCRATCHPAD_STEPS * 2;

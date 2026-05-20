@@ -1,11 +1,13 @@
 package xCloud.service;
 
+import com.baomidou.mybatisplus.extension.service.IService;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import xCloud.entity.TextVectorLog;
+import xCloud.entity.XProductsB;
 import xCloud.mapper.TextVectorLogMapper;
 import xCloud.tools.CodeX;
 
@@ -33,7 +35,7 @@ import java.util.concurrent.*;
  */
 @Slf4j
 @Service
-public class VectorLogService {
+public class VectorLogService  {
 
     /**
      * 每批最多写入条数，兼顾 MySQL 单 SQL 包大小与吞吐

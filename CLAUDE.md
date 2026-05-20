@@ -7,9 +7,10 @@ embedding_model_name: text-embedding-v4
 2-代码必须写完整、正确、高可用，备注清晰明了，提高复用。
 1-完整的CRUD 必须按照 controller，service ，serviceImpl,mapper.java,mapper.xml结构，swagger接口文档。
 
-# 我想做一个企业智能问答的客服
+# 项目简介
 
-⏺ 这是一个很实际的方向，结合你的技术栈给你说：
+我想做一个企业智能招聘客服，在x-productB服务。
+
 
 核心架构
 

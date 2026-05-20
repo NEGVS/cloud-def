@@ -200,3 +200,57 @@
 - **说明**：首次部署时调用，创建向量数据库 Collection 及索引；幂等操作，已存在则跳过
 - **入参**：无
 - **返回**：`Result<String>`
+
+---
+
+## 文本向量日志模块 `/text/vector/log`
+
+### 1. 分页查询向量日志
+
+- **接口**：`POST /text/vector/log/list`
+- **说明**：支持按 text 模糊搜索，按创建时间倒序分页返回向量日志列表
+- **入参**：`PageRequest<TextVectorLog>`
+
+| 字段 | 类型 | 必填 | 说明 |
+|---|---|---|---|
+| currentPage | Integer | 否 | 当前页，默认1 |
+| pageSize | Integer | 否 | 每页条数，默认10 |
+| data.text | String | 否 | 文本内容（模糊匹配） |
+
+- **返回**：`Result<Page<TextVectorLog>>`
+
+---
+
+### 2. 新增向量日志
+
+- **接口**：`POST /text/vector/log/save`
+- **说明**：新增一条文本向量日志记录
+- **入参**：`TextVectorLog`
+
+| 字段 | 类型 | 必填 | 说明 |
+|---|---|---|---|
+| id | Long | 否 | 主键（对应 Milvus 主键） |
+| text | String | 是 | 原始文本内容 |
+| vector | String | 否 | 向量数据 |
+| source | String | 否 | 来源标识 |
+| remark | String | 否 | 备注 |
+
+- **返回**：`Result<Boolean>`
+
+---
+
+### 3. 更新向量日志
+
+- **接口**：`POST /text/vector/log/update`
+- **说明**：根据 id 更新文本向量日志记录，id 必传
+- **入参**：`TextVectorLog`（同新增，id 必传）
+- **返回**：`Result<Boolean>`
+
+---
+
+### 4. 删除向量日志
+
+- **接口**：`POST /text/vector/log/delete/{id}`
+- **说明**：根据 id 物理删除一条向量日志记录
+- **入参**：Path 参数 `id`（日志ID）
+- **返回**：`Result<Boolean>`

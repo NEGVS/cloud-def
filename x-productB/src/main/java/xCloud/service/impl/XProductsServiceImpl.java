@@ -1,5 +1,6 @@
 package xCloud.service.impl;
 
+import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import jakarta.annotation.Resource;
@@ -36,6 +37,9 @@ public class XProductsServiceImpl extends ServiceImpl<XProductsBMapper, XProduct
 
     @Override
     public Result<XProductsB> addProduct(XProductsB request) {
+        if (ObjectUtil.equal(request.getProduct_id(),0L)){
+            return Result.error("添加失败");
+        }
         int insert = productsMapper.insert(request);
         if (insert > 0) {
             return Result.success(request);

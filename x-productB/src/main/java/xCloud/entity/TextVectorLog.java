@@ -12,7 +12,7 @@ import java.util.List;
  * @Description
  * @Author Andy Fan
  * @Date 2025/11/11 13:54
- * @ClassName TextVectorLog
+ * @ClassName TextVectorLog,text_vector_log
  */
 @Schema(description = "文本向量日志")
 @Data

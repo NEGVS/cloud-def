@@ -4,7 +4,9 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.Pattern;
 import lombok.Data;
+import org.springframework.validation.annotation.Validated;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -18,6 +20,7 @@ import java.util.Date;
 @Schema(description = "XProductsB")
 @TableName(value = "x_products")
 @Data
+@Validated
 public class XProductsB implements Serializable {
     /**
      * 商品ID
@@ -87,6 +90,7 @@ public class XProductsB implements Serializable {
      * 备注
      */
     @TableField(value = "notes")
+    @Pattern(regexp = "^[a-zA-Z0-9_]*$", message = "微信号不允许包含特殊字符、中文、表情，只能是字母、数字、下划线")
     private String notes;
 
     /**

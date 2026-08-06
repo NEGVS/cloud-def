@@ -112,25 +112,25 @@ public class RabbitMQService {
      * @messageService 是 Spring 容器中该 bean 的名称（默认是类名首字母小写）。确保类标注了 @Component 或其他 Spring 管理的注解。
      * @messageService 是 Spring 容器中该 bean 的名称（默认是类名首字母小写）。确保类标注了 @Component 或其他 Spring 管理的注解。
      */
-//    @RabbitListener(queues = QUEUE_NAME)
     @RabbitListener(queues = "${rabbitmq.queue}")
-//    @RabbitListener(queues = "#{@RabbitMQService.QUEUE_NAME}")
     public void receiveMessage(String message, Channel channel, Message amqpMessage) {
+        long deliveryTag = amqpMessage.getMessageProperties().getDeliveryTag();
         try {
             log.info("\n接收到消息：{}", message);
             processMessage(message);
-            //manual  ack
-            channel.basicAck(amqpMessage.getMessageProperties().getDeliveryTag(), false);
-        } catch (IOException e) {
+            //manual  ack 确认成功
+            channel.basicAck(deliveryTag, false);
+        } catch (Exception e) {
             log.error("\n处理消息出错：{}", e.getMessage());
-            log.error("处理延迟消息失败，从队列 [{}]: {}", QUEUE_NAME, message, e);
+            log.error("处理延迟消息失败，队列 [{}],消息内容: {}", QUEUE_NAME, message, e);
             try {
                 // 拒绝消息并重新入队（可根据需求调整为死信队列）
                 //channel.basicNack(amqpMessage.getMessageProperties().getDeliveryTag(), false, true);
                 //拒绝消息并发送到死信队列（不重新入队）
-                channel.basicNack(amqpMessage.getMessageProperties().getDeliveryTag(), false, false);
+                // false,false：不批量、不重新入队；配置了DLX则消息进入死信队列，否则直接丢弃
+                channel.basicNack(deliveryTag, false, false);
             } catch (IOException ex) {
-                log.error("\n消息处理失败，拒绝消息：{}", e.getMessage());
+                log.error("\n拒绝消息发生异常：{}", ex.getMessage(), ex);
             }
         }
     }

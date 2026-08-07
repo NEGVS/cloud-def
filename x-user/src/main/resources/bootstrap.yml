@@ -1,3 +1,4 @@
+# server.port、nacos 地址这类启动前置配置，必须放到 bootstrap.yml，不能放在 application.yml。
 spring:
   application:
     name: x-user

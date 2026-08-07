@@ -1,19 +1,10 @@
-#spring:
-#  # 0-配置nacos
-#  config:
-#    import:
-#      #      - optional:nacos:${spring.application.name}
-#      - optional:nacos:x-user.yml
-#  cloud:
-#    nacos:
-#      config:
-#        namespace:
-#        server-addr: 127.0.0.1:8848
-#        group: ANDY_GROUP
-#      discovery:
-#        server-addr: 127.0.0.1:8848
-server:
-  port: 8083
+#注意：bootstrap 的配置默认优先级高于 application.yml，
+#  application.yml 无法覆盖 bootstrap/nacos 里面的 key。【普通业务配置rabbitmq.queue Nacos 会覆盖本地 application.yml；但server.port因 Tomcat 初始化更早，Nacos 配置来不及生效。rabbitmq.queue 属于普通业务自定义配置，不是 spring 框架内置配置。
+#当前项目：spring.config.import 写在 application.yml
+#优先级（低→高）：
+#本地 application.yml：rabbitmq.queue=andyQueue
+#Nacos 配置 x‑user.yml：rabbitmq.queue=andyQueue2 ✅最终生效：andyQueue2
+#普通业务 key，Nacos 配置会覆盖本地 application.yml 的值。】
 spring:
   # ==========【必须放在spring下面，框架自动配置读取】==========
   rabbitmq:

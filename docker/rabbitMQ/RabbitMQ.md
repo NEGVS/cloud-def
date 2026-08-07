@@ -1,6 +1,8 @@
 # RabbitMQ
 已经在本机docker安装
 
+http://localhost:15672/#/
+
 根据这些配置文件
 RabbitMQ 网页客户端需要配置哪些？
 
@@ -268,3 +270,4 @@ public class MqConsumerDemo {
     }
 
     // 消费死信队列
+```

@@ -15,6 +15,23 @@
 server:
   port: 8083
 spring:
+  # ==========【必须放在spring下面，框架自动配置读取】==========
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: admin
+    password: admin123
+    virtual-host: andy
+    publisher-returns: true
+    listener:
+      simple:
+        acknowledge-mode: manual # 手动确认消息
+        concurrency: 2 # 并发消费数量
+        max-concurrency: 10 # 最大并发消费数量
+        retry:
+          enabled: true #  开启消息重试
+          max-attempts: 5 # 最大重试次数
+
   #  数据库配置
 #          enabled: true
   #        url: jdbc:mysql://101.35.226.226:3306/andy_nacos?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8&allowMultiQueries=true
@@ -65,22 +82,8 @@ mybatis-plus:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 
 
-#rabbitmq:-------------------------------------------------------------
+#rabbitmq:-----# ==========【和spring平级！纯业务常量，@Value读取】==========--------------------------------------------------------
 rabbitmq:
-  listener:
-    simple:
-      acknowledge-mode: manual # 手动确认消息
-      concurrency: 2 # 并发消费数量
-      max-concurrency: 10 # 最大并发消费数量
-      retry:
-        enabled: true #  开启消息重试
-        max-attempts: 5 # 最大重试次数
-  host: localhost
-  port: 5672
-  username: admin
-  password: admin123
-  virtual-host: andy
-  publisher-returns: true
 #    constants
   #  主队列-------------------------------------------------------------
   queue: andyQueue # 队列名称

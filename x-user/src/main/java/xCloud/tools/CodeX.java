@@ -1940,9 +1940,8 @@ public class CodeX {
         List<User> users = new ArrayList<>();
         for (int i = 0; i < 5; i++) {
             User user = new User();
-            user.setId(String.valueOf(1));
-//            user.setName(String.valueOf(i));
-//            user.setAge(1);
+            user.setUserId((long) i);
+            user.setUserName("user" + i);
             users.add(user);
         }
         System.out.println(JSON.toJSONString(users));
@@ -1951,11 +1950,9 @@ public class CodeX {
          * return Map<String, string>
          */
         //perfect
-        Map<String, String> collect1 = users.stream().collect(Collectors.toMap(User::getId, User::getUser_name, (oldValue, newValue) -> newValue));
+        Map<Long, String> collect1 = users.stream().collect(Collectors.toMap(User::getUserId, User::getUserName, (oldValue, newValue) -> newValue));
         //会报错，重复key
-        //Map<String, String> collect11 = users.stream().collect(Collectors.toMap(User::getId, User::getName));
-        //会报错，重复key
-        //Map<String, String> collect12 = users.stream().collect(Collectors.toMap(User::getId, User::getName));
+        //Map<Long, String> collect11 = users.stream().collect(Collectors.toMap(User::getUserId, User::getUserName));
         System.out.println(JSON.toJSONString(collect1));
 
         //
@@ -1963,9 +1960,9 @@ public class CodeX {
          * 2-List<VO> 转为Map，key 为Id，value 为User, 如果key重复，则覆盖。
          * return Map<String, User>
          */
-        Map<String, User> userMap = users.stream().collect(Collectors.toMap(User::getId, Function.identity(), (oldValue, newValue) -> newValue));
+        Map<Long, User> userMap = users.stream().collect(Collectors.toMap(User::getUserId, Function.identity(), (oldValue, newValue) -> newValue));
         //会报错的
-        //Map<String, User> userMap2 = users.stream().distinct().collect(Collectors.toMap(User::getId, Function.identity()));
+        //Map<Long, User> userMap2 = users.stream().distinct().collect(Collectors.toMap(User::getUserId, Function.identity()));
 
         //Function.identity() 作为 key 和 value 的映射函数，返回输入本身。当需要将 Stream 元素直接作为 key 或 value 时，避免显式写 x -> x。
 
@@ -1973,9 +1970,9 @@ public class CodeX {
          * 1-提取List<VO> 中的id，返回idList，并去重。
          */
         //返回Set<id>
-        Set<String> idList = users.stream().map(User::getId).collect(Collectors.toSet());
+        Set<Long> idList = users.stream().map(User::getUserId).collect(Collectors.toSet());
         //返回List<id>，需要加.distinct()
-        List<String> idList222 = users.stream().distinct().map(User::getId).collect(Collectors.toList());
+        List<Long> idList222 = users.stream().distinct().map(User::getUserId).collect(Collectors.toList());
 
         System.out.println(JSON.toJSONString(idList));
         System.out.println(JSON.toJSONString(idList222));

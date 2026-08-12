@@ -73,6 +73,13 @@ mybatis-plus:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 
 
+# ==========【JWT配置，和spring平级，@Value读取】==========
+jwt:
+  secret: andy-x-user-jwt-secret-key-must-be-at-least-32-bytes-long-2026 # HS256密钥，长度需>=32字节
+  expire-minutes: 120 # 令牌有效期（分钟）
+  header: Authorization # 令牌所在请求头
+  prefix: "Bearer " # 令牌前缀
+
 #rabbitmq:-----# ==========【和spring平级！纯业务常量，@Value读取】==========--------------------------------------------------------
 rabbitmq:
 #    constants

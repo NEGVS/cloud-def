@@ -14,11 +14,14 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.util.Date;
 
+/**
+ * 用户信息表 sys_user 实体，字段严格对齐 docs/sql.sql
+ */
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 @TableName(value = "sys_user")
-@Schema(name = "user", description = "user")
+@Schema(name = "User", description = "用户信息表")
 @Data
 public class User implements Serializable {
     @Serial
@@ -26,147 +29,78 @@ public class User implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @TableId(value = "user_id", type = IdType.AUTO)
-    @Schema(name = "user_id", description = "用户ID")
-    private Integer user_id;
+    @Schema(description = "用户ID")
+    private Long userId;
 
-    @Schema(name = "dept_id", description = "部门ID")
     @TableField("dept_id")
-    private Integer dept_id;
+    @Schema(description = "部门ID")
+    private Long deptId;
 
-    @Schema(name = "user_name", description = "用户账号")
     @TableField("user_name")
-    private String user_name;
+    @Schema(description = "用户账号")
+    private String userName;
 
-    @Schema(name = "nick_name", description = "用户昵称")
     @TableField("nick_name")
-    private String nick_name;
+    @Schema(description = "用户昵称")
+    private String nickName;
 
-    @Schema(name = "user_type", description = "用户类型（00系统用户）")
     @TableField("user_type")
-    private String user_type;
+    @Schema(description = "用户类型（00系统用户）")
+    private String userType;
 
-    @Schema(name = "email", description = "用户邮箱")
     @TableField("email")
+    @Schema(description = "用户邮箱")
     private String email;
 
-    @Schema(name = "phonenumber", description = "手机号码")
     @TableField("phonenumber")
+    @Schema(description = "手机号码")
     private String phonenumber;
 
-    @Schema(name = "sex", description = "用户性别（0男 1女 2未知）")
     @TableField("sex")
+    @Schema(description = "用户性别（0男 1女 2未知）")
     private String sex;
 
-    @Schema(name = "avatar", description = "头像地址")
     @TableField("avatar")
+    @Schema(description = "头像地址")
     private String avatar;
 
-    @Schema(name = "password", description = "密码")
     @TableField("password")
+    @Schema(description = "密码")
     private String password;
 
-    @Schema(name = "status", description = "帐号状态（0正常 1停用）")
     @TableField("status")
+    @Schema(description = "帐号状态（0正常 1停用）")
     private String status;
 
-    @Schema(name = "del_flag", description = "删除标志（0代表存在 2代表删除）")
     @TableField("del_flag")
-    private String del_flag;
+    @Schema(description = "删除标志（0代表存在 2代表删除）")
+    private String delFlag;
 
-    @Schema(name = "login_ip", description = "最后登录IP")
     @TableField("login_ip")
-    private String login_ip;
+    @Schema(description = "最后登录IP")
+    private String loginIp;
 
-    @Schema(name = "login_date", description = "最后登录时间")
     @TableField("login_date")
-    private Date login_date;
+    @Schema(description = "最后登录时间")
+    private Date loginDate;
 
-    @Schema(name = "create_by", description = "创建者")
     @TableField("create_by")
-    private String create_by;
+    @Schema(description = "创建者")
+    private String createBy;
 
-    @Schema(name = "create_time", description = "创建时间")
     @TableField("create_time")
-    private Date create_time;
+    @Schema(description = "创建时间")
+    private Date createTime;
 
-    @Schema(name = "update_by", description = "更新者")
     @TableField("update_by")
-    private String update_by;
+    @Schema(description = "更新者")
+    private String updateBy;
 
-    @Schema(name = "update_time", description = "更新时间")
     @TableField("update_time")
-    private Date update_time;
+    @Schema(description = "更新时间")
+    private Date updateTime;
 
-    @Schema(name = "id", description = "主键id")
-    @TableField("id")
-    private String id;
-
-    @Schema(name = "username", description = "登录账号")
-    @TableField("username")
-    private String username;
-
-    @Schema(name = "realname", description = "真实姓名")
-    @TableField("realname")
-    private String realname;
-
-    @Schema(name = "salt", description = "md5密码盐")
-    @TableField("salt")
-    private String salt;
-
-    @Schema(name = "birthday", description = "生日")
-    @TableField("birthday")
-    private Date birthday;
-
-    @Schema(name = "phone", description = "电话")
-    @TableField("phone")
-    private String phone;
-
-    @Schema(name = "org_code", description = "登录会话的机构编码")
-    @TableField("org_code")
-    private String org_code;
-
-    @Schema(name = "third_id", description = "第三方登录的唯一标识")
-    @TableField("third_id")
-    private String third_id;
-
-    @Schema(name = "third_type", description = "第三方类型")
-    @TableField("third_type")
-    private String third_type;
-
-    @Schema(name = "activiti_sync", description = "同步工作流引擎(1-同步,0-不同步)")
-    @TableField("activiti_sync")
-    private Integer activiti_sync;
-
-    @Schema(name = "work_no", description = "工号，唯一键")
-    @TableField("work_no")
-    private String work_no;
-
-    @Schema(name = "post", description = "职务，关联职务表")
-    @TableField("post")
-    private String post;
-
-    @Schema(name = "telephone", description = "座机号")
-    @TableField("telephone")
-    private String telephone;
-
-    @Schema(name = "user_identity", description = "身份（1普通成员 2上级）")
-    @TableField("user_identity")
-    private Integer user_identity;
-
-    @Schema(name = "depart_ids", description = "负责部门")
-    @TableField("depart_ids")
-    private String depart_ids;
-
-    @Schema(name = "rel_tenant_ids", description = "多租户标识")
-    @TableField("rel_tenant_ids")
-    private String rel_tenant_ids;
-
-    @Schema(name = "client_id", description = "设备ID")
-    @TableField("client_id")
-    private String client_id;
-
-    @Schema(name = "token", description = "令牌")
-    @TableField(exist = false)
-    private String token; // 模拟 JWT 令牌
-
+    @TableField("remark")
+    @Schema(description = "备注")
+    private String remark;
 }

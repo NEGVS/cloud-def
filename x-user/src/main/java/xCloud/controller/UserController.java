@@ -1,31 +1,26 @@
 package xCloud.controller;
 
+import cn.hutool.extra.servlet.JakartaServletUtil;
 import cn.hutool.json.JSONUtil;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.Parameters;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import xCloud.entity.User;
+import xCloud.entity.LoginDTO;
+import xCloud.entity.LoginVO;
+import xCloud.entity.ResultEntity;
 import xCloud.entity.UserDTO;
+import xCloud.entity.UserVO;
 import xCloud.service.UserService;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
 
 /**
  * @Description User接口
@@ -36,153 +31,52 @@ import java.util.Objects;
 @RestController
 @RequestMapping("biz/user")
 @Slf4j
-@Tag(name = "User接口", description = "User接口")
+@Tag(name = "User接口", description = "用户登录与CRUD接口")
 public class UserController {
 
-    @Autowired
+    @Resource
     private UserService userService;
 
-    @PostMapping("/authenticate")
-    public User authenticate(@RequestParam String username, @RequestParam String password) {
-        return userService.authenticate(username, password);
+    // ==========【登录：账号密码 -> JWT令牌】==========
+    @Operation(summary = "用户登录", description = "校验账号密码，成功返回JWT令牌")
+    @PostMapping("/login")
+    public ResultEntity<LoginVO> login(@Valid @RequestBody LoginDTO dto, HttpServletRequest request) {
+        log.info("登录请求：userName={}", dto.getUserName());
+        String loginIp = JakartaServletUtil.getClientIP(request);
+        return ResultEntity.success(userService.login(dto, loginIp), "登录成功");
     }
 
+    @Operation(summary = "获取用户详情", description = "根据用户ID查询详情，不含密码")
     @GetMapping("/{id}")
-    public UserDTO getUser(@PathVariable("id") Long userId) {
-        return userService.getUser(userId);
+    public ResultEntity<UserVO> getUser(@PathVariable("id") Long userId) {
+        return ResultEntity.success(userService.getUser(userId));
     }
 
-    /**
-     * 1-增加
-     *
-     * @param dto 前端请求dto
-     * @return 查询结果
-     */
-    @Operation(summary = "新增")
-    @Parameters(
-            value = {
-                    @Parameter(name = "userId", description = "Id", required = true),
-                    @Parameter(name = "userName", description = "姓名", required = true),
-                    @Parameter(name = "userAge", description = "年龄", required = true),
-                    @Parameter(name = "userAddress", description = "地址", required = true),
-                    @Parameter(name = "userPhone", description = "手机号", required = true),
-            }
-    )
-    @ApiResponse(responseCode = "200", description = "新增成功", content = @Content(schema = @Schema(implementation = User.class)))
+    @Operation(summary = "新增用户", description = "新增用户，密码BCrypt加密存储")
     @PostMapping("/add")
-    public Map<String, Object> add(@RequestBody UserDTO dto) {
-        log.info("新增数据参数：{}", JSONUtil.toJsonStr(dto));
-        return userService.add(dto);
+    public ResultEntity<Long> add(@RequestBody UserDTO dto) {
+        log.info("新增用户参数：{}", JSONUtil.toJsonStr(dto));
+        return ResultEntity.success(userService.add(dto), "新增成功");
     }
 
-    /**
-     * 2-删除
-     *
-     * @param dto 前端请求dto
-     * @return 查询结果
-     */
-    @Operation(summary = "删除", description = "删除")
-    @ApiResponse(responseCode = "200", description = "删除成功", content = @Content(schema = @Schema(implementation = User.class)))
-    @PostMapping("/delete")
-    public Map<String, Object> delete(@RequestBody UserDTO dto) {
-        log.info("更新数据参数：{}", JSONUtil.toJsonStr(dto));
-        return userService.delete(dto);
+    @Operation(summary = "删除用户", description = "逻辑删除")
+    @PostMapping("/delete/{id}")
+    public ResultEntity<Boolean> delete(@PathVariable("id") Long userId) {
+        log.info("删除用户：userId={}", userId);
+        return ResultEntity.success(userService.delete(userId), "删除成功");
     }
 
-    /**
-     * 3-修改
-     *
-     * @param dto 前端请求VO
-     * @return 查询结果
-     */
-    @Operation(summary = "更新接口", description = "更新数据")
-    @ApiResponse(responseCode = "200", description = "更新成功", content = @Content(schema = @Schema(implementation = User.class)))
+    @Operation(summary = "更新用户", description = "更新用户信息，不含密码")
     @PostMapping("/update")
-    public Map<String, Object> update(@RequestBody UserDTO dto) {
-        log.info("更新数据参数：{}", JSONUtil.toJsonStr(dto));
-        return userService.update(dto);
+    public ResultEntity<Boolean> update(@RequestBody UserDTO dto) {
+        log.info("更新用户参数：{}", JSONUtil.toJsonStr(dto));
+        return ResultEntity.success(userService.update(dto), "更新成功");
     }
 
-    /**
-     * 4-查询-列表
-     *
-     * @param dto 列表搜索
-     * @return 列表
-     */
-    @Operation(summary = "获取列表")
-    @ApiResponse(responseCode = "200", description = "获取成功", content = @Content(schema = @Schema(implementation = User.class)))
-    @PostMapping(value = "/list")
-    public Map<String, Object> list(@RequestBody UserDTO dto) {
+    @Operation(summary = "分页查询用户列表", description = "按条件分页查询，不含密码")
+    @PostMapping("/list")
+    public ResultEntity<IPage<UserVO>> list(@RequestBody UserDTO dto) {
         log.info("列表查询参数：{}", JSONUtil.toJsonStr(dto));
-        Map<String, Object> resultMap = userService.list(dto);
-        Object data = null;
-        long total = 0;
-        Object idNumberList = new ArrayList<>();
-        for (Map.Entry<String, Object> entry : resultMap.entrySet()) {
-            if (Objects.equals(entry.getKey(), "records")) {
-                data = entry.getValue();
-            }
-            if (Objects.equals(entry.getKey(), "count")) {
-                total = (long) entry.getValue();
-            }
-            if (Objects.equals(entry.getKey(), "idNumberList")) {
-                idNumberList = entry.getValue();
-            }
-        }
-        Map<String, Object> map = new HashMap<>();
-        map.put("list", data);
-        map.put("notFoundIdNumberList", idNumberList);
-        map.put("page", total);
-        return null;
+        return ResultEntity.success(userService.list(dto));
     }
-
-
-    /**
-     * 4.1-查询-详情
-     *
-     * @param dto
-     * @return 基本
-     */
-    @Parameter(name = "userId", description = "Id", required = true)
-    @Operation(summary = "列表-点击详情", description = "详情数据")
-    @ApiResponse(responseCode = "200", description = "详情", content = @Content(schema = @Schema(implementation = User.class)))
-    @PostMapping("/detail")
-    public Map<String, Object> detail(@RequestBody UserDTO dto) throws Exception {
-        log.info("查询详情参数：{}", JSONUtil.toJsonStr(dto));
-        return null;
-    }
-//
-//    /**
-//     * 5-导入
-//     *
-//     * @param multipartFile 文件流
-//     * @param response      响应流
-//     */
-//    @Operation(summary = "导入")
-//    @Parameter(name = "uploadFile", description = "导入文件", required = true)
-//    @ApiResponse(responseCode = "200", description = "导入成功")
-//    @PostMapping("importFile")
-//    public void importFile(@RequestParam("uploadFile") MultipartFile multipartFile, HttpServletResponse response) throws Exception {
-////        userService.importFile(multipartFile, UserContext.getUser().getYsUserId(), response);
-//    }
-//
-//    /**
-//     * 5.1-下载导入模板
-//     */
-//    @Operation(summary = "模版下载接口", description = "模版下载接口")
-//    @ApiResponse(responseCode = "200", description = "模版下载接口")
-//    @GetMapping("/downloadTemplate")
-//    public void downloadTemplate(HttpServletResponse response) throws Exception {
-//        userService.downloadTemplate(response);
-//    }
-//
-//    /**
-//     * 6-导出
-//     */
-//    @Operation(summary = "导出", description = "导出")
-//    @PostMapping("/export")
-//    public void export(@RequestBody UserDTO dto, HttpServletResponse response) throws Exception {
-//        log.info("导出的查询参数：{}", JSONUtil.toJsonStr(dto));
-//        userService.exportFile(dto, response);
-//    }
 }

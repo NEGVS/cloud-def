@@ -1,10 +1,12 @@
 package xCloud.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
+import xCloud.entity.LoginDTO;
+import xCloud.entity.LoginVO;
 import xCloud.entity.User;
 import xCloud.entity.UserDTO;
-
-import java.util.Map;
+import xCloud.entity.UserVO;
 
 /**
  * @author AndyFan
@@ -14,80 +16,56 @@ import java.util.Map;
 public interface UserService extends IService<User> {
 
     /**
-     * authenticate
-     */
-    User authenticate(String username, String password);
-
-    /**
-     * 获取用户信息
-     */
-    public UserDTO getUser(Long userId);
-
-    /**
-     * RabbitMQ 订单通知监听
-     */
-    public void sendOrderNotification(String orderId, Long userId);
-
-    /**
-     * 1-新增
+     * 登录：校验账号密码，成功返回JWT令牌与基础信息
      *
-     * @param dto dto
-     * @return 成功条数
+     * @param dto     登录参数
+     * @param loginIp 登录IP
+     * @return 登录结果
      */
-    Map<String, Object> add(UserDTO dto);
+    LoginVO login(LoginDTO dto, String loginIp);
 
     /**
-     * 2-删除
+     * 获取用户详情（不含密码）
      *
-     * @param dto dto
-     * @return 成功条数
+     * @param userId 用户ID
+     * @return 用户返回对象
      */
-    Map<String, Object> delete(UserDTO dto);
+    UserVO getUser(Long userId);
 
     /**
-     * 3-更新
-     *
-     * @param dto dto
-     * @return 成功条数
+     * RabbitMQ 订单通知
      */
-    Map<String, Object> update(UserDTO dto);
+    void sendOrderNotification(String orderId, Long userId);
 
     /**
-     * 4-查询-列表
+     * 1-新增用户
      *
-     * @param dto 列表搜索
-     * @return 列表
+     * @param dto 用户参数
+     * @return 新增后的用户ID
      */
-    Map<String, Object> list(UserDTO dto);
+    Long add(UserDTO dto);
 
     /**
-     * 4.1-查询-详情
+     * 2-删除用户（逻辑删除 del_flag=2）
      *
-     * @param dto
-     * @return 基本信息
+     * @param userId 用户ID
+     * @return 是否成功
      */
-    Map<String, Object> detail(UserDTO dto);
+    boolean delete(Long userId);
 
-//
-//    /**
-//     * 5-导入
-//     *
-//     * @param multipartFile 文件流
-//     * @param userId        用户id
-//     * @param response      响应流
-//     */
-//    void importFile(MultipartFile multipartFile, String userId, HttpServletResponse response) throws IOException;
-//
-//    /**
-//     * 5.1-下载导入模板
-//     */
-//    void downloadTemplate(HttpServletResponse response) throws Exception;
-//
-//    /**
-//     * 6-导出
-//     *
-//     * @param dto 搜索条件
-//     */
-//    void exportFile(UserDTO dto, HttpServletResponse response) throws Exception;
+    /**
+     * 3-更新用户
+     *
+     * @param dto 用户参数
+     * @return 是否成功
+     */
+    boolean update(UserDTO dto);
 
+    /**
+     * 4-分页查询用户列表
+     *
+     * @param dto 查询与分页参数
+     * @return 分页结果
+     */
+    IPage<UserVO> list(UserDTO dto);
 }

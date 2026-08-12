@@ -254,3 +254,65 @@
 - **说明**：根据 id 物理删除一条向量日志记录
 - **入参**：Path 参数 `id`（日志ID）
 - **返回**：`Result<Boolean>`
+
+---
+
+## 用户管理模块 `/biz/user`（x-user 服务）
+
+### 1. 用户登录
+
+- **接口**：`POST /biz/user/login`
+- **说明**：校验账号密码（BCrypt 比对），成功签发 JWT 令牌。用户不存在与密码错误返回统一提示，防账号探测。
+- **入参**：`LoginDTO`
+
+| 字段 | 类型 | 必填 | 说明 |
+|---|---|---|---|
+| userName | String | 是 | 用户账号 |
+| password | String | 是 | 密码（明文，服务端BCrypt比对） |
+
+- **返回**：`ResultEntity<LoginVO>`（token、userId、userName、nickName、avatar）
+
+---
+
+### 2. 获取用户详情
+
+- **接口**：`GET /biz/user/{id}`
+- **说明**：根据用户ID查询详情，不返回 password。
+- **入参**：Path 参数 `id`（用户ID）
+- **返回**：`ResultEntity<UserVO>`
+
+---
+
+### 3. 新增用户
+
+- **接口**：`POST /biz/user/add`
+- **说明**：新增用户，账号唯一校验，密码 BCrypt 加密存储。
+- **入参**：`UserDTO`（userName、password 必填，含 nickName、email、phonenumber、sex 等）
+- **返回**：`ResultEntity<Long>`（新增用户ID）
+
+---
+
+### 4. 删除用户
+
+- **接口**：`POST /biz/user/delete/{id}`
+- **说明**：逻辑删除（del_flag=2）。
+- **入参**：Path 参数 `id`（用户ID）
+- **返回**：`ResultEntity<Boolean>`
+
+---
+
+### 5. 更新用户
+
+- **接口**：`POST /biz/user/update`
+- **说明**：更新用户信息，userId 必传；此接口不允许修改密码。
+- **入参**：`UserDTO`（userId 必填）
+- **返回**：`ResultEntity<Boolean>`
+
+---
+
+### 6. 分页查询用户列表
+
+- **接口**：`POST /biz/user/list`
+- **说明**：多条件分页查询，仅返回未删除用户，不含 password。支持账号/昵称模糊、手机号、状态、部门过滤。
+- **入参**：`UserDTO`（current、size 分页 + 过滤字段）
+- **返回**：`ResultEntity<IPage<UserVO>>`

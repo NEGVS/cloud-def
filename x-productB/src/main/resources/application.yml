@@ -3,6 +3,16 @@ server:
 # dynamic-tp 动态线程池配置
 # 运行中可在 Nacos 配置中心修改以下参数，实时生效无需重启
 spring:
+  # ============Kafka数据中台配置============
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: recruitment-consumer-group
+      auto-offset-reset: earliest
+      enable-auto-commit: false
+    producer:
+      acks: all
+      retries: 3
   dynamic:
     tp:
       enabled: true
@@ -33,9 +43,9 @@ spring:
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://124.222.129.42:3306/andy_database?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
-    username: hylogan
-    password: hy123456
+    url: jdbc:mysql://101.35.226.226:3306/andy_nacos?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+    username: root
+    password: A5%Bd$#a7.Q
     druid:
       initial-size: 5
       min-idle: 5
@@ -173,3 +183,26 @@ hdbscan:
 llm:
   api:
     url: https://api.deepseek.com/v1/chat/completions
+
+# ============Elasticsearch混合检索配置============
+elasticsearch:
+  host: localhost
+  port: 9200
+  scheme: http
+  username:  # 可选，如果ES开启了安全认证
+  password:  # 可选
+  # 索引配置
+  index:
+    candidate_resume: candidate_resume  # 候选人简历索引
+    job_description: job_description    # JD岗位描述索引
+  # 检索配置
+  search:
+    max_result_window: 10000  # 最大检索窗口
+    timeout: 30s              # 超时时间
+
+
+
+# ============简历上传配置============
+resume:
+  upload:
+    dir: /tmp/resumes  # 简历文件存储目录

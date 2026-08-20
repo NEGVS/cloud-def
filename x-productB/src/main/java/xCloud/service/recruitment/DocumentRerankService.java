@@ -10,7 +10,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * 二次排序（Re-ranking）
+ * 文档重排序服务（Re-ranking）
  *
  * 使用阿里云 DashScope gte-rerank 模型对召回结果重排序，
  * 比纯向量相似度更准确地衡量 query 与 document 的相关性。
@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Service
-public class RerankService {
+public class DocumentRerankService {
 
     private static final String RERANK_URL =
             "https://dashscope.aliyuncs.com/api/v1/services/rerank/text-rerank/text-rerank";
@@ -30,7 +30,7 @@ public class RerankService {
 
     private final WebClient webClient;
 
-    public RerankService(WebClient webClient) {
+    public DocumentRerankService(WebClient webClient) {
         this.webClient = webClient;
     }
 

@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 import xCloud.entity.recruitment.DocumentChunk;
 import xCloud.service.recruitment.ContextCompressService;
 import xCloud.service.recruitment.HybridRagService;
-import xCloud.service.recruitment.RerankService;
+import xCloud.service.recruitment.DocumentRerankService;
 
 import java.util.List;
 
@@ -20,11 +20,11 @@ import java.util.List;
 public class RagTool implements AgentTool {
 
     private final HybridRagService hybridRagService;
-    private final RerankService rerankService;
+    private final DocumentRerankService rerankService;
     private final ContextCompressService contextCompressService;
 
     public RagTool(HybridRagService hybridRagService,
-                   RerankService rerankService,
+                   DocumentRerankService rerankService,
                    ContextCompressService contextCompressService) {
         this.hybridRagService = hybridRagService;
         this.rerankService = rerankService;

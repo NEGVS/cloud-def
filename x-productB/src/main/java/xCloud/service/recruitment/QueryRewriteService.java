@@ -156,7 +156,7 @@ public class QueryRewriteService {
                         "model", model,
                         "messages", List.of(Map.of("role", "user", "content", prompt)),
                         "max_tokens", maxTokens,
-                        "temperature", 0.3
+                        "temperature", 0.3f
                 ))
                 .retrieve()
                 .bodyToMono(Map.class)

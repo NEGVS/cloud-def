@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="xCloud.mapper.recruitment.CandidateScoreMapper">
+
+    <!-- 根据JD ID查询所有候选人评分（按总分降序） -->
+    <select id="selectByJdIdOrderByScore" resultType="xCloud.entity.recruitment.CandidateScore">
+        SELECT * FROM candidate_score
+        WHERE jd_id = #{jdId}
+        ORDER BY total_score DESC
+    </select>
+
+    <!-- 根据候选人ID查询所有评分记录 -->
+    <select id="selectByCandidateId" resultType="xCloud.entity.recruitment.CandidateScore">
+        SELECT * FROM candidate_score
+        WHERE candidate_id = #{candidateId}
+        ORDER BY created_at DESC
+    </select>
+
+    <!-- 查询候选人在指定JD下的评分 -->
+    <select id="selectByCandidateAndJd" resultType="xCloud.entity.recruitment.CandidateScore">
+        SELECT * FROM candidate_score
+        WHERE candidate_id = #{candidateId} AND jd_id = #{jdId}
+        LIMIT 1
+    </select>
+
+    <!-- 查询高分候选人（总分>=阈值） -->
+    <select id="selectHighScoreCandidates" resultType="xCloud.entity.recruitment.CandidateScore">
+        SELECT * FROM candidate_score
+        WHERE jd_id = #{jdId} AND total_score >= #{threshold}
+        ORDER BY total_score DESC
+    </select>
+
+</mapper>

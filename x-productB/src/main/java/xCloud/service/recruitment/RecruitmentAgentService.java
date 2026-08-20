@@ -389,7 +389,7 @@ public class RecruitmentAgentService {
                                     Map.of("role", "user", "content", finalAnswer)
                             ),
                             "stream", true,
-                            "temperature", 0.3
+                            "temperature", 0.3f
                     ))
                     .retrieve()
                     .bodyToFlux(String.class)
@@ -516,7 +516,7 @@ public class RecruitmentAgentService {
                                 "model", model,
                                 "messages", messages,
                                 "max_tokens", maxTokens,
-                                "temperature", 0.3
+                                "temperature", 0.3f
                         ))
                         .retrieve()
                         .bodyToMono(Map.class)

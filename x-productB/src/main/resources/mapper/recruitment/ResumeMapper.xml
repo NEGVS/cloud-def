@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="xCloud.mapper.recruitment.ResumeMapper">
+
+    <!-- 根据解析状态查询简历列表 -->
+    <select id="selectByParseStatus" resultType="xCloud.entity.recruitment.Resume">
+        SELECT * FROM resume
+        WHERE parse_status = #{parseStatus} AND deleted = 0
+        ORDER BY created_at DESC
+    </select>
+
+    <!-- 根据向量化状态查询简历列表 -->
+    <select id="selectByVectorizeStatus" resultType="xCloud.entity.recruitment.Resume">
+        SELECT * FROM resume
+        WHERE vectorize_status = #{vectorizeStatus} AND deleted = 0
+        ORDER BY created_at DESC
+    </select>
+
+    <!-- 查询待索引的简历 -->
+    <select id="selectPendingIndex" resultType="xCloud.entity.recruitment.Resume">
+        SELECT * FROM resume
+        WHERE indexed = 0 AND parse_status = 'success' AND deleted = 0
+        ORDER BY created_at DESC
+        LIMIT 100
+    </select>
+
+</mapper>

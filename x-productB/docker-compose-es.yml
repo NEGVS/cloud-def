@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  # Elasticsearch 8.12.0（支持向量检索 + BM25）
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.12.0
+    container_name: elasticsearch-recruitment
+    environment:
+      - discovery.type=single-node
+      - "ES_JAVA_OPTS=-Xms1g -Xmx1g"
+      - xpack.security.enabled=false  # 关闭安全认证（开发环境）
+      - xpack.security.http.ssl.enabled=false
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    volumes:
+      - es_data:/usr/share/elasticsearch/data
+    networks:
+      - recruitment-net
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9200/_cluster/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # Elasticsearch IK分词器（需要进入容器安装）
+  # docker exec -it elasticsearch-recruitment /bin/bash
+  # ./bin/elasticsearch-plugin install https://github.com/medcl/elasticsearch-analysis-ik/releases/download/v8.12.0/elasticsearch-analysis-ik-8.12.0.zip
+  # exit
+  # docker restart elasticsearch-recruitment
+
+  # Kibana（可选，用于可视化管理ES）
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.12.0
+    container_name: kibana-recruitment
+    ports:
+      - "5601:5601"
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    depends_on:
+      - elasticsearch
+    networks:
+      - recruitment-net
+
+volumes:
+  es_data:
+    driver: local
+
+networks:
+  recruitment-net:
+    driver: bridge

@@ -1,5 +1,7 @@
 package xCloud.config;
 
+import org.apache.kafka.clients.admin.AdminClient;
+import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
@@ -10,17 +12,23 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.config.TopicBuilder;
-import org.springframework.kafka.core.*;
+import org.springframework.kafka.core.ConsumerFactory;
+import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
+import org.springframework.kafka.core.DefaultKafkaProducerFactory;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.kafka.listener.ContainerProperties;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.kafka.support.serializer.JsonSerializer;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
 /**
  * Kafka配置类
  * 用途：数据中台 - 实时数据流处理
+ *
  * @author Claude
  * @date 2026-08-18
  */
@@ -32,6 +40,20 @@ public class KafkaConfig {
 
     @Value("${spring.kafka.consumer.group-id:recruitment-consumer-group}")
     private String consumerGroupId;
+
+    @Bean
+    public AdminClient kafkaAdminClient(
+            @Value("${spring.kafka.bootstrap-servers}") String servers) {
+
+        Properties properties = new Properties();
+
+        properties.put(
+                AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG,
+                servers
+        );
+
+        return AdminClient.create(properties);
+    }
 
     /**
      * Kafka主题定义

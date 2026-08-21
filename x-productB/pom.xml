@@ -114,19 +114,8 @@
             <artifactId>spring-boot-starter-data-elasticsearch</artifactId>
         </dependency>
 
-        <!-- Elasticsearch Java API Client (底层客户端，与服务端8.12.0版本匹配) -->
-        <dependency>
-            <groupId>co.elastic.clients</groupId>
-            <artifactId>elasticsearch-java</artifactId>
-            <version>8.12.0</version>
-        </dependency>
 
-        <!--        [INFO] +- org.springframework.boot:spring-boot-starter-data-elasticsearch:jar:3.4.3:compile
-        [INFO] |  \- org.springframework.data:spring-data-elasticsearch:jar:5.4.2:compile
-        [INFO] |     \- org.springframework.data:spring-data-commons:jar:3.4.2:compile
-        [INFO] +- co.elastic.clients:elasticsearch-java:jar:8.12.0:compile
-        [INFO] |  +- org.elasticsearch.client:elasticsearch-rest-client:jar:8.15.5:compile
-        -->
+
 
         <!-- Seata Starter（兼容 Spring Boot 3.x） -->
         <!--        <dependency>-->

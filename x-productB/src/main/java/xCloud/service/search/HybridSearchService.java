@@ -88,7 +88,8 @@ public class HybridSearchService {
                             .multiMatch(m -> m
                                     .query(query)
                                     .fields("content^3", "skills^2", "expectedPosition^1.5") // 字段权重
-                                    .analyzer("ik_smart")
+                                    .analyzer("standard")
+//                                    standard,ik_smart
                             )
                     )
                     .size(topK)

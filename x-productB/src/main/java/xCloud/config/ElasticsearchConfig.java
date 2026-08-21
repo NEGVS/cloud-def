@@ -47,7 +47,6 @@ public class ElasticsearchConfig {
      * 懒加载：仅在实际使用时初始化，避免启动时ES未就绪导致失败
      */
     @Bean
-    @Lazy
     public ElasticsearchClient elasticsearchClient() {
         // ============1-构建RestClient（HTTP客户端）============
         RestClient restClient;

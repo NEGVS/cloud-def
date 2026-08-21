@@ -12,7 +12,7 @@ import java.util.List;
  * @author Claude
  * @date 2026-08-18
  */
-@Repository
+//@Repository
 public interface CandidateResumeRepository extends ElasticsearchRepository<CandidateResumeDocument, String> {
 
     /**

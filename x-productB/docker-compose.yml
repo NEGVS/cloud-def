@@ -1,0 +1,91 @@
+version: "3.8"
+
+services:
+
+  # ============================================================
+  # Elasticsearch 8.12.0
+  # ============================================================
+  elasticsearch:
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    image: x-productb-elasticsearch:8.12.0-ik
+
+    container_name: elasticsearch-recruitment
+
+    restart: unless-stopped
+
+    environment:
+      # 单节点
+      - discovery.type=single-node
+
+      # JVM
+      - ES_JAVA_OPTS=-Xms1g -Xmx1g
+
+      # 开发环境关闭安全认证
+      - xpack.security.enabled=false
+
+      # HTTP 使用明文
+      - xpack.security.http.ssl.enabled=false
+
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+
+    volumes:
+      - es_data:/usr/share/elasticsearch/data
+
+    networks:
+      - recruitment-net
+
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "curl -fs http://localhost:9200/_cluster/health || exit 1"
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+      start_period: 30s
+
+
+  # ============================================================
+  # Kibana
+  # ============================================================
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.12.0
+
+    container_name: kibana-recruitment
+
+    restart: unless-stopped
+
+    ports:
+      - "5601:5601"
+
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+
+    networks:
+      - recruitment-net
+
+
+# ============================================================
+# Volumes
+# ============================================================
+volumes:
+  es_data:
+    driver: local
+
+
+# ============================================================
+# Network
+# ============================================================
+networks:
+  recruitment-net:
+    driver: bridge

@@ -3,6 +3,10 @@ server:
 # dynamic-tp 动态线程池配置
 # 运行中可在 Nacos 配置中心修改以下参数，实时生效无需重启
 spring:
+  elasticsearch:
+    uris: http://localhost:9200
+    username: elastic
+    password: "ASDks#d12"
   # ============Kafka数据中台配置============
   kafka:
     bootstrap-servers: localhost:9092
@@ -186,11 +190,11 @@ llm:
 
 # ============Elasticsearch混合检索配置============
 elasticsearch:
+  username: elastic
+  password: "ASDks#d12"
   host: localhost
   port: 9200
   scheme: http
-  username:  # 可选，如果ES开启了安全认证
-  password:  # 可选
   # 索引配置
   index:
     candidate_resume: candidate_resume  # 候选人简历索引

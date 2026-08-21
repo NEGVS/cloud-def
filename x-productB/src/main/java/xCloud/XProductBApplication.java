@@ -7,6 +7,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.event.ApplicationEnvironmentPreparedEvent;
@@ -14,7 +16,9 @@ import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.ApplicationListener;
+import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
+import xCloud.tools.health.InfrastructureHealthChecker;
 import xCloud.tools.springX.MyBean;
 
 import java.io.BufferedReader;
@@ -35,8 +39,6 @@ import java.io.InputStreamReader;
 @MapperScan("xCloud.mapper")
 public class XProductBApplication {
 
-    @Value("${server.port}")
-    public String port;
 
     @Value("${server.servlet.context-path:}")
     private String contextPath;
@@ -49,6 +51,9 @@ public class XProductBApplication {
 
     @PostConstruct
     public void init() {
+        String port = env.getProperty("server.port", "8083");
+
+        System.out.println("当前端口为：" + port);
         System.out.println("当前端口为：" + port);
         log.info("x-product-B 启动完成...");
         log.info("\n--api--");
@@ -69,6 +74,30 @@ public class XProductBApplication {
         app.run(args);
     }
 
+    @Bean
+    public ApplicationRunner applicationRunner(InfrastructureHealthChecker healthChecker) {
+
+        return new ApplicationRunner() {
+            @Override
+            public void run(ApplicationArguments args) {
+                String port = env.getProperty("server.port", "8083");
+
+                System.out.println("当前端口为：" + port);
+                log.info("========================================");
+                log.info("x-product-B 启动完成");
+                log.info("端口：{}", port);
+                log.info("API文档：http://localhost:{}{}/doc.html",
+                        port, contextPath);
+                log.info("Nacos：http://localhost:8848/nacos");
+                log.info("========================================");
+
+//                myBean.doBusiness();
+
+                // 检测基础设施
+                healthChecker.checkAll();
+            }
+        };
+    }
     private static void killProcessOnPort(int port) {
         try {
             Process findProcess = Runtime.getRuntime().exec(new String[]{"lsof", "-ti", "tcp:" + port});

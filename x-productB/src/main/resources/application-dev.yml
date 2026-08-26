@@ -1,0 +1,162 @@
+# 开发环境配置：禁用Kafka和Elasticsearch
+server:
+  port: 8083
+
+spring:
+  # ============禁用Elasticsearch自动配置============
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.data.elasticsearch.ElasticsearchDataAutoConfiguration
+      - org.springframework.boot.autoconfigure.elasticsearch.ElasticsearchRestClientAutoConfiguration
+
+  # ============禁用Kafka自动配置（可选配置，防止连接失败）============
+  kafka:
+    bootstrap-servers: localhost:9092  # 保留配置但不会真正连接
+    consumer:
+      group-id: recruitment-consumer-group
+      auto-offset-reset: earliest
+      enable-auto-commit: false
+    producer:
+      acks: all
+      retries: 3
+
+  # ============数据库配置============
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://101.35.226.226:3306/andy_nacos?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+    username: root
+    password: A5%Bd$#a7.Q
+    druid:
+      initial-size: 5
+      min-idle: 5
+      max-active: 20
+      max-wait: 60000
+      test-on-borrow: true
+      test-on-return: false
+      test-while-idle: true
+      filters: stat,wall,slf4j
+      filter:
+        stat:
+          enabled: true
+          slow-sql-millis: 1000
+        wall:
+          enabled: true
+      stat-view-servlet:
+        enabled: true
+        url-pattern: /druid/*
+        login-username: andy
+        login-password: andy
+        allow: 127.0.0.1
+
+  # ============文件上传配置============
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 200MB
+      max-request-size: 210MB
+      file-size-threshold: 10MB
+
+  # ============动态线程池配置============
+  dynamic:
+    tp:
+      enabled: true
+      monitor-interval: 5
+      executors:
+        - thread-pool-name: taskExecutor
+          notify-enabled: true
+          notify-items:
+            - threshold: 80
+              type: log
+
+  task:
+    execution:
+      shutdown:
+        await-termination: true
+        await-termination-period: 10s
+
+# ============mybatis-plus配置============
+mybatis-plus:
+  mapper-locations: classpath*:/mapper/**/*.xml
+  type-aliases-package: xCloud.entity
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    map-underscore-to-camel-case: false
+
+# ============日志配置============
+logging:
+  level:
+    com.alibaba.nacos: INFO
+    org.springframework.cloud: INFO
+    io.grpc: INFO
+    org.springframework.web: INFO
+    com.baomidou.mybatisplus: INFO
+    org.apache.pdfbox: ERROR
+
+# ============langchain4j配置============
+langchain4j:
+  open-ai:
+    chat-model:
+      api-key: ${OPENAI_API_KEY:placeholder}
+      model-name: gpt-4o
+      log-requests: true
+      log-responses: true
+    embedding-model:
+      api-key: ${OPENAI_API_KEY:placeholder}
+      model-name: text-embedding-3-small
+
+# ============RAG配置============
+rag:
+  url: http://localhost:8080/api/v1/rag
+
+milvus:
+  enabled: false  # 禁用Milvus
+  uri: http://localhost:19530
+  token: root:Milvus
+  host: localhost
+  port: 19530
+
+# ============LLM配置============
+openai:
+  api-key: ${OPENAI_API_KEY:placeholder}
+  model: text-embedding-3-small
+
+ali:
+  api-key: ${DASHSCOPE_API_KEY:placeholder}
+  chat_model_name: qwen-plus
+  embedding_model_name: text-embedding-v4
+  baseUrl: https://dashscope.aliyuncs.com/compatible-mode/v1
+
+vector:
+  dim: 1024
+  collection: andy_vectorsV2
+
+deepSeek:
+  api:
+    url: https://api.deepseek.com
+    key: ${DEEPSEEK_API_KEY:placeholder}
+
+baichuan:
+  api:
+    url: https://api.baichuan-ai.com/v1/embeddings
+    key: ${BAICHUAN_API_KEY:placeholder}
+
+hdbscan:
+  service:
+    url: http://localhost:8001
+
+llm:
+  api:
+    url: https://api.deepseek.com/v1/chat/completions
+
+# ============简历上传配置============
+resume:
+  upload:
+    dir: /tmp/resumes
+
+# ============开关控制============
+kafka:
+  enabled: false  # 禁用Kafka
+
+elasticsearch:
+  enabled: false  # 禁用Elasticsearch

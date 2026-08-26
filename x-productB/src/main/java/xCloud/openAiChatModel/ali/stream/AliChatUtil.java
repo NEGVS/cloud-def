@@ -72,7 +72,7 @@ public class AliChatUtil {
 //                                fullContent.append(content);
 //                                // 当 finishReason 不为 null 时，表示是最后一个 chunk，输出用量信息
 //                                if (finishReason != null && !"null".equals(finishReason)) {
-//                                    log.info("\n--- 请求用量 ---");
+//                                    log.info("\n\n--- 请求用量 ---");
 //                                    log.info("输入 Tokens：" + message.getUsage().getInputTokens());
 //                                    log.info("输出 Tokens：" + message.getUsage().getOutputTokens());
 //                                    log.info("总 Tokens：" + message.getUsage().getTotalTokens());
@@ -81,7 +81,7 @@ public class AliChatUtil {
 //                            },
 //                            // onError: 处理错误
 //                            error -> {
-//                                System.err.println("\n请求失败: " + error.getMessage());
+//                                System.err.println("\n\n请求失败: " + error.getMessage());
 //                                latch.countDown();
 //                            },
 //                            // onComplete: 完成回调
@@ -118,7 +118,14 @@ public class AliChatUtil {
      * @return Flux<String> 流式响应，每个元素为内容片段（最后一个元素包含用量信息，如果适用）
      */
     public static Flux<String> streamChatToFrontend(String apiKey, String prompt, String model) {
-        log.info("==1-使用 DashScope API 进行流式文本生成，并支持流式返回给前端。");
+        log.info("\n\n用户问题：{}", prompt);
+
+        log.info("\n\n==1-使用 DashScope API 进行流式文本生成，并支持流式返回给前端。");
+
+        //处理系统提示词
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(prompt);
+        stringBuilder.append("回答内容要精简，不要说废话，控制在100字以内，条理清晰，可以按照 1，2，3点回答。");
 
 
         Generation gen = new Generation();
@@ -129,13 +136,13 @@ public class AliChatUtil {
                 .messages(Arrays.asList(
                         Message.builder()
                                 .role(Role.USER.getValue())
-                                .content(prompt)
+                                .content(stringBuilder.toString())
                                 .build()
                 ))
                 .resultFormat(GenerationParam.ResultFormat.MESSAGE)
                 .incrementalOutput(true) // 开启增量输出，流式返回
                 .build();
-        log.info("==2-使用 DashScope API 进行流式文本生成，并支持流式返回给前端。");
+        log.info("\n\n==2-使用 DashScope API 进行流式文本生成，并支持流式返回给前端。");
 
         try {
             Flowable<GenerationResult> resultFlowable = gen.streamCall(param);
@@ -146,48 +153,66 @@ public class AliChatUtil {
                     .subscribeOn(Schedulers.boundedElastic())
                     // 计算线程用于处理响应（如 embedding 结果计算、聚合）
                     .publishOn(Schedulers.parallel());
-            log.info("==3-使用 DashScope API 进行流式文本生成，并支持流式返回给前端。");
+            log.info("\n\n==3-使用 DashScope API 进行流式文本生成，并支持流式返回给前端。");
 
             return resultFlux
                     .map(message -> {
-                        log.info("==3.1-使用 DashScope API 进行流式文本生成，并支持流式返回给前端。");
+//                        log.info("\n\n==3.1-使用 DashScope API 进行流式文本生成，并支持流式返回给前端。");
 
                         String content = message.getOutput().getChoices().getFirst().getMessage().getContent();
                         String finishReason = message.getOutput().getChoices().getFirst().getFinishReason();
-                        log.info("==4-使用 DashScope API 进行流式文本生成，并支持流式返回给前端。");
+//                        log.info("\n\n==4-使用 DashScope API 进行流式文本生成，并支持流式返回给前端。");
+
+                        log.info("\n\ncontent:{}", content);
+                        log.info("\n\nfinishReason:{}", finishReason);
 
                         if (finishReason != null && !"null".equals(finishReason)) {
                             // 最后一个 chunk，附加用量信息
-                            String usageInfo = "\n--- 请求用量 ---\n" +
-                                    "输入 Tokens：" + message.getUsage().getInputTokens() + "\n" +
-                                    "输出 Tokens：" + message.getUsage().getOutputTokens() + "\n" +
+                            String usageInfo = "\n\n--- 请求用量 ---\n\n" +
+                                    "输入 Tokens：" + message.getUsage().getInputTokens() + "\n\n" +
+                                    "输出 Tokens：" + message.getUsage().getOutputTokens() + "\n\n" +
                                     "总 Tokens：" + message.getUsage().getTotalTokens();
                             // + usageInfo
-                            log.info("==4-使用 DashScope API 进行流式文本生成，usageInfo{}。", usageInfo);
+                            log.info("\n\n==4-使用 DashScope API 进行流式文本生成，usageInfo{}。", usageInfo);
 
                             return content;
                         }
                         return content;
-                    });
+                    })
+                    .doOnNext(chunk -> System.out.print(chunk))
+                    .doOnComplete(()-> System.out.println("\n\n程序执行完成"));
 //                    .doOnNext(chunk -> System.out.print(chunk)) // 可选：同时打印到控制台用于调试
-//                    .doOnComplete(() -> log.info("\n程序执行完成")); // 可选：完成时打印
+//                    .doOnComplete(() -> log.info("\n\n\n\n程序执行完成")); // 可选：完成时打印
 
         } catch (Exception e) {
             return Flux.error(e);
         }
     }
 
+
     /**
      * 1-文本对话，同步回答，设定角色
+     *
+     * @param userMessage   userMessage
+     * @param systemMessage systemMessage
+     * @return String
      */
     public String chat(String userMessage, String systemMessage) {
         try {
             if (ObjectUtil.isEmpty(systemMessage)) {
                 systemMessage = "You are a helpful assistant.";
             }
+            log.info("\n\n用户问题：{}", userMessage);
+            log.info("\n\n角色设置：{}", systemMessage);
+
             if (ObjectUtil.isEmpty(userMessage)) {
                 return "";
             }
+            //处理系统提示词
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append(systemMessage);
+            stringBuilder.append("回答内容要精简，不要说废话，控制在100字以内，条理清晰，可以按照 1，2，3点回答。");
+
             OpenAIClient client = OpenAIOkHttpClient.builder()
                     // 新加坡和北京地域的API Key不同。获取API Key：https://help.aliyun.com/zh/model-studio/get-api-key
                     // 若没有配置环境变量，请用阿里云百炼API Key将下行替换为.apiKey("sk-xxx")
@@ -199,24 +224,24 @@ public class AliChatUtil {
             // 创建 ChatCompletion 参数
             ChatCompletionCreateParams params = ChatCompletionCreateParams.builder()
                     .model(AliConstant.CHAT_MODEL_NAME)  // 指定模型
-                    .addSystemMessage(systemMessage) // 添加系统消息，设置角色，描述角色
+                    .addSystemMessage(stringBuilder.toString()) // 添加系统消息，设置角色，描述角色
                     .addUserMessage(userMessage) //  添加用户消息
                     .build();
 
             // 发送请求并获取响应
-            log.info("正在请求模型，请稍等...");
+            log.info("\n\n正在请求模型，请稍等...");
             ChatCompletion chatCompletion = client.chat().completions().create(params);
             String content = chatCompletion.choices().getFirst().message().content().orElse("未返回有效内容");
-            log.info("---content----\n");
+            log.info("\n\n---content----\n\n");
             log.info(content);
-            log.info("\n");
+            log.info("\n\n");
 
             // 如需查看完整响应，请取消下列注释
             // log.info(chatCompletion);
             return content;
         } catch (Exception e) {
-            log.info("错误信息：" + e.getMessage());
-            log.info("请参考文档：https://help.aliyun.com/zh/model-studio/developer-reference/error-code");
+            log.info("\n\n错误信息：" + e.getMessage());
+            log.info("\n\n请参考文档：https://help.aliyun.com/zh/model-studio/developer-reference/error-code");
         }
         return "";
     }

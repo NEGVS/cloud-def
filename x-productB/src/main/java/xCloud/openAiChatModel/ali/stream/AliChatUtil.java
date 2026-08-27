@@ -131,7 +131,7 @@ public class AliChatUtil {
         // 处理系统提示词
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(prompt);
-        stringBuilder.append("回答内容要精简，不要说废话，控制在100字以内，条理清晰，可以按照 1，2，3点回答。");
+        stringBuilder.append("回答内容要精简，不要说废话，控制在100字以内。");
 
         Generation gen = new Generation();
 

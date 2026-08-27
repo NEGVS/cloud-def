@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -17,7 +18,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
+import xCloud.config.RateLimiterManager;
 import xCloud.openAiChatModel.ali.stream.AliChatUtil;
+import xCloud.util.IpUtil;
+
 
 /**
  * @Description 阿里大模型流式对话控制器，提供流式对话接口，支持 Server-Sent Events (SSE) 实时返回结果
@@ -33,6 +37,9 @@ public class AliChatController {
 
     @Autowired
     private AliChatUtil aliChatUtil;
+
+    @Autowired
+    private RateLimiterManager rateLimiterManager;
 
     /**
      * 阿里大模型同步对话接口
@@ -85,22 +92,40 @@ public class AliChatController {
             )
     })
     @GetMapping(value = "/chat/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public Flux<ServerSentEvent<String>> streamChat(@RequestParam String prompt) {
+    public Flux<ServerSentEvent<String>> streamChat(@RequestParam String prompt,
+                                                      HttpServletRequest request) {
 
-        //空值校验
+        // 获取客户端IP
+        String clientIp = IpUtil.getClientIp(request);
+        log.info("📥 [流式请求] IP: {}, Prompt: {}", clientIp, prompt);
+
+        // 空值校验
         if (prompt == null || prompt.trim().isEmpty()) {
-            log.error("streamChat 参数 prompt 为空");
+            log.error("❌ [参数错误] prompt 为空");
             return Flux.just(ServerSentEvent.<String>builder()
+                    .event("error")
                     .data("参数错误：prompt 不能为空")
                     .build());
         }
 
-        //转换为 SSE 格式并输出（返回给前端
+        // ============ 限流检查 ============
+        boolean rateLimitPassed = rateLimiterManager.tryAcquire(clientIp);
+        if (!rateLimitPassed) {
+            log.warn("🚫 [限流拦截] IP: {} 请求被限流", clientIp);
+            return Flux.just(ServerSentEvent.<String>builder()
+                    .event("error")
+                    .data("请求过于频繁，请稍后再试")
+                    .build());
+        }
+
+        log.info("✅ [限流通过] IP: {} 开始处理请求", clientIp);
+
+        // 转换为 SSE 格式并输出（返回给前端）
         return AliChatUtil.streamChatToFrontend(null, prompt, null)
                 // 异常处理：出错时返回友好提示
                 .onErrorResume(error -> {
-                    log.error("streamChat 错误：{}", error.getMessage());
-                    return Flux.just("对话异常" + error.getMessage());
+                    log.error("❌ [流式对话异常] IP: {}, 错误: {}", clientIp, error.getMessage());
+                    return Flux.just("对话异常：" + error.getMessage());
                 })
                 // 包装为 ServerSentEvent（SSE 标准格式）
                 .map(content -> ServerSentEvent.<String>builder()

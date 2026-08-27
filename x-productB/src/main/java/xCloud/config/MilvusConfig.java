@@ -18,10 +18,11 @@ import org.springframework.context.annotation.Lazy;
 @Configuration
 public class MilvusConfig {
 
-    @Value("${milvus.host}")
+    // 这些配置目前未使用，设为可选避免启动失败
+    @Value("${milvus.host:localhost}")
     private String host;
 
-    @Value("${milvus.port}")
+    @Value("${milvus.port:19530}")
     private Integer port;
 
     @Value("${milvus.uri}")

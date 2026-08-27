@@ -16,6 +16,17 @@ open /Applications/Docker.app
 open -a Docker --background
 ```
 
+
+# 启动kafka
+2-验证启动是否成功
+docker ps
+
+启动向量数据库
+docker start milvus-etcd milvus-minio milvus-standalone
+
+docker start kafka
+docker start elasticsearch
+
 ---
 ## 常用配套命令
 ```bash
@@ -25,6 +36,7 @@ docker info
 # 关闭Docker Desktop
 osascript -e 'quit app "Docker"'
 ```
+
 
 > ⚠️注意：`open -a Docker`只是打开Mac上的Docker Desktop图形应用；**不是直接启动docker引擎**，执行完后要等几秒，右上角鲸鱼图标停止跳动，`docker ps`才可以正常使用。
 

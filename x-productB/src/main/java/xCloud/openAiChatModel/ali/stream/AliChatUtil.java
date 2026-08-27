@@ -105,7 +105,7 @@ public class AliChatUtil {
      * 使用 DashScope API 进行流式文本生成 使用默认apikey、模型
      */
     public static Flux<String> streamChatToFrontend(String prompt) {
-        log.info("==使用默认apikey、模型-开始调用DashScope API进行流式文本生成");
+        log.info("📝 [流式对话] 使用默认配置开始流式对话");
         return streamChatToFrontend(null, prompt, null);
     }
 
@@ -118,15 +118,20 @@ public class AliChatUtil {
      * @return Flux<String> 流式响应，每个元素为内容片段（最后一个元素包含用量信息，如果适用）
      */
     public static Flux<String> streamChatToFrontend(String apiKey, String prompt, String model) {
-        log.info("\n\n用户问题：{}", prompt);
+        // 记录开始时间
+        long startTime = System.currentTimeMillis();
+        String sessionId = java.util.UUID.randomUUID().toString().substring(0, 8);
 
-        log.info("\n\n==1-使用 DashScope API 进行流式文本生成，并支持流式返回给前端。");
+        log.info("\n" + "=".repeat(80));
+        log.info("🚀 [流式对话开始] SessionID: {}", sessionId);
+        log.info("📥 [用户问题]: {}", prompt);
+        log.info("⚙️  [模型配置]: {}", model != null ? model : AliConstant.CHAT_MODEL_NAME);
+        log.info("=".repeat(80));
 
-        //处理系统提示词
+        // 处理系统提示词
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(prompt);
         stringBuilder.append("回答内容要精简，不要说废话，控制在100字以内，条理清晰，可以按照 1，2，3点回答。");
-
 
         Generation gen = new Generation();
 
@@ -142,49 +147,66 @@ public class AliChatUtil {
                 .resultFormat(GenerationParam.ResultFormat.MESSAGE)
                 .incrementalOutput(true) // 开启增量输出，流式返回
                 .build();
-        log.info("\n\n==2-使用 DashScope API 进行流式文本生成，并支持流式返回给前端。");
+
+        log.info("🔗 [API调用] 正在连接阿里云DashScope...");
 
         try {
             Flowable<GenerationResult> resultFlowable = gen.streamCall(param);
 
-            // 将 RxJava Flowable 转换为 Reactor Flux，并优化调度策略
+            // 将 RxJava Flowable 转换为 Reactor Flux
             Flux<GenerationResult> resultFlux = RxJava2Adapter.flowableToFlux(resultFlowable)
-                    // IO 线程用于调用外部接口（如 embedding API、数据库 IO）
                     .subscribeOn(Schedulers.boundedElastic())
-                    // 计算线程用于处理响应（如 embedding 结果计算、聚合）
                     .publishOn(Schedulers.parallel());
-            log.info("\n\n==3-使用 DashScope API 进行流式文本生成，并支持流式返回给前端。");
+
+            log.info("✅ [连接成功] 开始接收流式响应\n");
+
+            // 用于累积完整内容
+            StringBuilder fullContent = new StringBuilder();
+            final int[] chunkCount = {0}; // 使用数组以便在lambda中修改
 
             return resultFlux
                     .map(message -> {
-//                        log.info("\n\n==3.1-使用 DashScope API 进行流式文本生成，并支持流式返回给前端。");
-
                         String content = message.getOutput().getChoices().getFirst().getMessage().getContent();
                         String finishReason = message.getOutput().getChoices().getFirst().getFinishReason();
-//                        log.info("\n\n==4-使用 DashScope API 进行流式文本生成，并支持流式返回给前端。");
 
-                        log.info("\n\ncontent:{}", content);
-                        log.info("\n\nfinishReason:{}", finishReason);
+                        // 累积内容
+                        fullContent.append(content);
+                        chunkCount[0]++;
 
                         if (finishReason != null && !"null".equals(finishReason)) {
-                            // 最后一个 chunk，附加用量信息
-                            String usageInfo = "\n\n--- 请求用量 ---\n\n" +
-                                    "输入 Tokens：" + message.getUsage().getInputTokens() + "\n\n" +
-                                    "输出 Tokens：" + message.getUsage().getOutputTokens() + "\n\n" +
-                                    "总 Tokens：" + message.getUsage().getTotalTokens();
-                            // + usageInfo
-                            log.info("\n\n==4-使用 DashScope API 进行流式文本生成，usageInfo{}。", usageInfo);
+                            // 最后一个chunk，打印完整信息
+                            long endTime = System.currentTimeMillis();
+                            long duration = endTime - startTime;
 
-                            return content;
+                            log.info("\n" + "=".repeat(80));
+                            log.info("✅ [流式对话完成] SessionID: {}", sessionId);
+                            log.info("⏱️  [耗时]: {} ms ({} 秒)", duration, String.format("%.2f", duration / 1000.0));
+                            log.info("📊 [统计]: 共接收 {} 个数据块", chunkCount[0]);
+                            log.info("📝 [完整回复]:\n{}", fullContent.toString());
+                            log.info("\n💰 [Token用量]:");
+                            log.info("   • 输入 Tokens: {}", message.getUsage().getInputTokens());
+                            log.info("   • 输出 Tokens: {}", message.getUsage().getOutputTokens());
+                            log.info("   • 总 Tokens: {}", message.getUsage().getTotalTokens());
+                            log.info("=".repeat(80) + "\n");
                         }
+
                         return content;
                     })
-                    .doOnNext(chunk -> System.out.print(chunk))
-                    .doOnComplete(()-> System.out.println("\n\n程序执行完成"));
-//                    .doOnNext(chunk -> System.out.print(chunk)) // 可选：同时打印到控制台用于调试
-//                    .doOnComplete(() -> log.info("\n\n\n\n程序执行完成")); // 可选：完成时打印
+                    .doOnError(error -> {
+                        log.error("\n" + "=".repeat(80));
+                        log.error("❌ [流式对话失败] SessionID: {}", sessionId);
+                        log.error("❌ [错误信息]: {}", error.getMessage());
+                        log.error("=".repeat(80) + "\n", error);
+                    })
+                    .doOnComplete(() -> {
+                        log.info("🏁 [流式传输] SessionID: {} 数据流传输完毕\n", sessionId);
+                    });
 
         } catch (Exception e) {
+            log.error("\n" + "=".repeat(80));
+            log.error("❌ [API调用异常] SessionID: {}", sessionId);
+            log.error("❌ [异常信息]: {}", e.getMessage());
+            log.error("=".repeat(80) + "\n", e);
             return Flux.error(e);
         }
     }
@@ -198,50 +220,68 @@ public class AliChatUtil {
      * @return String
      */
     public String chat(String userMessage, String systemMessage) {
+        long startTime = System.currentTimeMillis();
+        String sessionId = java.util.UUID.randomUUID().toString().substring(0, 8);
+
         try {
             if (ObjectUtil.isEmpty(systemMessage)) {
                 systemMessage = "You are a helpful assistant.";
             }
-            log.info("\n\n用户问题：{}", userMessage);
-            log.info("\n\n角色设置：{}", systemMessage);
+
+            log.info("\n" + "=".repeat(80));
+            log.info("🚀 [同步对话开始] SessionID: {}", sessionId);
+            log.info("📥 [用户问题]: {}", userMessage);
+            log.info("🎭 [角色设置]: {}", systemMessage);
+            log.info("=".repeat(80));
 
             if (ObjectUtil.isEmpty(userMessage)) {
+                log.warn("⚠️  [参数错误] 用户消息为空");
                 return "";
             }
-            //处理系统提示词
+
+            // 处理系统提示词
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append(systemMessage);
             stringBuilder.append("回答内容要精简，不要说废话，控制在100字以内，条理清晰，可以按照 1，2，3点回答。");
 
             OpenAIClient client = OpenAIOkHttpClient.builder()
-                    // 新加坡和北京地域的API Key不同。获取API Key：https://help.aliyun.com/zh/model-studio/get-api-key
-                    // 若没有配置环境变量，请用阿里云百炼API Key将下行替换为.apiKey("sk-xxx")
                     .apiKey(AliConstant.API_KEY)
-                    // 以下是北京地域base_url，如果使用新加坡地域的模型，需要将base_url替换为：https://dashscope-intl.aliyuncs.com/compatible-mode/v1
                     .baseUrl(AliConstant.BASE_URL)
                     .build();
 
             // 创建 ChatCompletion 参数
             ChatCompletionCreateParams params = ChatCompletionCreateParams.builder()
-                    .model(AliConstant.CHAT_MODEL_NAME)  // 指定模型
-                    .addSystemMessage(stringBuilder.toString()) // 添加系统消息，设置角色，描述角色
-                    .addUserMessage(userMessage) //  添加用户消息
+                    .model(AliConstant.CHAT_MODEL_NAME)
+                    .addSystemMessage(stringBuilder.toString())
+                    .addUserMessage(userMessage)
                     .build();
 
             // 发送请求并获取响应
-            log.info("\n\n正在请求模型，请稍等...");
+            log.info("🔗 [API调用] 正在请求模型，请稍等...");
             ChatCompletion chatCompletion = client.chat().completions().create(params);
             String content = chatCompletion.choices().getFirst().message().content().orElse("未返回有效内容");
-            log.info("\n\n---content----\n\n");
-            log.info(content);
-            log.info("\n\n");
 
-            // 如需查看完整响应，请取消下列注释
-            // log.info(chatCompletion);
+            long endTime = System.currentTimeMillis();
+            long duration = endTime - startTime;
+
+            log.info("\n" + "=".repeat(80));
+            log.info("✅ [同步对话完成] SessionID: {}", sessionId);
+            log.info("⏱️  [耗时]: {} ms ({} 秒)", duration, String.format("%.2f", duration / 1000.0));
+            log.info("📝 [AI回复]:\n{}", content);
+            log.info("=".repeat(80) + "\n");
+
             return content;
+
         } catch (Exception e) {
-            log.info("\n\n错误信息：" + e.getMessage());
-            log.info("\n\n请参考文档：https://help.aliyun.com/zh/model-studio/developer-reference/error-code");
+            long endTime = System.currentTimeMillis();
+            long duration = endTime - startTime;
+
+            log.error("\n" + "=".repeat(80));
+            log.error("❌ [同步对话失败] SessionID: {}", sessionId);
+            log.error("⏱️  [已耗时]: {} ms", duration);
+            log.error("❌ [错误信息]: {}", e.getMessage());
+            log.error("📚 [参考文档]: https://help.aliyun.com/zh/model-studio/developer-reference/error-code");
+            log.error("=".repeat(80) + "\n", e);
         }
         return "";
     }

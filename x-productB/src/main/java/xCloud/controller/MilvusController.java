@@ -13,11 +13,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.web.bind.annotation.*;
+import xCloud.dto.MilvusVectorPageRequest;
+import xCloud.dto.MilvusVectorPageResponse;
 import xCloud.entity.Result;
 import xCloud.entity.request.DropCollectionRequest;
 import xCloud.entity.request.MilvusRequest;
 import xCloud.entity.request.MilvusSearchReq;
 import xCloud.service.Embedding2Service;
+import xCloud.service.VectorStoreService;
 
 import java.util.List;
 
@@ -42,6 +45,11 @@ public class MilvusController {
     @Lazy
     @Resource
     private Embedding2Service embedding2Service;
+
+    /** 向量存储服务（用于分页查询） */
+    @Lazy
+    @Resource
+    private VectorStoreService vectorStoreService;
 
     /** Collection 名称，从配置读取 */
     @Value("${vector.collection}")
@@ -181,6 +189,24 @@ public class MilvusController {
         } catch (Exception e) {
             log.error("queryEqual 失败: {}", e.getMessage(), e);
             return Result.error("查询失败: " + e.getMessage());
+        }
+    }
+
+    /**
+     * ============分页查询向量数据============
+     * 支持分页返回Milvus中的向量数据，包括ID、文本（超过5000字符自动截断）、向量
+     *
+     * @param request 分页请求参数（页码、每页大小、集合名称）
+     */
+    @Operation(summary = "分页查询向量数据")
+    @PostMapping("/vector/page")
+    public Result<MilvusVectorPageResponse> pageQuery(@Valid @RequestBody MilvusVectorPageRequest request) {
+        try {
+            MilvusVectorPageResponse response = vectorStoreService.pageQuery(request);
+            return Result.success(response);
+        } catch (Exception e) {
+            log.error("分页查询向量数据失败，pageNum={}, pageSize={}", request.getPageNum(), request.getPageSize(), e);
+            return Result.error("分页查询失败: " + e.getMessage());
         }
     }
 }

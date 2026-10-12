@@ -165,8 +165,10 @@ openai:
 #https://bailian.console.aliyun.com/cn-beijing/?spm=5176.29619931.J_SEsSjsNv72yRuRFS2VknO.2.1e7c10d7gavlfX&tab=model#/api-key
 ali:
   api-key: ${DASHSCOPE_API_KEY:placeholder}
+#
   chat_model_name: qwen-plus
   embedding_model_name: text-embedding-v4
+  rerank_model_name: qwen3-rerank
   baseUrl: https://dashscope.aliyuncs.com/compatible-mode/v1
 # Milvus vector dimension (和模型输出维度一致)
 vector:

@@ -1,23 +1,18 @@
 package xCloud.service.recruitment;
 
-import com.alibaba.dashscope.aigc.generation.Generation;
-import com.alibaba.dashscope.aigc.generation.GenerationParam;
-import com.alibaba.dashscope.aigc.generation.GenerationResult;
-import com.alibaba.dashscope.common.Message;
-import com.alibaba.dashscope.common.Role;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
 import xCloud.dto.recruitment.JDFeedbackRequest;
 import xCloud.dto.recruitment.JDGenerationRequest;
 import xCloud.entity.recruitment.JDFeedback;
 import xCloud.entity.recruitment.JobDescription;
 import xCloud.mapper.recruitment.JDFeedbackMapper;
 import xCloud.mapper.recruitment.JobDescriptionMapper;
+import xCloud.util.LlmJsonUtil;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -36,24 +31,49 @@ import java.util.List;
 @Service
 public class JDGenerationService {
 
-    @Autowired
+    @Resource
     private JobDescriptionMapper jobDescriptionMapper;
 
-    @Autowired
+    @Resource
     private JDFeedbackMapper jdFeedbackMapper;
 
-    @Value("${ali.api-key}")
-    private String apiKey;
+    /**
+     * 事务模板：仅包裹数据库写入，LLM 调用一律在事务外，避免长事务占用连接
+     */
+    @Resource
+    private TransactionTemplate transactionTemplate;
 
-    @Value("${ali.chat_model_name:qwen-plus}")
-    private String modelName;
+    @Resource
+    private RecruitmentLlmHelper llmHelper;
+
+    /**
+     * JD 状态：草稿
+     */
+    private static final String STATUS_DRAFT = "draft";
+
+    /**
+     * 反馈类型：调整优化
+     */
+    private static final String FEEDBACK_ADJUST = "adjust";
+
+    /**
+     * 反馈类型：通过
+     */
+    private static final String FEEDBACK_APPROVE = "approve";
+
+    /**
+     * 反馈类型：拒绝
+     */
+    private static final String FEEDBACK_REJECT = "reject";
 
     /**
      * 生成JD（第一版）
+     * <p>
+     * 仅一次 insert，无需事务；LLM 调用在事务外执行。
+     *
      * @param request 生成请求
      * @return 生成的JD
      */
-    @Transactional(rollbackFor = Exception.class)
     public JobDescription generateJD(JDGenerationRequest request) {
         try {
             log.info("开始生成JD：title={}, strategy={}", request.getTitle(), request.getGenerationStrategy());
@@ -61,19 +81,19 @@ public class JDGenerationService {
             // ============1-构建生成Prompt============
             String prompt = buildGenerationPrompt(request);
 
-            // ============2-调用LLM生成============
-            String llmResponse = callLLM(prompt);
+            // ============2-调用LLM生成（事务外，耗时操作）============
+            String llmResponse = llmHelper.syncChat(prompt, 0.7f, 2000);
 
             // ============3-解析LLM返回的结构化JD============
             JobDescription jd = parseJDFromLLM(llmResponse, request);
 
-            // ============4-保存到数据库============
+            // ============4-短事务保存到数据库============
             jd.setCreatedAt(new Date());
             jd.setUpdatedAt(new Date());
             jd.setVersion(1);
-            jd.setStatus("draft");
+            jd.setStatus(STATUS_DRAFT);
             jd.setDeleted(0);
-            jobDescriptionMapper.insert(jd);
+            transactionTemplate.executeWithoutResult(status -> jobDescriptionMapper.insert(jd));
 
             log.info("✅ JD生成成功：id={}, version={}", jd.getId(), jd.getVersion());
             return jd;
@@ -86,74 +106,92 @@ public class JDGenerationService {
 
     /**
      * 根据HR反馈优化JD（生成新版本）
+     * <p>
+     * 事务边界：
+     * - adjust：LLM 生成新版本放在事务【外】，随后一个短事务内【插入反馈记录 + 插入新版本JD】；
+     * - approve/reject：一个短事务内【插入反馈记录 + 更新JD状态】。
+     * 全程不把耗时 LLM 调用包进事务。
+     *
      * @param feedbackRequest 反馈请求
-     * @return 优化后的新版本JD
+     * @return 优化/发布/归档后的JD
      */
-    @Transactional(rollbackFor = Exception.class)
     public JobDescription optimizeJD(JDFeedbackRequest feedbackRequest) {
+        Long jdId = feedbackRequest.getJdId();
+        String feedbackType = feedbackRequest.getFeedbackType();
         try {
             log.info("开始优化JD：jdId={}, version={}, feedbackType={}",
-                    feedbackRequest.getJdId(), feedbackRequest.getJdVersion(), feedbackRequest.getFeedbackType());
+                    jdId, feedbackRequest.getJdVersion(), feedbackType);
 
-            // ============1-保存反馈记录============
+            // ============1-参数校验：反馈类型白名单，非法值不再落到 adjust 分支============
+            if (!FEEDBACK_ADJUST.equals(feedbackType) && !FEEDBACK_APPROVE.equals(feedbackType)
+                    && !FEEDBACK_REJECT.equals(feedbackType)) {
+                throw new IllegalArgumentException("非法的反馈类型：" + feedbackType + "，仅支持 adjust/approve/reject");
+            }
+
+            // ============2-只加载一次JD并判空，避免 NPE============
+            JobDescription oldJD = jobDescriptionMapper.selectById(jdId);
+            if (oldJD == null) {
+                throw new IllegalArgumentException("JD不存在：" + jdId);
+            }
+
+            // ============3-构建反馈实体============
             JDFeedback feedback = new JDFeedback();
-            feedback.setJdId(feedbackRequest.getJdId());
+            feedback.setJdId(jdId);
             feedback.setJdVersion(feedbackRequest.getJdVersion());
-            feedback.setFeedbackType(feedbackRequest.getFeedbackType());
+            feedback.setFeedbackType(feedbackType);
             feedback.setContent(feedbackRequest.getContent());
             feedback.setAdjustFields(feedbackRequest.getAdjustFields());
             feedback.setHrUserId(feedbackRequest.getHrUserId());
             feedback.setCreatedAt(new Date());
-            jdFeedbackMapper.insert(feedback);
 
-            // ============2-如果是approve，直接发布============
-            if ("approve".equals(feedbackRequest.getFeedbackType())) {
-                JobDescription jd = jobDescriptionMapper.selectById(feedbackRequest.getJdId());
-                jd.setStatus("published");
-                jd.setPublishedAt(new Date());
-                jd.setUpdatedAt(new Date());
-                jobDescriptionMapper.updateById(jd);
-                log.info("✅ JD已发布：id={}", jd.getId());
-                return jd;
+            // ============4-approve：发布============
+            if (FEEDBACK_APPROVE.equals(feedbackType)) {
+                return transactionTemplate.execute(status -> {
+                    jdFeedbackMapper.insert(feedback);
+                    oldJD.setStatus("published");
+                    oldJD.setPublishedAt(new Date());
+                    oldJD.setUpdatedAt(new Date());
+                    jobDescriptionMapper.updateById(oldJD);
+                    return oldJD;
+                });
             }
 
-            // ============3-如果是reject，归档============
-            if ("reject".equals(feedbackRequest.getFeedbackType())) {
-                JobDescription jd = jobDescriptionMapper.selectById(feedbackRequest.getJdId());
-                jd.setStatus("archived");
-                jd.setUpdatedAt(new Date());
-                jobDescriptionMapper.updateById(jd);
-                log.info("⚠️ JD已归档：id={}", jd.getId());
-                return jd;
+            // ============5-reject：归档============
+            if (FEEDBACK_REJECT.equals(feedbackType)) {
+                return transactionTemplate.execute(status -> {
+                    jdFeedbackMapper.insert(feedback);
+                    oldJD.setStatus("archived");
+                    oldJD.setUpdatedAt(new Date());
+                    jobDescriptionMapper.updateById(oldJD);
+                    return oldJD;
+                });
             }
 
-            // ============4-如果是adjust，生成新版本============
-            JobDescription oldJD = jobDescriptionMapper.selectById(feedbackRequest.getJdId());
-
-            // 构建优化Prompt
+            // ============6-adjust：LLM 生成新版本（事务外）============
             String optimizationPrompt = buildOptimizationPrompt(oldJD, feedbackRequest);
-
-            // 调用LLM优化
-            String llmResponse = callLLM(optimizationPrompt);
-
-            // 解析新版本JD
+            String llmResponse = llmHelper.syncChat(optimizationPrompt, 0.7f, 2000);
             JobDescription newJD = parseOptimizedJD(llmResponse, oldJD, feedbackRequest);
 
-            // 保存新版本
             newJD.setId(null); // 新记录
             newJD.setVersion(oldJD.getVersion() + 1);
-            newJD.setStatus("draft");
+            newJD.setStatus(STATUS_DRAFT);
             newJD.setCreatedAt(new Date());
             newJD.setUpdatedAt(new Date());
             newJD.setDeleted(0);
-            jobDescriptionMapper.insert(newJD);
+
+            // ============7-短事务：插入反馈记录 + 插入新版本============
+            JobDescription saved = transactionTemplate.execute(status -> {
+                jdFeedbackMapper.insert(feedback);
+                jobDescriptionMapper.insert(newJD);
+                return newJD;
+            });
 
             log.info("✅ JD优化成功：id={}, oldVersion={}, newVersion={}",
-                    newJD.getId(), oldJD.getVersion(), newJD.getVersion());
-            return newJD;
+                    saved.getId(), oldJD.getVersion(), saved.getVersion());
+            return saved;
 
         } catch (Exception e) {
-            log.error("JD优化失败：jdId={}", feedbackRequest.getJdId(), e);
+            log.error("JD优化失败：jdId={}", jdId, e);
             throw new RuntimeException("JD优化失败：" + e.getMessage(), e);
         }
     }
@@ -232,38 +270,12 @@ public class JDGenerationService {
     }
 
     /**
-     * 调用LLM生成内容
-     */
-    private String callLLM(String prompt) {
-        try {
-            Generation gen = new Generation();
-            GenerationParam param = GenerationParam.builder()
-                    .apiKey(apiKey)
-                    .model(modelName)
-                    .messages(List.of(Message.builder()
-                            .role(Role.USER.getValue())
-                            .content(prompt)
-                            .build()))
-                    .temperature(0.7f)
-                    .maxTokens(2000)
-                    .build();
-
-            GenerationResult result = gen.call(param);
-            return result.getOutput().getChoices().get(0).getMessage().getContent();
-
-        } catch (Exception e) {
-            log.error("LLM调用失败", e);
-            throw new RuntimeException("LLM调用失败", e);
-        }
-    }
-
-    /**
      * 解析LLM返回的JD（首次生成）
      */
     private JobDescription parseJDFromLLM(String llmResponse, JDGenerationRequest request) {
         try {
             // ============提取JSON部分（LLM可能返回带解释的文本）============
-            String jsonStr = extractJSON(llmResponse);
+            String jsonStr = LlmJsonUtil.extractJson(llmResponse);
             JSONObject json = JSON.parseObject(jsonStr);
 
             JobDescription jd = new JobDescription();
@@ -294,7 +306,7 @@ public class JDGenerationService {
      */
     private JobDescription parseOptimizedJD(String llmResponse, JobDescription oldJD, JDFeedbackRequest feedback) {
         try {
-            String jsonStr = extractJSON(llmResponse);
+            String jsonStr = LlmJsonUtil.extractJson(llmResponse);
             JSONObject json = JSON.parseObject(jsonStr);
 
             JobDescription newJD = new JobDescription();
@@ -326,23 +338,6 @@ public class JDGenerationService {
             log.error("优化JD解析失败：llmResponse={}", llmResponse, e);
             throw new RuntimeException("优化JD解析失败", e);
         }
-    }
-
-    /**
-     * 从LLM返回中提取JSON（处理LLM可能返回的markdown格式）
-     */
-    private String extractJSON(String llmResponse) {
-        // 去除markdown代码块标记
-        String json = llmResponse.trim();
-        if (json.startsWith("```json")) {
-            json = json.substring(7);
-        } else if (json.startsWith("```")) {
-            json = json.substring(3);
-        }
-        if (json.endsWith("```")) {
-            json = json.substring(0, json.length() - 3);
-        }
-        return json.trim();
     }
 
     /**

@@ -1,25 +1,21 @@
 package xCloud.service.recruitment;
 
-import com.alibaba.dashscope.aigc.generation.Generation;
-import com.alibaba.dashscope.aigc.generation.GenerationParam;
-import com.alibaba.dashscope.aigc.generation.GenerationResult;
-import com.alibaba.dashscope.common.Message;
-import com.alibaba.dashscope.common.Role;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.apache.poi.xwpf.extractor.XWPFWordExtractor;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.web.multipart.MultipartFile;
 import xCloud.dto.recruitment.ResumeParseResult;
 import xCloud.entity.recruitment.Resume;
 import xCloud.mapper.recruitment.ResumeMapper;
+import xCloud.util.LlmJsonUtil;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -44,26 +40,33 @@ import java.util.UUID;
 @Service
 public class ResumeParseService {
 
-    @Autowired
+    @Resource
     private ResumeMapper resumeMapper;
 
-    @Value("${ali.api-key}")
-    private String apiKey;
+    /**
+     * 事务模板：用于把"简历落库"收进短事务，避免长事务占用数据库连接
+     */
+    @Resource
+    private TransactionTemplate transactionTemplate;
 
-    @Value("${ali.chat_model_name:qwen-plus}")
-    private String modelName;
+    @Resource
+    private RecruitmentLlmHelper llmHelper;
 
     @Value("${resume.upload.dir:/tmp/resumes}")
     private String uploadDir;
 
     /**
      * 上传并解析简历
-     * @param file 简历文件（PDF或Word）
+     * <p>
+     * 事务边界：文件落盘、PDF/Word 解析、LLM 结构化抽取均为耗时 IO（5~30s），
+     * 一律放在事务【外】执行；仅最后的"插入简历记录"走短事务。
+     * 否则一个请求会长时间占用数据库连接，高并发下直接打满连接池。
+     *
+     * @param file   简历文件（PDF或Word）
      * @param source 来源（upload、referral等）
-     * @return 解析后的简历ID
+     * @return 解析并落库后的简历实体（含自增ID）
      */
-    @Transactional(rollbackFor = Exception.class)
-    public Long uploadAndParseResume(MultipartFile file, String source) {
+    public Resume uploadAndParseResume(MultipartFile file, String source) {
         Resume resume = new Resume();
         resume.setSource(source);
         resume.setParseStatus("parsing");
@@ -76,34 +79,52 @@ public class ResumeParseService {
         try {
             log.info("开始解析简历：filename={}, size={}", file.getOriginalFilename(), file.getSize());
 
-            // ============1-保存文件到本地============
+            // ============1-保存文件到本地（事务外）============
             String filePath = saveFile(file);
             resume.setFilePath(filePath);
             resume.setFileType(getFileExtension(file.getOriginalFilename()));
 
-            // ============2-提取纯文本============
+            // ============2-提取纯文本（事务外）============
             String rawContent = extractText(filePath, resume.getFileType());
             resume.setRawContent(rawContent);
 
-            // ============3-使用LLM进行结构化提取============
+            // ============3-使用LLM进行结构化提取（事务外，耗时最长）============
             ResumeParseResult parseResult = parseWithLLM(rawContent);
 
             // ============4-填充结构化字段============
             fillResumeFromParseResult(resume, parseResult);
-
-            // ============5-保存到数据库============
             resume.setParseStatus("success");
-            resumeMapper.insert(resume);
+
+            // ============5-短事务落库============
+            transactionTemplate.executeWithoutResult(status -> resumeMapper.insert(resume));
 
             log.info("✅ 简历解析成功：resumeId={}, name={}", resume.getId(), resume.getName());
-            return resume.getId();
+            return resume;
 
         } catch (Exception e) {
             log.error("❌ 简历解析失败：filename={}", file.getOriginalFilename(), e);
-            resume.setParseStatus("failed");
-            resume.setParseError(e.getMessage());
-            resumeMapper.insert(resume);
+            // ============失败记录用【独立事务】落库============
+            // 若与成功路径共用同一事务，异常回滚会把失败记录一并抹掉，导致失败简历静默消失
+            persistFailure(resume, e);
             throw new RuntimeException("简历解析失败：" + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * 用独立事务持久化失败记录，保证失败简历可追溯
+     */
+    private void persistFailure(Resume resume, Exception e) {
+        try {
+            String message = e.getMessage() != null ? e.getMessage() : e.toString();
+            // 避免超长异常信息撑爆字段
+            resume.setParseError(message.length() > 2000 ? message.substring(0, 2000) : message);
+            resume.setParseStatus("failed");
+            resume.setUpdatedAt(new Date());
+            transactionTemplate.executeWithoutResult(status -> resumeMapper.insert(resume));
+            log.warn("已记录失败简历：resumeId={}, error={}", resume.getId(), message);
+        } catch (Exception ex) {
+            // 失败记录落库本身出错不能覆盖原始异常，仅记录日志
+            log.error("失败简历记录落库异常：filename={}", resume.getFilePath(), ex);
         }
     }
 
@@ -163,12 +184,13 @@ public class ResumeParseService {
     }
 
     /**
-     * 使用LLM进行结构化提取
+     * 使用LLM进行结构化提取（温度 0.1，追求稳定准确）
      */
     private ResumeParseResult parseWithLLM(String rawContent) {
         try {
             String prompt = buildParsePrompt(rawContent);
-            String llmResponse = callLLM(prompt);
+            // 低温度，更准确；统一走 RecruitmentLlmHelper，避免每次 new Generation()
+            String llmResponse = llmHelper.syncChat(prompt, 0.1f, 3000);
             return parseResumeFromLLM(llmResponse);
 
         } catch (Exception e) {
@@ -241,33 +263,12 @@ public class ResumeParseService {
     }
 
     /**
-     * 调用LLM
-     */
-    private String callLLM(String prompt) throws Exception {
-        Generation gen = new Generation();
-        GenerationParam param = GenerationParam.builder()
-                .apiKey(apiKey)
-                .model(modelName)
-                .messages(List.of(Message.builder().role(Role.USER.getValue()).content(prompt).build()))
-                .temperature(0.1f) // 低温度，更准确
-                .maxTokens(3000)
-                .build();
-
-        GenerationResult result = gen.call(param);
-        return result.getOutput().getChoices().get(0).getMessage().getContent();
-    }
-
-    /**
      * 解析LLM返回的JSON
+     * <p>
+     * 统一走 {@link LlmJsonUtil#extractJson(String)} 剥离 Markdown 围栏，避免短文本 substring 越界。
      */
     private ResumeParseResult parseResumeFromLLM(String llmResponse) {
-        // 提取JSON部分
-        String jsonStr = llmResponse.trim();
-        if (jsonStr.startsWith("```json")) jsonStr = jsonStr.substring(7);
-        if (jsonStr.startsWith("```")) jsonStr = jsonStr.substring(3);
-        if (jsonStr.endsWith("```")) jsonStr = jsonStr.substring(0, jsonStr.length() - 3);
-
-        JSONObject json = JSON.parseObject(jsonStr.trim());
+        JSONObject json = JSON.parseObject(LlmJsonUtil.extractJson(llmResponse));
 
         ResumeParseResult result = new ResumeParseResult();
 

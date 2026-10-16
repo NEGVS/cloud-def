@@ -1,18 +1,11 @@
 package xCloud.service.recruitment;
 
-import com.alibaba.dashscope.aigc.generation.Generation;
-import com.alibaba.dashscope.aigc.generation.GenerationParam;
-import com.alibaba.dashscope.aigc.generation.GenerationResult;
-import com.alibaba.dashscope.common.Message;
-import com.alibaba.dashscope.common.Role;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
 import xCloud.dto.recruitment.CandidateScoringResult;
 import xCloud.entity.es.CandidateResumeDocument;
 import xCloud.entity.recruitment.CandidateScore;
@@ -20,10 +13,12 @@ import xCloud.entity.recruitment.JobDescription;
 import xCloud.mapper.recruitment.CandidateScoreMapper;
 import xCloud.mapper.recruitment.JobDescriptionMapper;
 import xCloud.repository.CandidateResumeRepository;
+import xCloud.util.LlmJsonUtil;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 候选人评分引擎
@@ -33,43 +28,53 @@ import java.util.*;
  */
 @Slf4j
 @Service
-@Lazy
 public class CandidateScoringService {
 
-    @Autowired
+    @Resource
     private CandidateScoreMapper candidateScoreMapper;
 
-    @Autowired
+    @Resource
     private JobDescriptionMapper jobDescriptionMapper;
 
-    @Autowired
+    @Resource
     private CandidateResumeRepository candidateResumeRepository;
 
-    @Value("${ali.api-key}")
-    private String apiKey;
+    /**
+     * 事务模板：仅包裹评分记录落库这一条写操作，LLM 可解释性生成在事务外
+     */
+    @Resource
+    private TransactionTemplate transactionTemplate;
 
-    @Value("${ali.chat_model_name:qwen-plus}")
-    private String modelName;
+    @Resource
+    private RecruitmentLlmHelper llmHelper;
 
     /**
-     * 默认权重配置
+     * 多维度权重配置
+     * <p>
+     * ============权重之和必须 = 1.00，且每个已计算维度都必须有对应权重============
+     * 历史上 location 维度被计算后未纳入总分（漏配权重），导致该维度形同虚设。
+     * 任何新增维度必须同时在此登记权重，否则会被静默丢弃。
      */
     private static final Map<String, BigDecimal> DEFAULT_WEIGHTS = Map.of(
             "skill", new BigDecimal("0.30"),
             "experience", new BigDecimal("0.25"),
             "education", new BigDecimal("0.15"),
-            "project", new BigDecimal("0.15"),
+            "project", new BigDecimal("0.10"),
             "salary", new BigDecimal("0.10"),
-            "stability", new BigDecimal("0.05")
+            "stability", new BigDecimal("0.05"),
+            "location", new BigDecimal("0.05")
     );
 
     /**
      * 对候选人进行评分
+     * <p>
+     * 事务边界：读取候选人/JD、纯本地打分、LLM 可解释性生成均在事务【外】；
+     * 仅最后的评分记录 insert 走短事务，避免 LLM 期间占用数据库连接。
+     *
      * @param candidateId 候选人ID
      * @param jdId JD ID
      * @return 评分结果
      */
-    @Transactional(rollbackFor = Exception.class)
     public CandidateScoringResult scoreCandidate(Long candidateId, Long jdId) {
         try {
             log.info("开始候选人评分：candidateId={}, jdId={}", candidateId, jdId);
@@ -86,13 +91,13 @@ public class CandidateScoringService {
                 throw new RuntimeException("JD不存在：" + jdId);
             }
 
-            // ============2-计算各维度分数============
+            // ============2-计算各维度分数（纯本地计算）============
             CandidateScoringResult.DimensionScores dimensionScores = calculateDimensionScores(candidate, jd);
 
             // ============3-计算总分（加权平均）============
             BigDecimal totalScore = calculateTotalScore(dimensionScores, DEFAULT_WEIGHTS);
 
-            // ============4-使用LLM生成可解释性内容============
+            // ============4-使用LLM生成可解释性内容（事务外，耗时操作）============
             ExplainabilityResult explainability = generateExplainability(candidate, jd, dimensionScores, totalScore);
 
             // ============5-构建结果============
@@ -109,8 +114,8 @@ public class CandidateScoringService {
             result.setRecommendation(determineRecommendation(totalScore));
             result.setRecommendationReason(explainability.getRecommendationReason());
 
-            // ============6-保存评分记录============
-            saveScoringRecord(result, dimensionScores);
+            // ============6-短事务保存评分记录============
+            transactionTemplate.executeWithoutResult(status -> saveScoringRecord(result, dimensionScores));
 
             log.info("✅ 候选人评分完成：candidateId={}, totalScore={}, recommendation={}",
                     candidateId, totalScore, result.getRecommendation());
@@ -154,14 +159,18 @@ public class CandidateScoringService {
 
     /**
      * 技能匹配分（Jaccard相似度）
+     * <p>
+     * 两侧格式不同，必须分别归一化：
+     * - 候选人侧 {@code Resume.skills} 存的是 JSON 数组字符串，如 {@code ["Java","Spring Boot"]}
+     * - JD 侧 {@code skillTags} 是逗号分隔字符串，如 {@code Java,Spring Boot,MySQL}
+     * 统一 trim + 转小写 + 去空，避免 " Java" 与 "Java" 不相等、空串膨胀并集。
      */
     private BigDecimal calculateSkillScore(String candidateSkills, String jdSkills) {
-        if (candidateSkills == null || jdSkills == null) {
+        Set<String> candidateSet = tokenizeSkills(candidateSkills);
+        Set<String> jdSet = tokenizeSkills(jdSkills);
+        if (candidateSet.isEmpty() || jdSet.isEmpty()) {
             return BigDecimal.ZERO;
         }
-
-        Set<String> candidateSet = new HashSet<>(Arrays.asList(candidateSkills.toLowerCase().split(",")));
-        Set<String> jdSet = new HashSet<>(Arrays.asList(jdSkills.toLowerCase().split(",")));
 
         // 计算交集
         Set<String> intersection = new HashSet<>(candidateSet);
@@ -173,7 +182,36 @@ public class CandidateScoringService {
 
         // Jaccard相似度 = 交集 / 并集
         double jaccard = union.isEmpty() ? 0 : (double) intersection.size() / union.size();
-        return BigDecimal.valueOf(jaccard * 100).setScale(2, RoundingMode.HALF_UP);
+        return scaled(jaccard * 100);
+    }
+
+    /**
+     * 技能归一化：兼容 JSON 数组字符串 与 逗号分隔字符串
+     *
+     * @param raw 原始技能串
+     * @return 归一化后的技能集合（小写、去空白、去空串）
+     */
+    private Set<String> tokenizeSkills(String raw) {
+        if (raw == null || raw.isBlank()) {
+            return Collections.emptySet();
+        }
+        String trimmed = raw.trim();
+        List<String> parts;
+        if (trimmed.startsWith("[")) {
+            // 候选人侧：JSON 数组字符串，解析失败降级为逗号切分
+            try {
+                parts = JSON.parseArray(trimmed, String.class);
+            } catch (Exception e) {
+                parts = Arrays.asList(trimmed.substring(1, Math.max(1, trimmed.length() - 1)).split(","));
+            }
+        } else {
+            parts = Arrays.asList(trimmed.split(","));
+        }
+        return parts.stream()
+                .filter(Objects::nonNull)
+                .map(s -> s.trim().toLowerCase())
+                .filter(s -> !s.isEmpty())
+                .collect(Collectors.toSet());
     }
 
     /**
@@ -183,6 +221,10 @@ public class CandidateScoringService {
         if (candidateExp == null || jdExp == null) {
             return new BigDecimal("50");
         }
+        // ============除零保护：JD未要求经验视为满分============
+        if (jdExp <= 0) {
+            return new BigDecimal("100");
+        }
 
         if (candidateExp >= jdExp) {
             // 经验充足，满分
@@ -190,7 +232,7 @@ public class CandidateScoringService {
         } else {
             // 经验不足，按比例扣分
             double ratio = (double) candidateExp / jdExp;
-            return BigDecimal.valueOf(ratio * 100).setScale(2, RoundingMode.HALF_UP);
+            return scaled(ratio * 100);
         }
     }
 
@@ -218,6 +260,8 @@ public class CandidateScoringService {
 
     /**
      * 薪资匹配分
+     * <p>
+     * ============除零保护：当 min==max（薪资区间为单点）时 range=0，不能做除法============
      */
     private BigDecimal calculateSalaryScore(Integer candidateSalary, String jdSalaryRange) {
         if (candidateSalary == null || jdSalaryRange == null) {
@@ -233,18 +277,23 @@ public class CandidateScoringService {
         try {
             int minSalary = Integer.parseInt(parts[0].trim());
             int maxSalary = Integer.parseInt(parts[1].trim());
-            int midSalary = (minSalary + maxSalary) / 2;
 
             // 期望薪资在范围内，满分
             if (candidateSalary >= minSalary && candidateSalary <= maxSalary) {
                 return new BigDecimal("100");
             }
 
-            // 期望薪资接近范围，给高分
+            int midSalary = (minSalary + maxSalary) / 2;
             double diff = Math.abs(candidateSalary - midSalary);
             double range = maxSalary - minSalary;
+
+            // range=0 无法按区间比例衰减，改用绝对差值衰减（每超出 1K 扣 10 分）
+            if (range <= 0) {
+                return scaled(Math.max(0, 100 - diff * 10));
+            }
+
             double score = Math.max(0, 100 - (diff / range * 50));
-            return BigDecimal.valueOf(score).setScale(2, RoundingMode.HALF_UP);
+            return scaled(score);
 
         } catch (Exception e) {
             return new BigDecimal("80");
@@ -269,16 +318,49 @@ public class CandidateScoringService {
 
     /**
      * 计算总分（加权平均）
+     * <p>
+     * ============按权重表逐项取分，避免已计算维度被漏算============
+     * 通过与 DEFAULT_WEIGHTS 的 key 对应取值，新增维度只要登记了权重就会自动纳入总分，
+     * 不再依赖手写 6 行加法（历史上 location 就是这样被漏掉的）。
      */
     private BigDecimal calculateTotalScore(CandidateScoringResult.DimensionScores scores, Map<String, BigDecimal> weights) {
+        Map<String, BigDecimal> dimensionMap = Map.of(
+                "skill", nz(scores.getSkillScore()),
+                "experience", nz(scores.getExperienceScore()),
+                "education", nz(scores.getEducationScore()),
+                "project", nz(scores.getProjectScore()),
+                "salary", nz(scores.getSalaryScore()),
+                "stability", nz(scores.getStabilityScore()),
+                "location", nz(scores.getLocationScore())
+        );
+
         BigDecimal total = BigDecimal.ZERO;
-        total = total.add(scores.getSkillScore().multiply(weights.get("skill")));
-        total = total.add(scores.getExperienceScore().multiply(weights.get("experience")));
-        total = total.add(scores.getEducationScore().multiply(weights.get("education")));
-        total = total.add(scores.getProjectScore().multiply(weights.get("project")));
-        total = total.add(scores.getSalaryScore().multiply(weights.get("salary")));
-        total = total.add(scores.getStabilityScore().multiply(weights.get("stability")));
+        for (Map.Entry<String, BigDecimal> weightEntry : weights.entrySet()) {
+            BigDecimal dimensionScore = dimensionMap.get(weightEntry.getKey());
+            if (dimensionScore == null) {
+                log.warn("权重配置了未知维度 [{}]，已跳过，请检查 DEFAULT_WEIGHTS 与 DimensionScores 是否一致", weightEntry.getKey());
+                continue;
+            }
+            total = total.add(dimensionScore.multiply(weightEntry.getValue()));
+        }
         return total.setScale(2, RoundingMode.HALF_UP);
+    }
+
+    /**
+     * 空分兜底为 0，避免 NPE
+     */
+    private BigDecimal nz(BigDecimal value) {
+        return value == null ? BigDecimal.ZERO : value;
+    }
+
+    /**
+     * double → BigDecimal 安全转换：先挡掉 NaN/Infinity（BigDecimal.valueOf 会抛 NumberFormatException）
+     */
+    private BigDecimal scaled(double value) {
+        if (!Double.isFinite(value)) {
+            return BigDecimal.ZERO;
+        }
+        return BigDecimal.valueOf(value).setScale(2, RoundingMode.HALF_UP);
     }
 
     /**
@@ -288,7 +370,8 @@ public class CandidateScoringService {
                                                         CandidateScoringResult.DimensionScores scores, BigDecimal totalScore) {
         try {
             String prompt = buildExplainabilityPrompt(candidate, jd, scores, totalScore);
-            String llmResponse = callLLM(prompt);
+            // 事务外调用，避免 LLM 期间占用数据库连接
+            String llmResponse = llmHelper.syncChat(prompt, 0.3f, 800);
             return parseExplainability(llmResponse);
 
         } catch (Exception e) {
@@ -329,32 +412,10 @@ public class CandidateScoringService {
     }
 
     /**
-     * 调用LLM
-     */
-    private String callLLM(String prompt) throws Exception {
-        Generation gen = new Generation();
-        GenerationParam param = GenerationParam.builder()
-                .apiKey(apiKey)
-                .model(modelName)
-                .messages(List.of(Message.builder().role(Role.USER.getValue()).content(prompt).build()))
-                .temperature(0.3f)
-                .maxTokens(800)
-                .build();
-
-        GenerationResult result = gen.call(param);
-        return result.getOutput().getChoices().get(0).getMessage().getContent();
-    }
-
-    /**
      * 解析可解释性结果
      */
     private ExplainabilityResult parseExplainability(String llmResponse) {
-        String jsonStr = llmResponse.trim();
-        if (jsonStr.startsWith("```json")) jsonStr = jsonStr.substring(7);
-        if (jsonStr.startsWith("```")) jsonStr = jsonStr.substring(3);
-        if (jsonStr.endsWith("```")) jsonStr = jsonStr.substring(0, jsonStr.length() - 3);
-
-        JSONObject json = JSON.parseObject(jsonStr.trim());
+        JSONObject json = JSON.parseObject(LlmJsonUtil.extractJson(llmResponse));
         return new ExplainabilityResult(
                 json.getString("matchReason"),
                 json.getString("riskAnalysis"),

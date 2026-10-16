@@ -2,6 +2,22 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="xCloud.mapper.recruitment.ResumeMapper">
 
+    <!-- 分页查询简历列表（不含大字段 raw_content，减少网络传输；分页由 PaginationInnerInterceptor 追加 LIMIT） -->
+    <select id="pageResumeList" resultType="xCloud.dto.recruitment.ResumeVO">
+        SELECT
+            id, name, phone, email, gender, age,
+            education, university, major, work_years,
+            current_position, current_company, expected_position, expected_salary, expected_city,
+            skills, work_experience, project_experience, education_history, self_evaluation,
+            file_path, file_type, source, parse_status, parse_error, vectorize_status, indexed
+        FROM resume
+        WHERE deleted = 0
+        <if test="parseStatus != null and parseStatus != ''">
+            AND parse_status = #{parseStatus}
+        </if>
+        ORDER BY created_at DESC
+    </select>
+
     <!-- 根据解析状态查询简历列表 -->
     <select id="selectByParseStatus" resultType="xCloud.entity.recruitment.Resume">
         SELECT * FROM resume

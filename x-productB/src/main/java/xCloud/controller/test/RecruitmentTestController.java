@@ -165,9 +165,9 @@ public class RecruitmentTestController {
         try {
             log.info("========== 开始测试：简历上传与解析 ==========");
 
-            // 上传并解析简历
-            Long resumeId = resumeParseService.uploadAndParseResume(file, "test");
-            Resume resume = resumeMapper.selectById(resumeId);
+            // 上传并解析简历（方法已改为直接返回完整实体，无需再查库）
+            Resume resume = resumeParseService.uploadAndParseResume(file, "test");
+            Long resumeId = resume.getId();
 
             long elapsed = System.currentTimeMillis() - startTime;
 
@@ -309,8 +309,8 @@ public class RecruitmentTestController {
 
             // ============步骤2：上传简历============
             log.info("步骤2：上传简历");
-            Long resumeId = resumeParseService.uploadAndParseResume(resumeFile, "test");
-            Resume resume = resumeMapper.selectById(resumeId);
+            Resume resume = resumeParseService.uploadAndParseResume(resumeFile, "test");
+            Long resumeId = resume.getId();
             log.info("✅ 简历上传成功：resumeId={}, name={}", resumeId, resume.getName());
 
             // ============步骤3：候选人评分============

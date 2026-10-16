@@ -16,8 +16,14 @@ import java.util.stream.Collectors;
  *
  * 架构：
  *   短期记忆：Redis List，TTL 24h，保留最近 MAX_TURNS 轮原文
- *   长期摘要：超出 MAX_TURNS 轮后，用 LLM 摘要压缩历史，存为 system message
- *   本地缓存：ConcurrentHashMap 作为一级缓存，减少 Redis 读写次数
+ *   本地缓存：LRU 有界一级缓存，减少 Redis 读写次数，按 SESSION_TTL 惰性过期
+ *
+ * 并发与容量（关键修复）：
+ *   1. 本地缓存原为无界 ConcurrentHashMap，只靠 Redis TTL 过期，进程内永不淘汰 → 内存泄漏。
+ *      现改为容量有界 + 访问顺序 LRU + 按 SESSION_TTL 惰性过期。
+ *   2. 原 getOrLoadHistory 直接返回缓存中的可变 LinkedList，并发同会话请求会互相污染。
+ *      现改为：写入在【会话级锁】内完成（读改写原子），对外读取一律返回【拷贝】。
+ *   3. Redis 读写放在锁外，避免持锁做网络 IO 拖慢并发。
  *
  * 降级策略：Redis 不可用时自动降级为纯内存模式，不影响主流程。
  */
@@ -34,16 +40,46 @@ public class ConversationMemoryService {
     /** 会话 TTL：24 小时 */
     private static final Duration SESSION_TTL = Duration.ofHours(24);
 
+    /** 本地缓存最大会话数（防止无界增长） */
+    private static final int MAX_LOCAL_SESSIONS = 10_000;
+
     private final StringRedisTemplate redisTemplate;
     private final ObjectMapper objectMapper;
 
     /**
-     * 本地一级缓存：避免每次都读 Redis
-     * key=sessionId, value=消息列表
+     * 本地一级缓存条目：消息列表 + 过期时间戳（毫秒）
      */
-    private final Map<String, LinkedList<Map<String, String>>> localCache = new ConcurrentHashMap<>();
+    private static class CacheEntry {
+        final LinkedList<Map<String, String>> messages;
+        final long expireAt;
 
-    /** Redis 是否可用（启动时检测，运行中动态切换） */
+        CacheEntry(LinkedList<Map<String, String>> messages, long expireAt) {
+            this.messages = messages;
+            this.expireAt = expireAt;
+        }
+
+        boolean expired(long now) {
+            return now > expireAt;
+        }
+    }
+
+    /**
+     * 本地一级缓存：访问顺序 LinkedHashMap（LRU），全部读写由 lruLock 保护
+     */
+    private final Map<String, CacheEntry> localCache = new LinkedHashMap<>(16, 0.75f, true) {
+        @Override
+        protected boolean removeEldestEntry(Map.Entry<String, CacheEntry> eldest) {
+            return size() > MAX_LOCAL_SESSIONS;
+        }
+    };
+    private final Object lruLock = new Object();
+
+    /**
+     * 会话级锁：保证同一 session 的"读—改—写"原子，避免并发污染
+     */
+    private final Map<String, Object> sessionLocks = new ConcurrentHashMap<>();
+
+    /** Redis 是否可用（运行中动态切换） */
     private volatile boolean redisAvailable = true;
 
     public ConversationMemoryService(StringRedisTemplate redisTemplate,
@@ -64,38 +100,40 @@ public class ConversationMemoryService {
      * @param content   消息内容
      */
     public void addMessage(String sessionId, String role, String content) {
-        log.info("添加一条消息，同步写本地缓存和 Redis");
-        LinkedList<Map<String, String>> history = getOrLoadHistory(sessionId);
-        history.add(Map.of("role", role, "content", content));
+        // 会话级加锁：保证读改写原子，避免并发同会话互相覆盖
+        synchronized (lockFor(sessionId)) {
+            LinkedList<Map<String, String>> history = loadMergedHistory(sessionId);
+            history.add(Map.of("role", role, "content", content));
 
-        // 滑动窗口：超出 MAX_TURNS 轮时移除最早的一轮（2条）
-        while (history.size() > MAX_TURNS * 2) {
-            history.removeFirst();
+            // 滑动窗口：超出 MAX_TURNS 轮时移除最早的一轮（2条）
+            while (history.size() > MAX_TURNS * 2) {
+                history.removeFirst();
+            }
+
+            // 回写本地缓存 + Redis
+            putLocalCache(sessionId, history);
+            persistToRedis(sessionId, history);
         }
-
-        // 同步写 Redis（失败不影响主流程）
-        persistToRedis(sessionId, history);
     }
 
     /**
-     * 获取完整对话历史
+     * 获取完整对话历史（返回拷贝，调用方可安全修改）
      */
     public List<Map<String, String>> getHistory(String sessionId) {
-        return new ArrayList<>(getOrLoadHistory(sessionId));
+        return new ArrayList<>(loadMergedHistory(sessionId));
     }
 
     /**
      * 构建历史对话文本（用于 ReAct Prompt 中的 Memory 部分）
      */
     public String buildHistoryText(String sessionId) {
-        log.info("构建历史对话文本（用于 ReAct Prompt 中的 Memory 部分）");
         List<Map<String, String>> history = getHistory(sessionId);
         if (history.isEmpty()) return "（无历史对话）";
 
         return history.stream()
                 .map(msg -> {
                     String role = "user".equals(msg.get("role")) ? "用户" : "助手";
-                    return role + ": " + msg.get("content");
+                    return role + ":" + msg.get("content");
                 })
                 .collect(Collectors.joining("\n"));
     }
@@ -104,21 +142,31 @@ public class ConversationMemoryService {
      * 清除会话（本地缓存 + Redis）
      */
     public void clear(String sessionId) {
-        localCache.remove(sessionId);
-        if (redisAvailable) {
-            try {
-                redisTemplate.delete(KEY_PREFIX + sessionId);
-            } catch (Exception e) {
-                log.warn("[Memory] Redis 清除失败: {}", e.getMessage());
+        synchronized (lockFor(sessionId)) {
+            synchronized (lruLock) {
+                localCache.remove(sessionId);
+            }
+            if (redisAvailable) {
+                try {
+                    redisTemplate.delete(KEY_PREFIX + sessionId);
+                } catch (Exception e) {
+                    log.warn("[Memory] Redis 清除失败: {}", e.getMessage());
+                }
             }
         }
+        sessionLocks.remove(sessionId);
     }
 
     /**
      * 是否存在会话
      */
     public boolean exists(String sessionId) {
-        if (localCache.containsKey(sessionId)) return true;
+        synchronized (lruLock) {
+            CacheEntry entry = localCache.get(sessionId);
+            if (entry != null && !entry.expired(System.currentTimeMillis())) {
+                return true;
+            }
+        }
         if (redisAvailable) {
             try {
                 return Boolean.TRUE.equals(redisTemplate.hasKey(KEY_PREFIX + sessionId));
@@ -134,24 +182,49 @@ public class ConversationMemoryService {
     // ─────────────────────────────────────────────
 
     /**
-     * 优先从本地缓存读取，缓存未命中则从 Redis 加载，Redis 不可用则返回空列表。
+     * 合并加载会话历史：本地缓存命中则直接返回其副本，
+     * 未命中则从 Redis 加载并回填本地缓存（回填加 LRU 锁）。
+     * <p>
+     * 注意：返回的是可修改的【工作副本】，调用方（addMessage）可安全增删，
+     * 不影响缓存中的原始对象。
      */
-    private LinkedList<Map<String, String>> getOrLoadHistory(String sessionId) {
-        // 一级缓存命中，直接返回
-        LinkedList<Map<String, String>> cached = localCache.get(sessionId);
-        if (cached != null) return cached;
+    private LinkedList<Map<String, String>> loadMergedHistory(String sessionId) {
+        long now = System.currentTimeMillis();
 
-        // 从 Redis 加载
+        // 一级缓存命中（未过期）
+        synchronized (lruLock) {
+            CacheEntry entry = localCache.get(sessionId);
+            if (entry != null && !entry.expired(now)) {
+                return new LinkedList<>(entry.messages);
+            }
+            if (entry != null) {
+                localCache.remove(sessionId); // 过期即移除
+            }
+        }
+
+        // 缓存未命中：从 Redis 加载
         LinkedList<Map<String, String>> history = loadFromRedis(sessionId);
-        localCache.put(sessionId, history);
-        return history;
+
+        synchronized (lruLock) {
+            localCache.put(sessionId, new CacheEntry(history, now + SESSION_TTL.toMillis()));
+        }
+        return new LinkedList<>(history);
+    }
+
+    /**
+     * 写入本地缓存（容量有界 + TTL）
+     */
+    private void putLocalCache(String sessionId, LinkedList<Map<String, String>> history) {
+        long expireAt = System.currentTimeMillis() + SESSION_TTL.toMillis();
+        synchronized (lruLock) {
+            localCache.put(sessionId, new CacheEntry(new LinkedList<>(history), expireAt));
+        }
     }
 
     /**
      * 从 Redis 加载会话历史，失败时返回空列表并标记 Redis 不可用。
      */
     private LinkedList<Map<String, String>> loadFromRedis(String sessionId) {
-        log.info("redisAvailable:{}", redisAvailable);
         if (!redisAvailable) return new LinkedList<>();
         try {
             String json = redisTemplate.opsForValue().get(KEY_PREFIX + sessionId);
@@ -178,5 +251,12 @@ public class ConversationMemoryService {
             log.warn("[Memory] Redis 持久化失败，数据仅在内存中: {}", e.getMessage());
             // 单次失败不立即标记不可用，避免抖动导致频繁切换
         }
+    }
+
+    /**
+     * 取会话级锁对象（computeIfAbsent 保证同 session 拿到同一个锁）
+     */
+    private Object lockFor(String sessionId) {
+        return sessionLocks.computeIfAbsent(sessionId, k -> new Object());
     }
 }

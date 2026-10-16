@@ -5,11 +5,13 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.web.bind.annotation.*;
 import xCloud.service.search.HybridSearchResult;
 import xCloud.service.search.HybridSearchService;
 import xCloud.service.search.HybridSearchRerankService;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,6 +19,13 @@ import java.util.Map;
 /**
  * 混合检索控制器
  * 提供BM25 + 向量检索 + RRF融合 + Rerank的完整检索链路
+ *
+ * ============开关感知============
+ * Controller 本身始终注册（/health 探活接口不受开关影响）。
+ * 检索类接口在 ES/Milvus 开关关闭时返回明确降级提示，而不是注入失败或 NPE：
+ * - HybridSearchService 依赖 ES + Milvus 双开关
+ * - HybridSearchRerankService 只依赖 LLM，始终可用
+ *
  * @author Claude
  * @date 2026-08-18
  */
@@ -26,8 +35,9 @@ import java.util.Map;
 @Tag(name = "混合检索", description = "BM25关键词检索 + 向量语义检索 + RRF融合 + Rerank精排")
 public class HybridSearchController {
 
+    /** 混合检索服务：ES / Milvus 开关任一关闭时不存在 */
     @Autowired
-    private HybridSearchService hybridSearchService;
+    private ObjectProvider<HybridSearchService> hybridSearchServiceProvider;
 
     @Autowired
     private HybridSearchRerankService rerankService;
@@ -53,6 +63,13 @@ public class HybridSearchController {
             @RequestParam(defaultValue = "true") boolean useRerank
     ) {
         long startTime = System.currentTimeMillis();
+
+        // ============开关校验：ES / Milvus 未启用时明确降级，不抛异常============
+        HybridSearchService hybridSearchService = hybridSearchServiceProvider.getIfAvailable();
+        if (hybridSearchService == null) {
+            log.warn("混合检索未启用（elasticsearch.enabled / milvus.enabled 已关闭），query={}", query);
+            return disabledResponse();
+        }
 
         try {
             // ============1-混合检索（BM25 + 向量 + RRF）============
@@ -98,6 +115,13 @@ public class HybridSearchController {
     ) {
         long startTime = System.currentTimeMillis();
 
+        // ============开关校验：ES / Milvus 未启用时明确降级============
+        HybridSearchService hybridSearchService = hybridSearchServiceProvider.getIfAvailable();
+        if (hybridSearchService == null) {
+            log.warn("快速检索未启用（elasticsearch.enabled / milvus.enabled 已关闭），query={}", query);
+            return disabledResponse();
+        }
+
         try {
             List<HybridSearchResult> results = hybridSearchService.hybridSearch(query, topK);
             long elapsed = System.currentTimeMillis() - startTime;
@@ -127,7 +151,19 @@ public class HybridSearchController {
         Map<String, Object> status = new HashMap<>();
         status.put("status", "ok");
         status.put("timestamp", System.currentTimeMillis());
-        // TODO: 添加ES和Milvus的连接状态检查
+        status.put("hybridSearchEnabled", hybridSearchServiceProvider.getIfAvailable() != null);
         return status;
+    }
+
+    /**
+     * 检索能力未启用时的统一降级响应
+     */
+    private Map<String, Object> disabledResponse() {
+        Map<String, Object> disabled = new HashMap<>();
+        disabled.put("enabled", false);
+        disabled.put("total", 0);
+        disabled.put("results", Collections.emptyList());
+        disabled.put("message", "混合检索未启用：请开启 elasticsearch.enabled 与 milvus.enabled");
+        return disabled;
     }
 }

@@ -3,6 +3,7 @@ package xCloud.service.kafka;
 import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.kafka.support.KafkaHeaders;
@@ -22,11 +23,20 @@ import java.util.List;
 /**
  * Kafka消息消费者服务
  * 用途：消费Kafka消息并进行后续处理
+ *
+ * ============总开关：kafka.enabled + elasticsearch.enabled============
+ * 消费者既依赖 Kafka（监听容器），又依赖 ES（CandidateResumeRepository 写索引），
+ * 任一关闭都无法工作：
+ * - kafka.enabled=false  → 不注册监听容器，避免无 broker 时后台重连刷屏
+ * - elasticsearch.enabled=false → CandidateResumeRepository 不存在，必须一并关闭才不会注入失败
+ * matchIfMissing 语义用 SpEL 表达：未配置该属性时视为 true，生产环境行为不变。
+ *
  * @author Claude
  * @date 2026-08-18
  */
 @Slf4j
 @Service
+@ConditionalOnExpression("'${kafka.enabled:true}' == 'true' and '${elasticsearch.enabled:true}' == 'true'")
 public class KafkaConsumerService {
 
     @Autowired

@@ -7,6 +7,9 @@ springCloud 主要学习的 有：rabbitMq，kafka，es，等等 详情可以查
 最终目标：
 我要做一个企业级的智能招聘Agent
 
+当前主要使用的项目是x-productB
+
+
 # 开发注意事项
 2-
 1-已经有的模块、功能 能复用的就复用

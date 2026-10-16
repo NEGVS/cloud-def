@@ -1,8 +1,36 @@
 server:
   port: 8083
+
+# ==================================================================
+# ==================== 基础设施总开关（改这里）======================
+# ==================================================================
+# true  = 启用该组件；false = 关闭。
+# 关闭后相关 Bean 完全不注册，启动与运行不产生任何连接行为，业务接口自动降级不报错。
+# 三个开关都不写时，默认按 true（启用）处理，与改造前行为完全一致。
+#
+#   kafka.enabled          关闭后：不建 KafkaTemplate / AdminClient / 监听容器 / Topic；
+#                                   生产者静默跳过发送，上传简历接口不再等 broker
+#   elasticsearch.enabled  关闭后：不建 ElasticsearchClient；简历 Repository 不注册；
+#                                   BM25 检索、候选人评分不可用（接口返回未启用提示）
+#   milvus.enabled         关闭后：不建 MilvusClientV2；混合检索的向量召回不可用
+# ==================================================================
+kafka:
+  enabled: true
+elasticsearch:
+  enabled: true
+milvus:
+  enabled: true
+# ==================================================================
+
 # dynamic-tp 动态线程池配置
 # 运行中可在 Nacos 配置中心修改以下参数，实时生效无需重启
 spring:
+  # ============自动配置排除：避免与自建 KafkaConfig 的开关冲突============
+  # 本项目的 KafkaTemplate / ProducerFactory / ConsumerFactory / 监听容器工厂均由 KafkaConfig 自建，
+  # 排除 Boot 自动配置可防止 kafka.enabled=false 时 Boot 又接管并重建这些 Bean，导致开关失效。
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration
   elasticsearch:
     uris: http://localhost:9200
     username: elastic

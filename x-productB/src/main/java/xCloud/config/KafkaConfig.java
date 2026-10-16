@@ -8,6 +8,7 @@ import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
@@ -29,10 +30,16 @@ import java.util.Properties;
  * Kafka配置类
  * 用途：数据中台 - 实时数据流处理
  *
+ * ============总开关：kafka.enabled============
+ * matchIfMissing = true：未显式配置时默认启用，保证生产环境行为不变。
+ * 置为 false 时整个类不注册，KafkaTemplate / AdminClient / 监听容器工厂 / Topic 全部不创建，
+ * 应用启动与运行不产生任何 Kafka 连接行为。
+ *
  * @author Claude
  * @date 2026-08-18
  */
 @Configuration
+@ConditionalOnProperty(name = "kafka.enabled", havingValue = "true", matchIfMissing = true)
 public class KafkaConfig {
 
     @Value("${spring.kafka.bootstrap-servers:localhost:9092}")
@@ -78,6 +85,8 @@ public class KafkaConfig {
         config.put(ProducerConfig.ACKS_CONFIG, "all"); // 确保消息可靠性
         config.put(ProducerConfig.RETRIES_CONFIG, 3);
         config.put(ProducerConfig.MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION, 1); // 保证顺序
+        // ============broker 不可用时快速失败：默认 60s 会阻塞业务请求线程，压到 2s============
+        config.put(ProducerConfig.MAX_BLOCK_MS_CONFIG, 2000);
         return new DefaultKafkaProducerFactory<>(config);
     }
 

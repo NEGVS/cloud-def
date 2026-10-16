@@ -12,6 +12,7 @@ import io.milvus.v2.service.vector.response.SearchResp;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.stereotype.Service;
 import xCloud.entity.es.CandidateResumeDocument;
 import xCloud.service.vector.EmbeddingService;
@@ -22,11 +23,17 @@ import java.util.stream.Collectors;
 /**
  * 混合检索服务（BM25 + 向量检索 + RRF融合）
  * 核心算法：Reciprocal Rank Fusion (RRF)
+ *
+ * ============总开关：elasticsearch.enabled + milvus.enabled============
+ * 同时依赖 ES（BM25）与 Milvus（向量），两者任一关闭都无法工作。
+ * matchIfMissing 语义用 SpEL 表达：未配置该属性时视为 true，生产环境行为不变。
+ *
  * @author Claude
  * @date 2026-08-18
  */
 @Slf4j
 @Service
+@ConditionalOnExpression("'${elasticsearch.enabled:true}' == 'true' and '${milvus.enabled:true}' == 'true'")
 public class HybridSearchService {
 
     @Autowired

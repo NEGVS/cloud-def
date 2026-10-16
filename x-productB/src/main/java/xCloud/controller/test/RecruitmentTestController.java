@@ -3,6 +3,7 @@ package xCloud.controller.test;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -27,6 +28,12 @@ import java.util.Map;
 /**
  * 招聘系统综合测试控制器
  * 用途：端到端测试所有核心功能
+ *
+ * ============开关感知============
+ * ES / Kafka / Milvus 三个依赖均以 ObjectProvider 延迟获取：
+ * - 不依赖基础设施的测试（JD生成、JD优化、简历上传）始终可用
+ * - 依赖 ES/Kafka/Milvus 的测试在对应开关关闭时返回明确提示，不抛异常
+ *
  * @author Claude
  * @date 2026-08-18
  */
@@ -42,15 +49,18 @@ public class RecruitmentTestController {
     @Autowired
     private ResumeParseService resumeParseService;
 
+    /** 依赖 ES + Milvus */
     @Autowired
-    private HybridSearchService hybridSearchService;
+    private ObjectProvider<HybridSearchService> hybridSearchServiceProvider;
 
     @Autowired
     private HybridSearchRerankService rerankService;
 
+    /** 依赖 ES */
     @Autowired
-    private CandidateScoringService scoringService;
+    private ObjectProvider<CandidateScoringService> scoringServiceProvider;
 
+    /** Kafka 关闭时自动降级为静默跳过，始终可注入 */
     @Autowired
     private KafkaProducerService kafkaProducerService;
 
@@ -206,6 +216,15 @@ public class RecruitmentTestController {
         long startTime = System.currentTimeMillis();
         Map<String, Object> result = new HashMap<>();
 
+        // ============开关校验：ES / Milvus 关闭时明确降级============
+        HybridSearchService hybridSearchService = hybridSearchServiceProvider.getIfAvailable();
+        if (hybridSearchService == null) {
+            log.warn("混合检索测试跳过：ES / Milvus 未启用");
+            result.put("success", false);
+            result.put("error", "混合检索未启用：请开启 elasticsearch.enabled 与 milvus.enabled");
+            return result;
+        }
+
         try {
             log.info("========== 开始测试：混合检索 ==========");
 
@@ -246,6 +265,15 @@ public class RecruitmentTestController {
                                                      @RequestParam Long jdId) {
         long startTime = System.currentTimeMillis();
         Map<String, Object> result = new HashMap<>();
+
+        // ============开关校验：ES 关闭时评分服务不可用============
+        CandidateScoringService scoringService = scoringServiceProvider.getIfAvailable();
+        if (scoringService == null) {
+            log.warn("候选人评分测试跳过：ES 未启用");
+            result.put("success", false);
+            result.put("error", "候选人评分未启用：请开启 elasticsearch.enabled");
+            return result;
+        }
 
         try {
             log.info("========== 开始测试：候选人评分 ==========");
@@ -288,6 +316,16 @@ public class RecruitmentTestController {
     public Map<String, Object> testEndToEnd(@RequestParam("resumeFile") MultipartFile resumeFile) {
         long startTime = System.currentTimeMillis();
         Map<String, Object> result = new HashMap<>();
+
+        // ============开关校验：端到端流程依赖 ES（评分）+ ES/Milvus（检索）============
+        CandidateScoringService scoringService = scoringServiceProvider.getIfAvailable();
+        HybridSearchService hybridSearchService = hybridSearchServiceProvider.getIfAvailable();
+        if (scoringService == null || hybridSearchService == null) {
+            log.warn("端到端测试跳过：ES / Milvus 未启用");
+            result.put("success", false);
+            result.put("error", "端到端测试依赖 ES + Milvus：请开启 elasticsearch.enabled 与 milvus.enabled");
+            return result;
+        }
 
         try {
             log.info("========== 开始测试：端到端完整流程 ==========");
@@ -433,6 +471,15 @@ public class RecruitmentTestController {
     public Map<String, Object> performanceTest(@RequestParam(defaultValue = "10") int iterations) {
         long startTime = System.currentTimeMillis();
         Map<String, Object> result = new HashMap<>();
+
+        // ============开关校验：压测对象为混合检索，ES / Milvus 关闭时跳过============
+        HybridSearchService hybridSearchService = hybridSearchServiceProvider.getIfAvailable();
+        if (hybridSearchService == null) {
+            log.warn("性能压测跳过：ES / Milvus 未启用");
+            result.put("success", false);
+            result.put("error", "性能压测依赖混合检索：请开启 elasticsearch.enabled 与 milvus.enabled");
+            return result;
+        }
 
         try {
             log.info("========== 开始性能压测：iterations={} ==========", iterations);

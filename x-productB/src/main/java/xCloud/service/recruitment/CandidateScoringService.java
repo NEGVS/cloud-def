@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionTemplate;
 import xCloud.dto.recruitment.CandidateScoringResult;
@@ -23,11 +24,17 @@ import java.util.stream.Collectors;
 /**
  * 候选人评分引擎
  * 核心功能：多维度评分 + 可解释性 + HR偏好驱动
+ *
+ * ============总开关：elasticsearch.enabled============
+ * 候选人信息从 ES（CandidateResumeRepository）读取，ES 关闭时该 Repository 不存在，
+ * 本服务随之不注册，避免依赖注入失败。Controller 侧以 ObjectProvider 做降级。
+ *
  * @author Claude
  * @date 2026-08-18
  */
 @Slf4j
 @Service
+@ConditionalOnProperty(name = "elasticsearch.enabled", havingValue = "true", matchIfMissing = true)
 public class CandidateScoringService {
 
     @Resource

@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.*;
 import xCloud.dto.recruitment.BatchResultVO;
@@ -23,6 +24,13 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * 候选人评分控制器
+ *
+ * ============开关感知============
+ * 评分能力依赖 ES（候选人信息读自 CandidateResumeRepository）。
+ * elasticsearch.enabled=false 时 CandidateScoringService 不注册：
+ * - 依赖评分的两个接口返回明确降级提示
+ * - 纯 DB 查询接口（/jd-candidates、/candidate-detail）不受影响
+ *
  * @author Claude
  * @date 2026-08-18
  */
@@ -38,8 +46,9 @@ public class CandidateScoringController {
     /** 批量评分整体超时（秒） */
     private static final long BATCH_TIMEOUT_SECONDS = 600L;
 
+    /** 评分服务：ES 开关关闭时不存在 */
     @Resource
-    private CandidateScoringService scoringService;
+    private ObjectProvider<CandidateScoringService> scoringServiceProvider;
 
     @Resource
     private CandidateScoreMapper candidateScoreMapper;
@@ -57,6 +66,13 @@ public class CandidateScoringController {
             @Parameter(description = "候选人ID", required = true, example = "1") @RequestParam Long candidateId,
             @Parameter(description = "JD ID", required = true, example = "1") @RequestParam Long jdId) {
         long startTime = System.currentTimeMillis();
+
+        // ============开关校验：ES 关闭时评分服务不可用，明确降级============
+        CandidateScoringService scoringService = scoringServiceProvider.getIfAvailable();
+        if (scoringService == null) {
+            log.warn("候选人评分未启用（elasticsearch.enabled 已关闭）：candidateId={}, jdId={}", candidateId, jdId);
+            return Result.error("候选人评分未启用：请开启 elasticsearch.enabled");
+        }
 
         CandidateScoringResult result = scoringService.scoreCandidate(candidateId, jdId);
 
@@ -84,6 +100,13 @@ public class CandidateScoringController {
         if (candidateIds == null || candidateIds.isEmpty()) {
             result.setElapsedMs(0L);
             return Result.success(result);
+        }
+
+        // ============开关校验：ES 关闭时评分服务不可用，明确降级============
+        CandidateScoringService scoringService = scoringServiceProvider.getIfAvailable();
+        if (scoringService == null) {
+            log.warn("批量评分未启用（elasticsearch.enabled 已关闭）：jdId={}", jdId);
+            return Result.error("候选人评分未启用：请开启 elasticsearch.enabled");
         }
 
         // ============有界信号量 + 线程池并行评分，单个失败不影响整体============

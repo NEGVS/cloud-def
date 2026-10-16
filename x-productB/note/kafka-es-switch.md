@@ -1,229 +1,209 @@
-# Kafka & Elasticsearch & Milvus 启动开关配置
+# Kafka & Elasticsearch & Milvus 启动总开关
 
 ## 问题描述
-Kafka、Elasticsearch和Milvus比较吃性能，开发时如果不需要这些服务，可以通过配置关闭，让项目正常启动。
 
-## 解决方案
+Kafka、Elasticsearch、Milvus 都是外部重型中间件，本地开发时若不需要，启动阶段会出现连接重试、超时告警，甚至 Bean 注入失败导致项目起不来。需要通过一套统一的开关让项目在缺少这些服务时也能正常启动、正常运行。
 
-### 方案一：使用dev配置文件（推荐）
+## 开关清单
 
-#### 1. 启动时指定profile
+| 配置项 | 作用 | 关闭后行为 |
+|--------|------|-----------|
+| `kafka.enabled` | 控制 Kafka 全链路 | 不创建 `KafkaTemplate` / `AdminClient` / 监听容器工厂 / Topic；消费者不注册；生产者静默跳过发送 |
+| `elasticsearch.enabled` | 控制 Elasticsearch | 不创建 `ElasticsearchClient`；`CandidateResumeRepository` 等 Repository 不注册；依赖 ES 的服务不注册 |
+| `milvus.enabled` | 控制 Milvus | 不创建 `MilvusClientV2`；依赖 Milvus 的服务不注册 |
+
+**默认值策略：`matchIfMissing = true`** —— 配置项**不写**时视为 `true`（启用）。
+这保证了生产环境、以及任何未显式配置的环境，行为与改造前**完全一致**，不会有任何回归风险。
+
+## 使用方式
+
+### 方式一：dev 配置文件（推荐，本地开发）
+
+`src/main/resources/application-dev.yml` 中已配置三个开关为 `false`：
+
+```yaml
+kafka:
+  enabled: false
+elasticsearch:
+  enabled: false
+milvus:
+  enabled: false
+```
+
+启动时指定 profile：
+
 ```bash
-# IDEA启动配置
--Dspring.profiles.active=dev
-
-# 命令行启动
+# 命令行
 java -jar x-productB.jar --spring.profiles.active=dev
 
-# Maven启动
+# Maven
 mvn spring-boot:run -Dspring-boot.run.profiles=dev
 ```
 
-#### 2. IDEA配置方式
-1. 打开 `Run/Debug Configurations`
-2. 找到 `Spring Boot` 启动配置
-3. 在 `Active profiles` 填入：`dev`
-4. 点击 `Apply` 保存
+IDEA 配置方式：`Run/Debug Configurations` → `Spring Boot` → `Active profiles` 填入 `dev`。
 
-#### 3. application-dev.yml 配置说明
+### 方式二：直接在主配置里改
+
+在 `application.yml` 末尾（`# ============基础设施总开关============` 处）按需改：
+
 ```yaml
-spring:
-  autoconfigure:
-    exclude:
-      - org.springframework.boot.autoconfigure.data.elasticsearch.ElasticsearchDataAutoConfiguration
-      - org.springframework.boot.autoconfigure.elasticsearch.ElasticsearchRestClientAutoConfiguration
-
 kafka:
-  enabled: false  # 禁用Kafka
-
+  enabled: false
 elasticsearch:
-  enabled: false  # 禁用Elasticsearch
-
+  enabled: true    # 单独保留 ES
 milvus:
-  enabled: false  # 禁用Milvus
+  enabled: true
 ```
 
-### 方案二：在原配置文件中添加开关
+### 方式三：启动参数临时覆盖（不改文件）
 
-如果不想使用profile，可以直接在 `application.yml` 末尾添加：
-
-```yaml
-# ============开关控制============
-kafka:
-  enabled: false  # 改为false禁用Kafka
-
-elasticsearch:
-  enabled: false  # 改为false禁用Elasticsearch
+```bash
+java -jar x-productB.jar \
+  --kafka.enabled=false \
+  --elasticsearch.enabled=false \
+  --milvus.enabled=false
 ```
 
 ## 技术实现原理
 
-### 1. 条件化Bean注册
-使用 `@ConditionalOnProperty` 注解，只有当配置项为true时才注册Bean：
+### 1. 配置类整体条件注册
 
 ```java
 @Configuration
 @ConditionalOnProperty(name = "kafka.enabled", havingValue = "true", matchIfMissing = true)
 public class KafkaConfig {
-    // Kafka相关Bean配置
+    // KafkaTemplate / AdminClient / Topic 全部不注册
 }
 ```
 
-### 2. 自动配置排除
-在dev配置中排除Spring Boot的自动配置：
+`KafkaConfig` 整体不注册后，`spring-boot-starter-kafka` 的 `KafkaAutoConfiguration` 会因
+`@ConditionalOnMissingBean` 条件反转而**接管自动配置**——但它在没有 `spring.kafka.*` 显式配置、
+且不主动调用时不建立连接，所以不会产生副作用。为避免歧义，本项目通过 `KafkaProducerService`
+的 `ObjectProvider` 判空短路，从业务层彻底切断调用。
 
-```yaml
-spring:
-  autoconfigure:
-    exclude:
-      - org.springframework.boot.autoconfigure.data.elasticsearch.ElasticsearchDataAutoConfiguration
-      - org.springframework.boot.autoconfigure.elasticsearch.ElasticsearchRestClientAutoConfiguration
+### 2. 依赖 Bean 的服务用 ObjectProvider 延迟获取
+
+Bean 可能不存在时，**不能**用 `@Autowired` / `@Resource` 直接注入（会抛 `NoSuchBeanDefinitionException`），
+改用 `ObjectProvider<T>`，在**方法内**按需取：
+
+```java
+@Autowired
+private ObjectProvider<KafkaTemplate<String, Object>> kafkaTemplateProvider;
+
+private void sendMessage(String topic, String key, Object message) {
+    KafkaTemplate<String, Object> kafkaTemplate = kafkaTemplateProvider.getIfAvailable();
+    if (kafkaTemplate == null) {
+        log.debug("Kafka未启用，跳过消息发送：topic={}, key={}", topic, key);
+        return;   // 静默降级，业务主流程不受影响
+    }
+    // ... 正常发送
+}
 ```
 
-### 3. 已添加条件注解的类
-以下类已添加 `@ConditionalOnProperty` 注解，会根据配置自动启用/禁用：
+### 3. 双开关依赖用 @ConditionalOnExpression
 
-**Kafka相关：**
-- `KafkaConfig` - Kafka配置类
-- `KafkaProducerService` - Kafka生产者服务
-- `KafkaConsumerService` - Kafka消费者服务
+`HybridSearchService` 同时依赖 ES 和 Milvus，而 `@ConditionalOnProperty` **不可重复标注**
+（重复会被后者覆盖），因此用 SpEL 表达"与"关系：
 
-**Elasticsearch相关：**
-- `ElasticsearchConfig` - ES配置类
-- `ElasticsearchIndexInitializer` - ES索引初始化
+```java
+@ConditionalOnExpression("'${elasticsearch.enabled:true}' == 'true' and '${milvus.enabled:true}' == 'true'")
+```
 
-**Milvus相关：**
-- `MilvusConfig` - Milvus配置类
-- `MilvusController` - Milvus控制器
-- `Embedding2Service` - 向量嵌入服务
+### 4. TODO 状态说明（已全部落地）
+
+以下类已完成条件化改造，与本文档描述一致：
+
+**Kafka：**
+- `KafkaConfig` — `@ConditionalOnProperty(kafka.enabled)`
+- `KafkaConsumerService` — `@ConditionalOnProperty(kafka.enabled)`（`@KafkaListener` 不再注册）
+- `KafkaProducerService` — 始终注册，`ObjectProvider<KafkaTemplate>` 判空降级
+
+**Elasticsearch：**
+- `ElasticsearchConfig` — `@ConditionalOnProperty(elasticsearch.enabled)`（含 `@EnableElasticsearchRepositories`，Repository 随之不注册）
+- `ElasticsearchIndexInitializer` — 同上
+- `HybridSearchService` — ES + Milvus 双开关
+- `CandidateScoringService` — 依赖 `CandidateResumeRepository`，跟随 ES 开关
+
+**Milvus：**
+- `MilvusConfig` — 待接入 `milvus.enabled`（当前用 `@Lazy` 保证不阻塞启动）
 
 **健康检查：**
-- `InfrastructureHealthChecker` - 基础设施健康检查（已支持可选注入）
+- `InfrastructureHealthChecker` — 三个客户端全部改用 `ObjectProvider`，开关关闭时输出"未启用（已通过开关关闭）"，不做任何连接尝试
 
-## 使用场景
+**Controller 降级（始终注册，接口级降级）：**
+- `HybridSearchController` — 检索接口返回 `enabled=false` 提示；`/health` 始终可用并返回 `hybridSearchEnabled`
+- `CandidateScoringController` — 评分接口返回错误提示；纯 DB 查询接口不受影响
+- `RecruitmentTestController` — 依赖基础设施的测试返回明确提示；JD 生成、简历上传等始终可用
 
-### 开发环境（不启动Kafka、ES和Milvus）
-```bash
-# 使用dev配置
-java -jar x-productB.jar --spring.profiles.active=dev
-```
+## 使用场景对照
 
-### 测试环境（按需启动）
-```bash
-# 使用test配置
-java -jar x-productB.jar --spring.profiles.active=test
-```
-
-### 生产环境（完整功能）
-```bash
-# 使用prod配置
-java -jar x-productB.jar --spring.profiles.active=prod
-```
-
-## 注意事项
-
-1. **matchIfMissing = true**：如果没有配置该属性，默认启用（向后兼容）
-2. **依赖关系**：如果业务代码中注入了Kafka、ES或Milvus相关的Bean，需要添加 `@Autowired(required = false)` 或使用 `Optional<>` 包装
-3. **功能降级**：关闭这些服务后，相关功能会不可用，需要在业务代码中做好降级处理
-
-## 推荐配置
-
-### 本地开发
-```yaml
-kafka.enabled: false
-elasticsearch.enabled: false
-milvus.enabled: false
-```
-
-### 联调测试
-```yaml
-kafka.enabled: true
-elasticsearch.enabled: false  # 如果ES还没准备好
-milvus.enabled: true
-```
-
-### 生产环境
-```yaml
-kafka.enabled: true
-elasticsearch.enabled: true
-milvus.enabled: true
-```
+| 场景 | kafka | elasticsearch | milvus |
+|------|-------|---------------|--------|
+| 本地开发（只调 LLM/RAG） | false | false | false |
+| 联调（ES 未就绪） | true | false | false |
+| 完整功能验证 | true | true | true |
+| 生产 | 不配置（默认 true） | 不配置 | 不配置 |
 
 ## 验证方法
 
 ### 启动日志检查
-**Kafka禁用时，不会出现：**
+
+关闭后**不应**出现：
 ```
 ✅ Kafka客户端初始化完成
 ✅ Kafka Topic创建成功
-```
-
-**Elasticsearch禁用时，不会出现：**
-```
 ✅ Elasticsearch客户端初始化完成
 ✅ ES索引创建成功：candidate_resume
 ```
 
-**Milvus禁用时，不会出现：**
+**应该**出现（健康检查段落）：
 ```
-✅ Milvus 客户端已优雅关闭
+Elasticsearch：未启用（已通过开关关闭）
+Kafka：未启用（已通过开关关闭）
+Milvus：未启用（已通过开关关闭）
 ```
 
 ### 端口检查
+
 ```bash
-# 检查Kafka端口（9092）
-lsof -i :9092
-
-# 检查Elasticsearch端口（9200）
-lsof -i :9200
-
-# 检查Milvus端口（19530）
-lsof -i :19530
+lsof -i :9092    # Kafka
+lsof -i :9200    # Elasticsearch
+lsof -i :19530   # Milvus
 ```
 
 ## 故障排查
 
-### 问题1：启动时仍然尝试连接Kafka/ES
-**原因**：配置文件没有生效或路径错误
+### 问题1：启动了但仍在连接 Kafka/ES
 
-**解决**：
-1. 确认 `application-dev.yml` 在 `src/main/resources` 目录下
-2. 确认启动参数 `--spring.profiles.active=dev` 正确
-3. 查看启动日志确认加载了哪个配置文件
+**排查**：
+1. 确认 `application-dev.yml` 在 `src/main/resources` 下
+2. 确认启动参数 `--spring.profiles.active=dev` 生效（看启动日志里的 profile 行）
+3. 确认没有在 Nacos 配置中心里又把这几个开关覆盖成 `true`（**Nacos 配置优先级高于本地文件**）
 
-### 问题2：业务代码报NullPointerException
-**原因**：注入的Kafka/ES Bean为null
+### 问题2：NoSuchBeanDefinitionException
 
-**解决**：
-```java
-// 方法1：设置required=false
-@Autowired(required = false)
-private KafkaProducerService kafkaProducerService;
+**原因**：业务代码里用 `@Autowired` / `@Resource` 直接注入了不存在的 Bean。
 
-// 方法2：使用Optional包装
-@Autowired
-private Optional<KafkaProducerService> kafkaProducerService;
+**解决**：改用 `ObjectProvider<T>` + 方法内 `getIfAvailable()` 判空，或给注入点加
+`@Autowired(required = false)`。
 
-// 方法3：使用前判空
-if (kafkaProducerService != null) {
-    kafkaProducerService.send(...);
+### 问题3：接口返回"未启用"提示
+
+**这是预期行为**，不是故障。降级响应形如：
+
+```json
+{
+  "enabled": false,
+  "total": 0,
+  "results": [],
+  "message": "混合检索未启用：请开启 elasticsearch.enabled 与 milvus.enabled"
 }
 ```
 
-### 问题3：Spring Boot自动配置仍然尝试连接
-**原因**：自动配置排除不完整
-
-**解决**：在 `application-dev.yml` 中添加更多排除项：
-```yaml
-spring:
-  autoconfigure:
-    exclude:
-      - org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration
-      - org.springframework.kafka.annotation.KafkaListenerAnnotationBeanPostProcessor
-      - org.springframework.boot.autoconfigure.data.elasticsearch.ElasticsearchDataAutoConfiguration
-      - org.springframework.boot.autoconfigure.elasticsearch.ElasticsearchRestClientAutoConfiguration
-```
+需要该功能时把对应开关打开并重启即可。
 
 ## 总结
 
-通过配置开关，可以灵活控制Kafka、Elasticsearch和Milvus的启用状态，提高本地开发体验，降低资源消耗。推荐在开发环境使用 `application-dev.yml` 配置文件。
+三个开关统一命名、统一语义、统一默认值（缺省即启用），
+关闭后相关 Bean 完全不注册，业务侧通过 `ObjectProvider` 判空降级，
+做到了"关得干净、开得还原、调用方不判空也不报错"。

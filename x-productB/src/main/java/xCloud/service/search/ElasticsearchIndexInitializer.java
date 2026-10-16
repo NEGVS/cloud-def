@@ -7,6 +7,7 @@ import co.elastic.clients.elasticsearch.indices.IndexSettings;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
 import java.io.StringReader;
@@ -14,11 +15,16 @@ import java.io.StringReader;
 /**
  * Elasticsearch索引初始化服务
  * 应用启动时自动创建索引和映射
+ *
+ * ============总开关：elasticsearch.enabled============
+ * ES 关闭时整个 Runner 不注册，启动阶段不会尝试连接 ES 建索引。
+ *
  * @author Claude
  * @date 2026-08-18
  */
 @Slf4j
 @Service
+@ConditionalOnProperty(name = "elasticsearch.enabled", havingValue = "true", matchIfMissing = true)
 public class ElasticsearchIndexInitializer implements CommandLineRunner {
 
     @Autowired

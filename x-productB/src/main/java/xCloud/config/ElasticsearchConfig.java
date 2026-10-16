@@ -10,6 +10,7 @@ import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.elasticsearch.client.RestClient;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
@@ -18,11 +19,19 @@ import org.springframework.data.elasticsearch.repository.config.EnableElasticsea
 /**
  * Elasticsearch配置类
  * 用途：混合检索（BM25 + 向量检索）
+ *
+ * ============总开关：elasticsearch.enabled============
+ * matchIfMissing = true：未显式配置时默认启用，生产环境行为不变。
+ * 置为 false 时不创建 ElasticsearchClient，同时 @EnableElasticsearchRepositories 也不会生效，
+ * CandidateResumeRepository 等 Repository Bean 不会注册，应用启动不产生任何 ES 连接行为。
+ * 依赖 ES 的服务（HybridSearchService / CandidateScoringService 等）同步带上相同开关。
+ *
  * @author Claude
  * @date 2026-08-18
  */
 @Slf4j
 @Configuration
+@ConditionalOnProperty(name = "elasticsearch.enabled", havingValue = "true", matchIfMissing = true)
 @EnableElasticsearchRepositories(basePackages = "xCloud.repository")
 public class ElasticsearchConfig {
 

@@ -1,25 +1,10 @@
-# 开发环境配置：禁用Kafka和Elasticsearch
+# 开发环境配置：禁用 Kafka、Elasticsearch、Milvus
+# 启动方式：-Dspring.profiles.active=dev
+# 三个开关均为 false 时，相关 Bean 全部不注册，项目启动与运行不产生任何 Kafka/ES/Milvus 连接行为
 server:
   port: 8083
 
 spring:
-  # ============禁用Elasticsearch自动配置============
-  autoconfigure:
-    exclude:
-      - org.springframework.boot.autoconfigure.data.elasticsearch.ElasticsearchDataAutoConfiguration
-      - org.springframework.boot.autoconfigure.elasticsearch.ElasticsearchRestClientAutoConfiguration
-
-  # ============禁用Kafka自动配置（可选配置，防止连接失败）============
-  kafka:
-    bootstrap-servers: localhost:9092  # 保留配置但不会真正连接
-    consumer:
-      group-id: recruitment-consumer-group
-      auto-offset-reset: earliest
-      enable-auto-commit: false
-    producer:
-      acks: all
-      retries: 3
-
   # ============数据库配置============
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
@@ -75,6 +60,14 @@ spring:
         await-termination: true
         await-termination-period: 10s
 
+# ============基础设施总开关（开发环境全部关闭）============
+kafka:
+  enabled: false         # 关闭 Kafka：不创建 KafkaTemplate / AdminClient / 监听容器 / Topic
+elasticsearch:
+  enabled: false         # 关闭 ES：不创建 ElasticsearchClient，Repository 不注册
+milvus:
+  enabled: false         # 关闭 Milvus：不创建 MilvusClientV2
+
 # ============mybatis-plus配置============
 mybatis-plus:
   mapper-locations: classpath*:/mapper/**/*.xml
@@ -108,13 +101,6 @@ langchain4j:
 # ============RAG配置============
 rag:
   url: http://localhost:8080/api/v1/rag
-
-milvus:
-  enabled: false  # 禁用Milvus
-  uri: http://localhost:19530
-  token: root:Milvus
-  host: localhost
-  port: 19530
 
 # ============LLM配置============
 openai:
@@ -153,10 +139,3 @@ llm:
 resume:
   upload:
     dir: /tmp/resumes
-
-# ============开关控制============
-kafka:
-  enabled: false  # 禁用Kafka
-
-elasticsearch:
-  enabled: false  # 禁用Elasticsearch

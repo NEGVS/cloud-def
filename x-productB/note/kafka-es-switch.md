@@ -6,56 +6,49 @@ Kafka、Elasticsearch、Milvus 都是外部重型中间件，本地开发时若�
 
 ## 开关清单
 
-| 配置项 | 作用 | 关闭后行为 |
-|--------|------|-----------|
-| `kafka.enabled` | 控制 Kafka 全链路 | 不创建 `KafkaTemplate` / `AdminClient` / 监听容器工厂 / Topic；消费者不注册；生产者静默跳过发送 |
-| `elasticsearch.enabled` | 控制 Elasticsearch | 不创建 `ElasticsearchClient`；`CandidateResumeRepository` 等 Repository 不注册；依赖 ES 的服务不注册 |
-| `milvus.enabled` | 控制 Milvus | 不创建 `MilvusClientV2`；依赖 Milvus 的服务不注册 |
+三个开关都在 `src/main/resources/application.yml` 中，**各自写在对应组件的配置块内**
+（因为 `milvus` / `elasticsearch` 本就有配置块，YAML 不允许同名根键重复出现，开关不能单独成块）：
+
+| 配置项 | 所在块 | 关闭后行为 |
+|--------|--------|-----------|
+| `kafka.enabled` | 文件顶部 `kafka:` 块 | 不创建 `KafkaTemplate` / `AdminClient` / 监听容器工厂 / Topic；消费者不注册；生产者静默跳过发送 |
+| `milvus.enabled` | `milvus:` 块内 | 不创建 `MilvusClientV2`；依赖 Milvus 的服务不注册 |
+| `elasticsearch.enabled` | `elasticsearch:` 块内 | 不创建 `ElasticsearchClient`；`CandidateResumeRepository` 等 Repository 不注册；依赖 ES 的服务不注册 |
+
+直接改对应的 `true` / `false` 即可，不需要加启动参数、也不需要切 profile。
+
+> **踩坑记录**：不要在文件里新增独立的 `milvus:` / `elasticsearch:` 顶层块来放开关。
+> YAML 同名根键重复会触发 `org.yaml.snakeyaml.constructor.DuplicateKeyException`，应用直接启动失败。
 
 **默认值策略：`matchIfMissing = true`** —— 配置项**不写**时视为 `true`（启用）。
 这保证了生产环境、以及任何未显式配置的环境，行为与改造前**完全一致**，不会有任何回归风险。
 
 ## 使用方式
 
-### 方式一：dev 配置文件（推荐，本地开发）
-
-`src/main/resources/application-dev.yml` 中已配置三个开关为 `false`：
+### 直接改 application.yml（推荐）
 
 ```yaml
 kafka:
-  enabled: false
-elasticsearch:
-  enabled: false
+  enabled: false         # 关掉 Kafka
+
 milvus:
-  enabled: false
+  enabled: false         # 关掉 Milvus（写在 milvus 块第一行）
+
+elasticsearch:
+  enabled: false         # 关掉 ES（写在 elasticsearch 块第一行）
 ```
 
-启动时指定 profile：
+改完重启即可。
+
+### 可选：dev profile 一键全关
+
+`src/main/resources/application-dev.yml` 里三个开关都是 `false`，启动时显式激活才会生效：
 
 ```bash
-# 命令行
 java -jar x-productB.jar --spring.profiles.active=dev
-
-# Maven
-mvn spring-boot:run -Dspring-boot.run.profiles=dev
 ```
 
-IDEA 配置方式：`Run/Debug Configurations` → `Spring Boot` → `Active profiles` 填入 `dev`。
-
-### 方式二：直接在主配置里改
-
-在 `application.yml` 末尾（`# ============基础设施总开关============` 处）按需改：
-
-```yaml
-kafka:
-  enabled: false
-elasticsearch:
-  enabled: true    # 单独保留 ES
-milvus:
-  enabled: true
-```
-
-### 方式三：启动参数临时覆盖（不改文件）
+### 启动参数临时覆盖（不改文件）
 
 ```bash
 java -jar x-productB.jar \
@@ -176,11 +169,30 @@ lsof -i :19530   # Milvus
 ### 问题1：启动了但仍在连接 Kafka/ES
 
 **排查**：
-1. 确认 `application-dev.yml` 在 `src/main/resources` 下
-2. 确认启动参数 `--spring.profiles.active=dev` 生效（看启动日志里的 profile 行）
-3. 确认没有在 Nacos 配置中心里又把这几个开关覆盖成 `true`（**Nacos 配置优先级高于本地文件**）
+1. 确认开关写在 `application.yml` 里且值确实是 `false`
+2. 确认没有在 Nacos 配置中心（`bootstrap.yml` 中 `x-productB`、`ANDY_GROUP`）
+   里又把这几个开关覆盖成 `true` —— **Nacos 配置优先级高于本地文件**
+3. 确认启动参数里没有 `--kafka.enabled=true` 之类的临时覆盖
 
-### 问题2：NoSuchBeanDefinitionException
+### 问题2：DuplicateKeyException（YAML 重复根键）
+
+```
+org.yaml.snakeyaml.constructor.DuplicateKeyException: found duplicate key milvus
+```
+
+**原因**：文件里出现了两个同名的顶层键（例如既在开头新增了 `milvus:` 放开关，
+下边又本来就有 `milvus:` 放 uri/token）。
+
+**解决**：合并成一个块。开关必须是已有块里的一个子键，不能另起一块：
+
+```yaml
+milvus:
+  enabled: false        # 开关作为块内第一个子键
+  uri: http://localhost:19530
+  token: root:Milvus
+```
+
+### 问题3：NoSuchBeanDefinitionException
 
 **原因**：业务代码里用 `@Autowired` / `@Resource` 直接注入了不存在的 Bean。
 

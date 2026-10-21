@@ -2,25 +2,29 @@ server:
   port: 8083
 
 # ==================================================================
-# ==================== 基础设施总开关（改这里）======================
+# ==================== 基础设施总开关索引 ===========================
 # ==================================================================
-# true  = 启用该组件；false = 关闭。
-# 关闭后相关 Bean 完全不注册，启动与运行不产生任何连接行为，业务接口自动降级不报错。
-# 三个开关都不写时，默认按 true（启用）处理，与改造前行为完全一致。
+# 三个开关分散在本文件各自的配置块内（因 milvus / elasticsearch 本就有配置块，
+# YAML 不允许同名根键重复出现，故不能再单独成块）：
 #
-#   kafka.enabled          关闭后：不建 KafkaTemplate / AdminClient / 监听容器 / Topic；
-#                                   生产者静默跳过发送，上传简历接口不再等 broker
-#   elasticsearch.enabled  关闭后：不建 ElasticsearchClient；简历 Repository 不注册；
-#                                   BM25 检索、候选人评分不可用（接口返回未启用提示）
-#   milvus.enabled         关闭后：不建 MilvusClientV2；混合检索的向量召回不可用
+#   kafka.enabled           —— 见下方 kafka 块
+#   milvus.enabled          —— 见下方 milvus 块
+#   elasticsearch.enabled   —— 见下方 elasticsearch 块
+#
+# 取值：true = 启用（默认，不写也是启用）；false = 关闭。
+# 关闭后相关 Bean 完全不注册，启动与运行不产生任何连接行为，业务接口自动降级不报错。
+#
+#   kafka.enabled=false          不建 KafkaTemplate / AdminClient / 监听容器 / Topic；
+#                                生产者静默跳过发送，上传简历接口不再等 broker
+#   elasticsearch.enabled=false  不建 ElasticsearchClient；简历 Repository 不注册；
+#                                BM25 检索、候选人评分不可用（接口返回未启用提示）
+#   milvus.enabled=false         不建 MilvusClientV2；混合检索的向量召回不可用
 # ==================================================================
+
+# ============Kafka 总开关============
+# 关闭时：不创建 KafkaTemplate / AdminClient / 监听容器工厂 / Topic，生产者静默跳过发送
 kafka:
   enabled: true
-elasticsearch:
-  enabled: true
-milvus:
-  enabled: true
-# ==================================================================
 
 # dynamic-tp 动态线程池配置
 # 运行中可在 Nacos 配置中心修改以下参数，实时生效无需重启
@@ -179,7 +183,9 @@ langchain4j:
 #rag
 rag:
   url: http://localhost:8080/api/v1/rag
+# ============Milvus 向量库（含总开关）============
 milvus:
+  enabled: true  # 总开关：false 时不创建 MilvusClientV2，混合检索的向量召回不可用
   uri: http://localhost:19530 # Milvus URI（新 V2 使用 URI）
   token: root:Milvus  # 默认 token，生产环境替换
   host: localhost
@@ -218,8 +224,9 @@ llm:
   api:
     url: https://api.deepseek.com/v1/chat/completions
 
-# ============Elasticsearch混合检索配置============
+# ============Elasticsearch混合检索配置（含总开关）============
 elasticsearch:
+  enabled: true  # 总开关：false 时不创建 ElasticsearchClient，简历 Repository 不注册
   username: elastic
   password: "ASDks#d12"
   host: localhost

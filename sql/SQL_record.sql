@@ -8,15 +8,19 @@
 # ALTER TABLE table_name DROP COLUMN column_name;
 CREATE TABLE `text_vector_log`
 (
-    `id`          bigint NOT NULL COMMENT '主键',
-    `text`        text COMMENT '文本',
-    `vector`      text COMMENT '向量',
-    `create_time` datetime COMMENT '创建时间',
-    `source`      varchar(255) DEFAULT NULL COMMENT '来源',
-    `remark`      varchar(512) DEFAULT NULL COMMENT '备注',
+    `id`              bigint       NOT NULL COMMENT '主键',
+    `text`            text COMMENT '文本',
+    `vector`          text COMMENT '向量',
+    `create_time`     datetime COMMENT '创建时间',
+    `source`          varchar(255) DEFAULT NULL COMMENT '来源',
+    `remark`          varchar(512) DEFAULT NULL COMMENT '备注',
+    `collection_name` varchar(255) DEFAULT NULL COMMENT '向量所属 Milvus collection 名称（记录写入的是哪个集合）',
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4 COMMENT ='文本向量日志';
+
+# text_vector_log 新增 collection_name 字段：记录向量写入的 Milvus collection（旧库执行下面这行）
+# ALTER TABLE text_vector_log ADD COLUMN collection_name varchar(255) DEFAULT NULL COMMENT '向量所属 Milvus collection 名称（记录写入的是哪个集合）' AFTER remark;
 
 
 create table car_sales

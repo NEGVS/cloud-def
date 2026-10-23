@@ -383,7 +383,8 @@ public class PdfChunkService {
                     chunk.getContent(),
                     arr.toString(),          // 向量 JSON，如 "[0.12, -0.34, ...]"
                     chunk.getSource(),
-                    "docType=" + chunk.getDocType() + ",chunkIndex=" + chunk.getChunkIndex()
+                    "docType=" + chunk.getDocType() + ",chunkIndex=" + chunk.getChunkIndex(),
+                    COLLECTION               // 记录向量实际写入的 collection
             ));
         }
 

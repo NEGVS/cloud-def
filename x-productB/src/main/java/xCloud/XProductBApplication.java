@@ -58,8 +58,11 @@ public class XProductBApplication {
         log.info("x-product-B 启动完成...");
         log.info("\n--api--");
         log.info("\nAPI文档地址: http://localhost:{}{}/doc.html", port, contextPath);
-        log.info("\n--nacos URL");
-        log.info("\nhttp://localhost:8848/nacos");
+        // ============Nacos 总开关关闭时不打印 Nacos 地址，避免误导============
+        if (isNacosEnabled()) {
+            log.info("\n--nacos URL");
+            log.info("\nhttp://localhost:8848/nacos");
+        }
         System.out.println("---------------获取并使用Bean");
         myBean.doBusiness();
     }
@@ -88,7 +91,12 @@ public class XProductBApplication {
                 log.info("端口：{}", port);
                 log.info("API文档：http://localhost:{}{}/doc.html",
                         port, contextPath);
-                log.info("Nacos：http://localhost:8848/nacos");
+                // ============Nacos 总开关关闭时不打印 Nacos 地址============
+                if (isNacosEnabled()) {
+                    log.info("Nacos：http://localhost:8848/nacos");
+                } else {
+                    log.info("Nacos：已通过开关关闭（nacos.enabled=false），使用本地配置");
+                }
                 log.info("========================================");
 
 //                myBean.doBusiness();
@@ -98,6 +106,14 @@ public class XProductBApplication {
             }
         };
     }
+    /**
+     * 读取 Nacos 总开关（见 bootstrap.yml 的 nacos.enabled），默认 true
+     * 仅用于控制启动日志输出，与 Nacos 本身的装配无关
+     */
+    private boolean isNacosEnabled() {
+        return Boolean.TRUE.equals(env.getProperty("nacos.enabled", Boolean.class, Boolean.TRUE));
+    }
+
     private static void killProcessOnPort(int port) {
         try {
             Process findProcess = Runtime.getRuntime().exec(new String[]{"lsof", "-ti", "tcp:" + port});

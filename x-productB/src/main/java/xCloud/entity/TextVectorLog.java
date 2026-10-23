@@ -1,6 +1,7 @@
 package xCloud.entity;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
 
 import java.io.Serial;
@@ -33,4 +34,8 @@ public class TextVectorLog  implements Serializable {
     private String source;
     @Schema(description = "备注")
     private String remark;
+
+    @Schema(description = "向量所属 Milvus collection 名称（记录本次向量写入的是哪个集合）")
+    @TableField(value = "collection_name")
+    private String collectionName;
 }

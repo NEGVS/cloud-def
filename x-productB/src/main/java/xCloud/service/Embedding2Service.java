@@ -193,6 +193,7 @@ public class Embedding2Service {
                     logEntry.setCreate_time(LocalDateTime.now());
                     logEntry.setSource("insertVector");
                     logEntry.setRemark("System");
+                    logEntry.setCollectionName(collectionName); // 记录向量写入的 Milvus collection
                     int rows = textVectorLogMapper.insert(logEntry);
                     log.info("向量日志异步写入{}, id={}", rows > 0 ? "成功" : "失败", finalId);
                 } catch (Exception ex) {
@@ -248,6 +249,7 @@ public class Embedding2Service {
             logEntry.setCreate_time(LocalDateTime.now());
             logEntry.setSource("insertVectors");
             logEntry.setRemark("System");
+            logEntry.setCollectionName(collectionName); // 记录向量写入的 Milvus collection
             logEntries.add(logEntry);
         }
 

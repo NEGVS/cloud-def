@@ -27,7 +27,7 @@ import java.util.concurrent.*;
  * <p>
  * 使用方式（任意 Service 注入后直接调用）：
  * <pre>
- *   vectorLogService.asyncLog(id, text, vectorJson, source, remark);
+ *   vectorLogService.asyncLog(id, text, vectorJson, source, remark, collectionName);
  *   vectorLogService.asyncLogBatch(logs);  // 已构建好 TextVectorLog 列表
  * </pre>
  *
@@ -103,14 +103,15 @@ public class VectorLogService  {
     /**
      * 异步写入单条向量日志（非阻塞）
      *
-     * @param id     与 Milvus 主键保持一致的雪花 ID
-     * @param text   原始文本内容
-     * @param vector 向量 JSON 字符串（由调用方序列化）
-     * @param source 来源标识，如文件名、业务模块名
-     * @param remark 备注信息（可为 null）
+     * @param id             与 Milvus 主键保持一致的雪花 ID
+     * @param text           原始文本内容
+     * @param vector         向量 JSON 字符串（由调用方序列化）
+     * @param source         来源标识，如文件名、业务模块名
+     * @param remark         备注信息（可为 null）
+     * @param collectionName 向量写入的 Milvus collection 名称（记录数据落在哪个库）
      */
-    public void asyncLog(Long id, String text, String vector, String source, String remark) {
-        TextVectorLog log = buildLog(id, text, vector, source, remark);
+    public void asyncLog(Long id, String text, String vector, String source, String remark, String collectionName) {
+        TextVectorLog log = buildLog(id, text, vector, source, remark, collectionName);
         offerToQueue(log);
     }
 
@@ -131,15 +132,16 @@ public class VectorLogService  {
     /**
      * 构建 TextVectorLog 实体的便捷工厂方法
      *
-     * @param id     主键（与 Milvus id 对应）
-     * @param text   原始文本
-     * @param vector 向量序列化字符串
-     * @param source 来源
-     * @param remark 备注
+     * @param id             主键（与 Milvus id 对应）
+     * @param text           原始文本
+     * @param vector         向量序列化字符串
+     * @param source         来源
+     * @param remark         备注
+     * @param collectionName 向量写入的 Milvus collection 名称
      * @return 已填充字段的 TextVectorLog 实体
      */
     public static TextVectorLog buildLog(Long id, String text, String vector,
-                                         String source, String remark) {
+                                         String source, String remark, String collectionName) {
         TextVectorLog entity = new TextVectorLog();
         entity.setId(id != null ? id : CodeX.nextId());
         entity.setText(text);
@@ -147,6 +149,7 @@ public class VectorLogService  {
         entity.setCreate_time(LocalDateTime.now());
         entity.setSource(source);
         entity.setRemark(remark);
+        entity.setCollectionName(collectionName);
         return entity;
     }
 

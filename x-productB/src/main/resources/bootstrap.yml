@@ -1,3 +1,25 @@
+# ==================================================================
+# ======================= Nacos 总开关 =============================
+# ==================================================================
+# nacos.enabled = true  ：使用 Nacos（配置中心 + 服务发现），默认值，行为与之前完全一致
+# nacos.enabled = false ：完全不使用 Nacos，本地不启动 Nacos 服务也能正常启动并运行
+#
+# 关闭后：
+#   1. 不连接 Nacos 配置中心（8848 端口），不拉取远程配置，不会有连接超时等待和红色异常日志
+#   2. 不注册到 Nacos 服务列表，不创建服务发现客户端
+#   3. 所有配置全部来自本地 application.yml / application-dev.yml，线程池参数不再支持远程热更新
+#
+# 开关生效方式（优先级从高到低，任选其一）：
+#   1. JVM 参数：  -Dnacos.enabled=false        ← 推荐，IDEA 里加在 VM options
+#   2. 环境变量：  NACOS_ENABLED=false
+#   3. 直接修改下方 enabled 的默认值（把 ${NACOS_ENABLED:true} 改成 ${NACOS_ENABLED:false}）
+#
+# 注意：必须写在 bootstrap.yml 中，不能写 application.yml。
+#      因为 spring.config.import 的解析早于 application.yml 绑定，写在那里对配置中心来不及生效。
+# ==================================================================
+nacos:
+  enabled: ${NACOS_ENABLED:false}
+
 spring:
   config:
     import:
@@ -10,6 +32,7 @@ spring:
     nacos:
       # nacos 配置管理（spring.cloud.nacos.config）
       config:
+        enabled: ${nacos.enabled} # 总开关：false 时上面 config.import 的 nacos 地址被跳过，完全不连配置中心
         namespace: ba2af5d9-ccb9-46f1-b325-cfa1da420099 # Nacos 命名空间，默认为 public
         server-addr: 127.0.0.1:8848 # Nacos 服务器地址
         group: ANDY_GROUP # 配置分组，默认为 DEFAULT_GROUP
@@ -19,8 +42,8 @@ spring:
       #        password: nacos
       # Nacos 服务发现（Service Discovery），启用服务发现 需要在 Spring Boot 主类上添加 @EnableDiscoveryClient 注解：在“服务管理 > 服务列表”中，确认 your-app-name 已注册。
       discovery:
+        enabled: ${nacos.enabled} # 总开关：false 时不注册服务、不创建服务发现客户端
         server-addr: 127.0.0.1:8848 # Nacos 服务发现地址
         namespace: ba2af5d9-ccb9-46f1-b325-cfa1da420099 # 与配置管理保持一致
         group: ANDY_GROUP
 #        file-extension: yml # 配置文件格式
-

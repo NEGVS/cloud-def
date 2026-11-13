@@ -107,6 +107,7 @@ openai:
   api-key: ${OPENAI_API_KEY:placeholder}
   model: text-embedding-3-small
 
+#当前正在使用的
 ali:
   api-key: ${DASHSCOPE_API_KEY:placeholder}
   chat_model_name: qwen-plus
